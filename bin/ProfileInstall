@@ -4,6 +4,7 @@ Import GoboLinux
 Import Log
 Import OptionParser
 Import Process
+Import PostInstall
 
 source GoboPath
 
@@ -122,7 +123,12 @@ function install_packages() {
          rm -rf ${dest_dir}/${goboPrograms}/${line}/Settings &> /dev/null
          cp -a ${goboPrograms}/${line}/Current/Resources/Defaults/Settings ${dest_dir}/${goboPrograms}/${line}
       fi
-      # SymlinkProgram ${line} &> /dev/null
+      if [ -e ${goboPrograms}/${line}/Current/Resources/PostInstall ]
+      then
+         Log_Normal "Processing PostInstall script for ${line}..."
+         version="`readlink ${goboPrograms}/${line}/Current`"
+         Run_PostInstall "${line}" "${version}" "" "" "${destdir}"
+      fi
    done < ${profile}
 }
 
