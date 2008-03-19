@@ -296,7 +296,7 @@ for line in lines :
 
 lines = safeFileReadLines('/System/Settings/modprobe.conf')
 
-cmd = 'EthInterfaces'
+cmd = 'NetInterfaces'
 if reallyInstall :
 	interfaces = safeRun(cmd)
 else :
