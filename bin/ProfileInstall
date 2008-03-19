@@ -123,6 +123,11 @@ function install_packages() {
          rm -rf ${dest_dir}/${goboPrograms}/${line}/Settings &> /dev/null
          cp -a ${goboPrograms}/${line}/Current/Resources/Defaults/Settings ${dest_dir}/${goboPrograms}/${line}
       fi
+   done < ${profile}
+   
+   chroot ${dest_dir} ldconfig
+   while read line
+   do
       if [ -e ${goboPrograms}/${line}/Current/Resources/PostInstall ]
       then
          Log_Normal "Processing PostInstall script for ${line}..."
