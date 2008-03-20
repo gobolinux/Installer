@@ -125,6 +125,10 @@ function install_packages() {
       fi
    done < ${profile}
    
+   # Setup env for PostInstall chroot (ldconfig, /dev, /sys, /proc)
+   mount -o bind ${goboSystem}/Kernel/Devices ${dest_dir}/${goboSystem}/Kernel/Devices
+   mount -o bind ${goboSystem}/Kernel/Objects ${dest_dir}/${goboSystem}/Kernel/Objects
+   mount -o bind ${goboSystem}/Kernel/Status  ${dest_dir}/${goboSystem}/Kernel/Status
    chroot ${dest_dir} ldconfig
    while read line
    do
@@ -135,6 +139,9 @@ function install_packages() {
          Run_PostInstall "${line}" "${version}" "" "" "${dest_dir}"
       fi
    done < ${profile}
+   umount ${dest_dir}/${goboSystem}/Kernel/Status
+   umount ${dest_dir}/${goboSystem}/Kernel/Objects
+   umount ${dest_dir}/${goboSystem}/Kernel/Devices
 }
 
 ### Main ####################################################################
