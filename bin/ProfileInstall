@@ -83,7 +83,7 @@ function install_base() {
    ln -s "`lstrip ${goboBoot}`" ${dest_dir}/boot
    ln -s "`lstrip ${goboMount}`/Media" ${dest_dir}/media
    ln -s "`lstrip ${goboMount}`" ${dest_dir}/mnt
-   ln -s "`lstrip ${goboFiles}`" ${dest_dir}/srv
+   ln -s "Files" ${dest_dir}/srv
 
    Log_Normal "Installing directory "${goboUsers}/${superuser}
    mkdir -p ${dest_dir}/${goboUsers}
@@ -132,7 +132,7 @@ function install_packages() {
       then
          Log_Normal "Processing PostInstall script for ${line}..."
          version="`readlink ${goboPrograms}/${line}/Current`"
-         Run_PostInstall "${line}" "${version}" "" "" "${destdir}"
+         Run_PostInstall "${line}" "${version}" "" "" "${dest_dir}"
       fi
    done < ${profile}
 }
