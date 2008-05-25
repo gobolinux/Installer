@@ -90,10 +90,14 @@ function install_base() {
    cp -a ${goboPrograms}/EnhancedSkel/Current/testuser ${dest_dir}/${goboUsers}/${superuser} || mkdir ${dest_dir}/${goboUsers}/${superuser}
    chmod 600 ${dest_dir}/${goboUsers}/${superuser}/
 
-   cd ${dest_dir}/${goboUsers}/${superuser}
-   GrepReplace -R "/Users/testuser" "${goboUsers}/${superuser}/"
-   GrepReplace -R "prompt lode cyan" "prompt lode red" '.zshrc'
-   rm -f '.zshrc~'
+   cd ${goboPrograms}/EnhancedSkel/Current/testuser
+   for i in `find . -type f`
+   do
+      GrepReplace -B "/Users/testuser" "${goboUsers}/${superuser}/" "${dest_dir}/${goboUsers}/${superuser}/$i"
+   done
+   cd - &> /dev/null
+
+   GrepReplace -B "prompt lode cyan" "prompt lode red" "${dest_dir}/${goboUsers}/${superuser}/.zshrc"
    cd - &> /dev/null
 
    mkdir -p ${dest_dir}/System/Variable/tmp/{.ICE-unix,.X11-unix} -m a+rwxt
