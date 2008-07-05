@@ -3,7 +3,6 @@ source ScriptFunctions
 Import GoboLinux
 Import Log
 Import OptionParser
-Import Process
 Import PostInstall
 
 source GoboPath
