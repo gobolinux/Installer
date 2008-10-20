@@ -338,7 +338,7 @@
         <translation>A GoboLinux telepítése félbeszakadt</translation>
     </message>
     <message>
-        <source>Formating root partition %s...</source>
+        <source>Formatting root partition %s...</source>
         <translation>A root-partíció formázása: %s...</translation>
     </message>
     <message>

@@ -312,7 +312,7 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Instalação do GoboLinux abortada</translation>
     </message>
     <message>
-        <source>Formating root partition %s</source>
+        <source>Formatting root partition %s</source>
         <translation type="obsolete">Formatando partição raiz %s</translation>
     </message>
     <message>
@@ -398,7 +398,7 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="unfinished">Espaço necessário para a instalação dos pacotes selecionados</translation>
     </message>
     <message>
-        <source>Formating root partition %s...</source>
+        <source>Formatting root partition %s...</source>
         <translation type="unfinished">Formatando partição raiz %s...</translation>
     </message>
     <message>

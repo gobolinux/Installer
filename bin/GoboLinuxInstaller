@@ -859,7 +859,7 @@ try :
 		safeRun(cmd, '', 0, logger)
 
 	if installer.getValue('DoFormat') :
-		log(tr('Formating root partition %s...')%installer.getValue('RootPartition')[1])
+		log(tr('Formatting root partition %s...')%installer.getValue('RootPartition')[1])
 		formatPartition(installer.getValue('RootPartition')[1].split()[0], installer.getValue('PartitionType')[1])
 
 

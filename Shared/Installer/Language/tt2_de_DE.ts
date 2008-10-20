@@ -366,7 +366,7 @@
         <translation>Die Installation von GoboLinux wurde abgebrochen</translation>
     </message>
     <message>
-        <source>Formating root partition %s...</source>
+        <source>Formatting root partition %s...</source>
         <translation>Formatiere Root-Partition %s...</translation>
     </message>
     <message>
