@@ -1,0 +1,27 @@
+Witamy w instalatorze Gobolinuksa!
+
+Instalator poprowadzi Ciê krok-po-kroku
+a¿ do momentu, kiedy system bêdzie gotowy
+do instalacji na dysku. Umo¿liwi Ci sformatowanie
+partycji docelowej - tej, która bêdzie zawieraæ
+instalowany system - wybór pakietów oprogramowania
+przeznaczonego do instalacji, oraz u³atwi
+dokonanie podstawowej konfiguracji, która
+umo¿liwi natychmiastowe uruchomienie systemu.
+
+Instalator pracuje interaktywnie, zadaj±c
+pytania w celu zebrania informacji niezbêdnych
+do instalacji Gobolinuksa. Zawsze mo¿esz przej¶æ
+do poprzedniego/nastêpnego kroku; samo
+prze³±czanie siê pomiêdzy kolejnymi ekranami
+nie powoduje jeszcze wykonania jakiejkolwiek
+akcji, zapisania czegokolwiek. Instalacja
+zacznie siê po opuszczeniu ostatniego ekranu.
+
+Nale¿y pamiêtaæ, ¿e instalacja Gobolinuksa wymaga
+wolnej, przeznaczonej dlañ partycji dysku, ale
+sam instalator NIE ZMODYFIKUJE tablicy partycji!
+Je¶li jest potrzeba sprawdzenia - b±d¼ dokonania
+zmian w tablicy partycji - nale¿y skorzystaæ
+z programu GParted (przy pracy w trybie graficznym),
+lub np. cfdisk (je¶li pracujesz w trybie znakowym).
