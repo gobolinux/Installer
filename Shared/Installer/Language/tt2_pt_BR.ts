@@ -391,7 +391,7 @@ Você está pronto para proceder com a instalação.</translation>
     </message>
     <message>
         <source>Space required: %s</source>
-        <translation type="unfinished">Espaço necessário: %s</translation>
+        <translation type="obsolete">Espaço necessário: %s</translation>
     </message>
     <message>
         <source>Space required to install the selected packages</source>
@@ -577,7 +577,7 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
     </message>
     <message>
         <source>Adds the user to the &apos;sys&apos; group, enabling it to run all commands as super-user via &apos;sudo&apos;</source>
-        <translation>Adiciona o usuário ao grupo &apos;sys&apos;, permitindo que ele execute comandos através do &apos;sudo&apos;</translation>
+        <translation>Adiciona o usuário ao grupo &apos;sys&apos;, permitindo que ele execute comandos por meio do &apos;sudo&apos;</translation>
     </message>
     <message>
         <source>Setting superuser login and password...</source>
@@ -629,32 +629,45 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
     </message>
     <message>
         <source>Password is not allowed to be empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>A senha não pode ficar em branco.</translation>
     </message>
     <message>
         <source>No normal users are added. Do you want to continue anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum usuário normal foi adicionado. Você quer continuar mesmo assim?</translation>
     </message>
     <message>
         <source>Your installation will only have a superuser defined.
  It is recommended that one adds at least one additional user for normal use.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sua instalação terá apenas o superusuário. É recomendada a instalação de pelo menos um usuário adicional para uso normal.</translation>
     </message>
     <message>
         <source>Create a swap file</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar um arquivo de troca</translation>
     </message>
     <message>
         <source>Create a special file in the root partition to function as memory swap space</source>
-        <translation type="unfinished"></translation>
+        <translation>Criar um arquivo especial na partição raiz para operar como um espaço de troca de memória</translation>
     </message>
     <message>
         <source>Swap file size (in MB)</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho do arquivo de troca (em MB)</translation>
     </message>
     <message>
         <source>Size of the swap file, in megabytes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho do arquivo de troca, em megabytes</translation>
+    </message>
+    <message>
+        <source>Space required: %s (%s%% of %s)</source>
+        <translation>Espaço necessário: %s (%s%% de %s)</translation>
+    </message>
+    <message>
+        <source>Selected packages does not fit target partition.
+Either deselect packages or go back and choose another target partition.</source>
+        <translation>Os pacotes selecionados não cabem na partição de destino. Retire alguns pacotes de sua seleção ou escolha outra partição de destino.</translation>
+    </message>
+    <message>
+        <source>Space required: %s (available space: %s)</source>
+        <translation>Espaço necessário: %s (espaço disponível: %s)</translation>
     </message>
 </context>
 </TS>
