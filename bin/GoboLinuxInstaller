@@ -20,7 +20,7 @@ import  MouseInfo
 
 sys.path = ['GraphicalTail'] + sys.path
 
-shared = "/Programs/Installer/Current/Shared/Installer/"
+shared = "/System/Links/Shared/Installer/"
 
 ###############################################################################
 ###############################################################################
@@ -351,7 +351,7 @@ for disc in discsList :
 ###############################################################################
 ###############################################################################
 
-cmd = 'cd /Programs/Glibc/Current/Shared/zoneinfo; find -type f'
+cmd = 'cd /System/Links/Shared/zoneinfo; find -type f'
 locales = os.popen(cmd).readlines()
 for i in range(len(locales)) :
 	locales[i] = locales[i][2:].strip().replace('_', ' ')
@@ -1200,7 +1200,7 @@ lo_Netmask=255.0.0.0
 	##############################################################################
 	# Zoneinfo
 	log(tr('Setting zoneinfo...'))
-	safeRun('chroot '+destMountPoint+' ln -sfn /Programs/Glibc/Current/Shared/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
+	safeRun('chroot '+destMountPoint+' ln -sfn /System/Links/Shared/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
 
 	##############################################################################
 	##############################################################################
