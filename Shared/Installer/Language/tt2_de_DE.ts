@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>Space required: %s</source>
-        <translation>Benötigter Speicherplatz: %s</translation>
+        <translation type="obsolete">Benötigter Speicherplatz: %s</translation>
     </message>
     <message>
         <source>Space required to install the selected packages</source>
@@ -548,6 +548,19 @@
     </message>
     <message>
         <source>Size of the swap file, in megabytes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Space required: %s (%s%% of %s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Selected packages does not fit target partition.
+Either deselect packages or go back and choose another target partition.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Space required: %s (available space: %s)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
