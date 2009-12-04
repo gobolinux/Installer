@@ -49,6 +49,9 @@ function install_base() {
 
    Log_Normal "Installing directory "${goboSystem}/Links
    cp -a ${goboSystem}/Links  ${dest_dir}/${goboSystem}
+   
+   Log_Normal "Installing directory "${goboSystem}/Index
+   cp -a ${goboSystem}/Index  ${dest_dir}/${goboSystem}
 
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir ${dest_dir}/${goboSystem}/Kernel
@@ -71,18 +74,15 @@ function install_base() {
    Log_Normal "Installing legacy directory "/usr
    cp -a /usr ${dest_dir}/usr
 
-   Log_Normal "Installing directory "/Files
-   cp -a /Files ${dest_dir}/Files
-
-   Log_Normal "Creating "/Depot
-   mkdir ${dest_dir}/Depot/
+   Log_Normal "Installing directory "/Data
+   cp -a /Data ${dest_dir}/Data
 
    Log_Normal "Installing legacy links on "${dest_dir}
    cp -a /bin /dev /etc /lib /proc /sbin /sys /tmp /var /media ${dest_dir}
    ln -s "`lstrip ${goboBoot}`" ${dest_dir}/boot
    ln -s "`lstrip ${goboMount}`/Media" ${dest_dir}/media
    ln -s "`lstrip ${goboMount}`" ${dest_dir}/mnt
-   ln -s "Files" ${dest_dir}/srv
+   ln -s "Data" ${dest_dir}/srv
 
    Log_Normal "Installing directory "${goboUsers}/${superuser}
    mkdir -p ${dest_dir}/${goboUsers}
