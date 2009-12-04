@@ -934,15 +934,15 @@ try :
 
 	##############################################################################
 	##############################################################################
-	# Create menu.lst...
-	log(tr('Generating GRUB "menu.lst" file...'))
+	# Create grub.cfg...
+	log(tr('Generating GRUB "grub.cfg" file...'))
 
 	import GenGrubMenu
 	selectedWithSize = installer.getValue('Packages')[1]
 	selected = map(lambda x: x.split()[0], selectedWithSize)
 
-	menu_lst = GenGrubMenu.generateGrubMenuFile(bootloaderTarget, rootPartition, installer.getValue('KeymapLayout')[1], 'KDE-Base' in selected)
-	safeWriteToFile(destMountPoint+'/System/Kernel/Boot/grub/menu.lst', menu_lst, logger)
+	grub_cfg = GenGrubMenu.generateGrubMenuFile(bootloaderTarget, rootPartition, installer.getValue('KeymapLayout')[1], 'KDE-Base' in selected)
+	safeWriteToFile(destMountPoint+'/System/Kernel/Boot/grub/grub.cfg', grub_cfg, logger)
 
 
 	##############################################################################
