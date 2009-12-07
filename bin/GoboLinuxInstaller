@@ -1089,12 +1089,13 @@ lo_Netmask=255.0.0.0
 	if installer.getValue('PrimaryDNS') :
 		o += 'nameserver %s\n'%installer.getValue('PrimaryDNS')
 	else :
-		o += 'nameserver 200.199.241.17\n'
+		o += '# Domain name servers from OpenDNS.com\n'
+		o += 'nameserver 208.67.222.222\n'
 
 	if installer.getValue('SecondaryDNS') :
 		o += 'nameserver %s\n'%installer.getValue('SecondaryDNS')
 	else :
-		o += 'nameserver 200.199.252.68\n'
+		o += 'nameserver 208.67.220.220\n'
 
 	safeWriteToFile(destMountPoint+'/System/Settings/resolv.conf', o, logger)
 
