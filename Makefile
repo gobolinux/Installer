@@ -7,7 +7,7 @@ PACKAGE_VDIR=$(PACKAGE_ROOT)/$(VERSION)
 PACKAGE_FILE=$(PACKAGE_DIR)/$(PROGRAM)--$(VERSION)--$(shell uname -m).tar.bz2
 CVSTAG=`echo $(PROGRAM)_$(VERSION) | tr "[:lower:]" "[:upper:]" | sed  's,\.,_,g'`
 
-PYTHON_VERSION=2.3
+PYTHON_VERSION=2.7
 PYTHON_LIBS=GraphicalTail GraphicalTailForm
 PYTHON_SITE=lib/python$(PYTHON_VERSION)/site-packages
 
