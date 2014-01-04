@@ -50,9 +50,6 @@ function install_base() {
    Log_Normal "Installing directory "${goboSystem}/Links
    cp -a ${goboSystem}/Links  ${dest_dir}/${goboSystem}
    
-   Log_Normal "Installing directory "${goboSystem}/Index
-   cp -a ${goboSystem}/Index  ${dest_dir}/${goboSystem}
-
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir ${dest_dir}/${goboSystem}/Kernel
    mkdir ${dest_dir}/${goboSystem}/Kernel/Devices
