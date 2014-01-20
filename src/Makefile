@@ -1,10 +1,10 @@
-all: tail lang
+all: lang tail
 
 tail:
-	pyuic GraphicalTailForm.ui > GraphicalTailForm.py
+	pyuic4 GraphicalTailForm.ui > GraphicalTailForm.py
 
 lang :
-	pylupdate Installer.pro
+	pylupdate4 Installer.pro
 
 clean :
 	rm -f GraphicalTailForm.py
