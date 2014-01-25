@@ -937,20 +937,23 @@ try :
 	# Create grub.cfg...
 	log(tr('Generating GRUB "grub.cfg" file...'))
 
-	import GenGrubMenu
 	selectedWithSize = installer.getValue('Packages')[1]
 	selected = map(lambda x: x.split()[0], selectedWithSize)
 
-	grub_cfg = GenGrubMenu.generateGrubMenuFile(bootloaderTarget, rootPartition, installer.getValue('KeymapLayout')[1], 'KDE-Base' in selected)
-	safeWriteToFile(destMountPoint+'/System/Kernel/Boot/grub/grub.cfg', grub_cfg, logger)
+	import GenGrubMenu
+	genGraphicDesktop = 'KDE-Libs' in selected
+	keymap = installer.getValue('KeymapLayout')[1]
+	grub_cfg = GenGrubMenu.GrubConfig(bootloaderTarget, rootPartition, keymap, genGraphicDesktop)
+	safeWriteToFile(destMountPoint+'/System/Kernel/Boot/grub/grub.cfg', grub_cfg.generate(), logger)
 
 
 	##############################################################################
 	# Install GRUB...
 	def installGrub(targetDisc, targetPartition) :
+		devhandler = GenGrubMenu.DeviceHandler()
 		o = ''
-		o += 'root %s'%GenGrubMenu.devToGrub('/dev/'+targetPartition) + '\n'
-		o += 'setup --prefix=/System/Kernel/Boot/grub %s'%GenGrubMenu.devToGrub('/dev/'+targetDisc) + '\n'
+		o += 'root %s' %devhandler.grubName('/dev/'+targetPartition) + '\n'
+		o += 'setup --prefix=/System/Kernel/Boot/grub %s' %devhandler.grubName('/dev/'+targetDisc) + '\n'
 
 		safeWriteToFile('/tmp/GRUB_INPUT', o, logger)
 		cmd = 'grub --batch < /tmp/GRUB_INPUT'
