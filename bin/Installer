@@ -3,6 +3,20 @@
 unset NO_UNIONFS
 
 if $(grep -q "localhost LiveCD" "/System/Settings/hosts")
-then GoboLinuxInstaller install
-else GoboLinuxInstaller
+then
+    #
+    # When processed with isohybrid, the ISO is identified by the Installer as a valid
+    # install target. Moreover, parted will fail with errors and freezing the installation
+    # process.
+    #
+    # As a workaround to that problem, we temporarily rename the device in which the
+    # LiveCD was booted while the Installer is invoked. That should not be a problem for
+    # regular operations in the LiveCD.
+    #
+    LIVECD_DEVICE=$(grep "/Mount/.Pivot/Mount/CD-ROM" /proc/mounts | awk {'print $1'})
+    RENAMED_DEVICE=$(echo "$LIVECD_DEVICE" | sed 's,/dev/,/dev/_,g')
+    GoboLinuxInstaller install
+    mv "$RENAMED_DEVICE" "$LIVECD_DEVICE"
+else
+    GoboLinuxInstaller
 fi
