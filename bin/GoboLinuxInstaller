@@ -316,6 +316,8 @@ for device in devicesList :
 	size = int(l[2])
 	if size > 1 :
 		name = l[3]
+		if not os.path.exists('/System/Kernel/Devices/%s' %name) :
+			continue
 		if size > 1024*1024 :
 			c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
 		else :
