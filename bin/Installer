@@ -1,0 +1,8 @@
+#!/bin/bash
+
+unset NO_UNIONFS
+
+if $(grep -q "localhost LiveCD" "/System/Settings/hosts")
+then GoboLinuxInstaller install
+else GoboLinuxInstaller
+fi
