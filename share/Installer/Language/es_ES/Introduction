@@ -1,0 +1,20 @@
+¡Bienvenido al instalador de GoboLinux!
+
+Siga los siguientes pasos para instalar el sistema
+en su disco duro. En este instalador será capaz
+de formatear el disco duro en que residirá el
+nuevo sistema, seleccionar cuáles paquetes deberán
+ser instalados y realizar la configuración básica
+para tener a su nuevo sistema listo y ejecutándose.
+
+Este instalador le preguntará todo lo necesario para
+instalar GoboLinux. Puede seguir y volver en 
+cualquier momento porque ninguna acción se realizará
+entre pantallas. La instalación se hará toda en 
+conjunto hasta el final.
+
+Note que para instalar GoboLinux necesita una
+partición disponible en su disco duro (este
+instalador no modificará su tabla de particiones).
+Si necesita revisar o reconfigurar sus particiones,
+use GParted en ambiente gráfico o cfdisk en consola.
