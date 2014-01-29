@@ -13,11 +13,19 @@ then
     # which the LiveCD was booted while the Installer is invoked. That should 
     # not be a problem for regular operations in the LiveCD.
     #
+    # Another workaround needed has to do with GRUB: grub-install will attempt
+    # to open /dev/root and check if the filesystem on the partition pointed
+    # to by that symlink is valid (that is, if GRUB can be installed on it).
+    # In the LiveCD /dev/root points to /dev/ram0, which triggers an error.
+    # Therefore, /dev/root is also adjusted before the Installer is invoked.
+    #
     LIVECD_DEVICE=$(grep "/Mount/.Pivot/Mount/CD-ROM" /proc/mounts | awk {'print $1'})
     RENAMED_DEVICE=$(echo "$LIVECD_DEVICE" | sed 's,/dev/,/dev/_,g')
     mv "$LIVECD_DEVICE" "$RENAMED_DEVICE"
     GoboLinuxInstaller install
     mv "$RENAMED_DEVICE" "$LIVECD_DEVICE"
+    rm -f "/dev/root"
+    mv "/dev/root.old" "/dev/root"
 else
     GoboLinuxInstaller
 fi
