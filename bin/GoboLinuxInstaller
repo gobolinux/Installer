@@ -13,10 +13,10 @@
 #
 
 from wizard import *
-import sys, os, string, os.path
+import sys, os, string, os.path, glob
 from sys import *
 import crypt
-import  MouseInfo
+import MouseInfo
 from subprocess import *
 
 sys.path = ['GraphicalTail'] + sys.path
@@ -78,7 +78,7 @@ if os.environ.has_key('LANG') :
 else :
 	lang = 'en_US'
 
-consoleFont = '/Files/Fonts/Console/lode-lat1u-16.psf.gz'
+consoleFont = '/Data/Fonts/Console/lode-lat1u-16.psf.gz'
 defaultZone = ''
 
 # Configure known locale settings
@@ -842,6 +842,22 @@ try :
 
 	##############################################################################
 	##############################################################################
+	def getUUID(partition) :
+		for entry in glob.glob("/dev/disk/by-uuid/*") :
+			target = os.readlink(entry)
+			if os.path.basename(target) == partition :
+				return os.path.basename(entry)
+		return ''
+
+	# Force UUID label to be refreshed
+	def refreshUUID(partition) :
+		target = getUUID(partition)
+		if len(target) :
+			os.unlink("/dev/disk/by-uuid/%s" %target)
+		cmd = 'udevadm trigger'
+		safeRun(cmd, '', 0, logger)
+		cmd = 'udevadm settle'
+		safeRun(cmd, '', 0, logger)
 
 	# Format partition
 	def formatPartition(partition, fileSystem) :
@@ -862,18 +878,22 @@ try :
 			return
 
 		safeRun(cmd, '', 0, logger)
+		if reallyInstall :
+			refreshUUID(partition)
 
+
+	rootPartition = installer.getValue('RootPartition')[1].split()[0]
+	originalUUID = getUUID(rootPartition)
 	if installer.getValue('DoFormat') :
 		log(tr('Formatting root partition %s...')%installer.getValue('RootPartition')[1])
-		formatPartition(installer.getValue('RootPartition')[1].split()[0], installer.getValue('PartitionType')[1])
+		formatPartition(rootPartition, installer.getValue('PartitionType')[1])
 
 
 	##############################################################################
 	##############################################################################
 	# Mount partition
-	log(tr('Mounting selected root partition %s...')%installer.getValue('RootPartition')[1])
-	rp = installer.getValue('RootPartition')[1].split()[0]
-	cmd = 'mount /System/Kernel/Devices/%s /Mount/GoboLinux'%rp
+	log(tr('Mounting selected root partition %s...')%rootPartition)
+	cmd = 'mount /System/Kernel/Devices/%s /Mount/GoboLinux'%rootPartition
 	safeRun(cmd, 'Mounting root partition', 0, logger)
 
 
@@ -919,7 +939,6 @@ try :
 	##############################################################################
 	##############################################################################
  	# Create lilo.conf...
-	rootPartition = installer.getValue('RootPartition')[1].split()[0]
 	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
 
 	installLilo = 'LILO' in map(lambda x: x.split()[0], installer.getValue('Packages')[1])
@@ -935,35 +954,41 @@ try :
 
 
 	##############################################################################
-	##############################################################################
-	# Create grub.cfg...
-	log(tr('Generating GRUB "grub.cfg" file...'))
-
-	selectedWithSize = installer.getValue('Packages')[1]
-	selected = map(lambda x: x.split()[0], selectedWithSize)
-
-	import GenGrubMenu
-	genGraphicDesktop = 'KDE-Libs' in selected
-	keymap = installer.getValue('KeymapLayout')[1]
-	grub_cfg = GenGrubMenu.GrubConfig(bootloaderTarget, rootPartition, keymap, genGraphicDesktop)
-	safeWriteToFile(destMountPoint+'/System/Kernel/Boot/grub/grub.cfg', grub_cfg.generate(), logger)
-
-
-	##############################################################################
 	# Install GRUB...
-	def installGrub(targetDisc, targetPartition) :
-		devhandler = GenGrubMenu.DeviceHandler()
-		o = ''
-		o += 'root %s' %devhandler.grubName('/dev/'+targetPartition) + '\n'
-		o += 'setup --prefix=/System/Kernel/Boot/grub %s' %devhandler.grubName('/dev/'+targetDisc) + '\n'
-
-		safeWriteToFile('/tmp/GRUB_INPUT', o, logger)
-		cmd = 'grub --batch < /tmp/GRUB_INPUT'
-		safeRun(cmd, 'grub install', 0, logger)
+	def installGrub(targetDisc, targetPartition, grubdir) :
+		if len(grubdir) :
+			if not os.path.exists(grubdir) :
+				os.mkdir(grubdir)
+			cmd = 'grub-mkconfig -o %s/grub.cfg' %grubdir
+			safeRun(cmd, 'grub-mkconfig', 0, logger)
+		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot %s' %(destMountPoint, targetDisc)
+		safeRun(cmd, 'grub-install', 0, logger)
 
 	if installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB in %s...')%bootloaderTarget)
-		installGrub(bootloaderTarget, rootPartition)
+		grubdir = '%s/System/Kernel/Boot/grub' %destMountPoint
+		if not reallyInstall :
+			installGrub(bootloaderTarget, rootPartition, grubdir)
+		else :
+			# Not pretty, but required to fix issues with grub-mkconfig
+			devroot = os.readlink("/dev/root")
+			os.unlink("/dev/root")
+			os.symlink(rootPartition, "/dev/root")
+			# Install GRUB (yeah, THREE times)
+			installGrub(bootloaderTarget, rootPartition, grubdir)
+			installGrub(bootloaderTarget, rootPartition, '')
+			installGrub(bootloaderTarget, rootPartition, '')
+			# Make sure old UUID is no longer present in the cfg file
+			newUUID = getUUID(rootPartition)
+			if len(newUUID) and len(originalUUID) and newUUID != originalUUID :
+				cmd = 'GrepReplace -B %s %s %s/grub.cfg' %(originalUUID, newUUID, grubdir)
+				safeRun(cmd, 'Update UUID in grub.cfg', 0, logger)
+			# Make the kernel happy
+			cmd = 'GrepReplace -B /System/Kernel/Devices /dev %s/grub.cfg' %grubdir
+			safeRun(cmd, 'Update grub.cfg', 0, logger)
+			# Rollback modifications to /dev/root
+			os.unlink("/dev/root")
+			os.symlink(devroot, "/dev/root")
 
 
 	##############################################################################
