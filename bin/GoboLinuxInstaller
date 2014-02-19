@@ -12,21 +12,205 @@
 #
 #
 
+import sys, os, re, string, os.path, glob
+from subprocess import *
 from wizard import *
-import sys, os, string, os.path, glob
 from sys import *
 import crypt
+
+# ConfigTools modules
 import MouseInfo
-from subprocess import *
+import GenLiloConf
+from GenExtLinuxConf import ExtLinuxConf
 
 sys.path = ['GraphicalTail'] + sys.path
 
+# Approximate size (in kb) from /System (88Mb) and /Data (6Mb)
+system_plus_data_sum = 100000
 shared = "/System/Links/Shared/Installer/"
 
-###############################################################################
+class DiskUtility :
+	def __init__(self, logger=None, reallyInstall=True) :
+		self.logger = logger
+		self.reallyInstall = reallyInstall
+
+	def getDevicesList(self) :
+		devicesList = open('/System/Kernel/Status/partitions').readlines()[2:]
+		temp = []
+		devicesSizes = {}
+		for device in devicesList :
+			l = device.split()
+			size = int(l[2])
+			if size > 1 :
+				name = l[3]
+				if not os.path.exists('/System/Kernel/Devices/%s' %name) :
+					continue
+				if size > 1024*1024 :
+					c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
+				else :
+					c = name + ' (%0.1fMB)'%(size/1024.0)
+				temp.append(c)
+				devicesSizes[name] = size
+		devicesList = temp
+
+		p = re.compile(r'\b[a-z]+[0-9]+\b')
+		partitionsList = filter(lambda x:p.match(x) and not 'loop' in x,devicesList)
+		partitionsList.sort()
+
+		d = re.compile(r'\b[a-z]+\b')
+		discsList = filter(lambda x:d.match(x) and not 'loop' in x,devicesList)
+		discsList.sort()
+
+		hasSwap = False
+		for disc in discsList :
+			device = '/System/Kernel/Devices/'+disc.split(' ')[0]
+			partitionfilter = re.compile(r'^/.*')
+			partitions = filter(lambda x:partitionfilter.match(x) and not 'loop' in x,os.popen('fdisk -l %s'%device).readlines())
+			for partition in partitions :
+				part = partition.split()
+				if part[4] == '82' :
+					safeRun('mkswap %s'%part[0])
+					safeRun('swapon %s'%part[0])
+					hasSwap = True
+
+		return discsList, partitionsList, devicesSizes, hasSwap
+
+	def getUUID(self, partition) :
+		for entry in glob.glob("/dev/disk/by-uuid/*") :
+			target = os.readlink(entry)
+			if os.path.basename(target) == partition :
+				return os.path.basename(entry)
+		return ''
+	
+	def __refreshUUID(self, partition) :
+		target = self.getUUID(partition)
+		if len(target) :
+			os.unlink("/dev/disk/by-uuid/%s" %target)
+		cmd = 'udevadm trigger'
+		safeRun(cmd, '', 0, self.logger)
+		cmd = 'udevadm settle'
+		safeRun(cmd, '', 0, self.logger)
+	
+	def formatPartition(self, partition, fileSystem) :
+		if fileSystem == 'ReiserFS' :
+			#yes, two '-f's needed
+			cmd = 'mkreiserfs -f -f /dev/%s'%partition
+		
+		elif fileSystem == 'Ext4' :
+			cmd = 'mkfs.ext4 /dev/%s'%partition
+
+		elif fileSystem == 'Ext3' :
+			cmd = 'mkfs.ext3 /dev/%s'%partition
+
+		elif fileSystem == 'Ext2' :
+			cmd = 'mkfs.ext2 /dev/%s'%partition
+
+		elif fileSystem == 'XFS' :
+			cmd = 'mkfs.xfs -f -q /dev/%s'%partition
+
+		else :
+			print 'Unkown FS type: '+fileSystem
+			return
+
+		safeRun(cmd, '', 0, self.logger)
+		if self.reallyInstall :
+			self.__refreshUUID(partition)
+
+	def mountRoot(self, partition, destMountPoint) :
+		cmd = 'mount /System/Kernel/Devices/%s %s'%(partition, destMountPoint)
+		safeRun(cmd, 'Mounting root partition', 0, self.logger)
+	
+		cmd = 'mount -o bind /System/Kernel/Status %s/System/Kernel/Status' %destMountPoint
+		safeRun(cmd, 'Binding /System/Kernel/Status', 0, self.logger)
+
+		cmd = 'mount -o bind /System/Kernel/Devices/ %s/System/Kernel/Devices' %destMountPoint
+		safeRun(cmd, 'Binding /System/Kernel/Devices', 0, self.logger)
+
+	def unmountRoot(self, partition, destMountPoint) :
+		cmd = 'umount %s/System/Kernel/Status' %destMountPoint
+		safeRun(cmd, 'Unbinding /System/Kernel/Status', 0, self.logger)
+
+		cmd = 'umount %s/System/Kernel/Devices' %destMountPoint
+		safeRun(cmd, 'Unbinding /System/Kernel/Devices', 0, self.logger)
+
+		log(tr('Unmounting selected root partition %s...' %partition))
+		safeRun('umount ' + destMountPoint)
+
+
+class BootLoader :
+	def __init__(self, targetDisc, targetPartition, destMountPoint, logger, reallyInstall) :
+		self.targetDisc = targetDisc
+		self.targetPartition = targetPartition
+		self.destMountPoint = destMountPoint
+		self.logger = logger
+		self.reallyInstall = reallyInstall
+		self.devroot = os.readlink("/dev/root")
+
+	def __fixDevRoot(self) :
+		if self.reallyInstall :
+			# Not pretty, but required to fix issues with grub-mkconfig
+			os.unlink("/dev/root")
+			os.symlink(self.targetPartition, "/dev/root")
+
+	def __rollbackDevRoot(self) :
+		if self.reallyInstall :
+			# Rollback modifications to /dev/root
+			os.unlink("/dev/root")
+			os.symlink(self.devroot, "/dev/root")
+
+	def installGrub(self) :
+		self.__fixDevRoot()
+		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot /dev/%s' %(self.destMountPoint, self.targetDisc)
+		safeRun(cmd, 'grub-install', 0, self.logger)
+		self.__rollbackDevRoot()
+	
+	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
+		if len(grubdir) :
+			if not os.path.exists(grubdir) :
+				os.mkdir(grubdir)
+			cmd = 'grub-mkconfig -o %s/grub.cfg' %grubdir
+			safeRun(cmd, 'grub-mkconfig', 0, self.logger)
+
+			# Make sure old UUID is no longer present in the cfg file
+			diskutil = DiskUtility(self.logger, self.reallyInstall)
+			uuidAfterMkfs = diskutil.getUUID(self.targetPartition)
+			if len(uuidAfterMkfs) and len(uuidBeforeMkfs) and uuidAfterMkfs != uuidBeforeMkfs :
+				cmd = 'GrepReplace -B %s %s %s/grub.cfg' %(uuidBeforeMkfs, uuidAfterMkfs, grubdir)
+				safeRun(cmd, 'Update UUID in grub.cfg', 0, self.logger)
+
+			# The kernel doesn't know about /System/Kernel/Devices
+			cmd = 'GrepReplace -B /System/Kernel/Devices /dev %s/grub.cfg' %grubdir
+			safeRun(cmd, 'Update grub.cfg', 0, self.logger)
+		return True
+
+	def installLilo(self) :
+		pass
+
+	def createLiloConfig(self) :
+		lilo_conf = GenLiloConf.generateLiloConfFile(self.targetDisc, self.targetPartition)
+		os.mkdir(self.destMountPoint + '/Programs/LILO/Settings')
+		safeWriteToFile(self.destMountPoint + '/Programs/LILO/Settings/lilo.conf', lilo_conf, self.logger)
+
+	def installExtLinux(self) :
+		self.__fixDevRoot()
+		cmd = 'extlinux --install %s/System/Kernel/Boot/extlinux' %self.destMountPoint
+		safeRun(cmd, 'extlinux --install', 0, self.logger)
+		cmd = 'cp -v /System/Links/Shared/syslinux/{menu.c32,vesamenu.c32,memdisk,libcom32.c32,libutil.c32} %s/System/Kernel/Boot/extlinux' %self.destMountPoint
+		safeRun(cmd, 'install syslinux modules', 0, self.logger)
+		cmd = 'dd bs=440 conv=notrunc count=1 if=/System/Links/Shared/syslinux/mbr.bin of=/dev/%s' %self.targetDisc
+		safeRun(cmd, 'install mbr.bin', 0, self.logger)
+		self.__rollbackDevRoot()
+	
+	def createExtLinuxConfig(self) :
+		extlinux_conf = ExtLinuxConf(self.targetDisc, self.targetPartition).generate()
+		extlinux_dir = self.destMountPoint + '/System/Kernel/Boot/extlinux'
+		if not os.path.exists(extlinux_dir) :
+			os.mkdir(extlinux_dir)
+		safeWriteToFile(extlinux_dir+'/extlinux.conf', extlinux_conf, self.logger)
+
+
 ###############################################################################
 #               CHOOSING DISPLAY MODE
-###############################################################################
 ###############################################################################
 
 if ('qt' in sys.argv) :
@@ -60,17 +244,13 @@ else :
 
 
 ###############################################################################
-###############################################################################
 #               INSTALL OR DEBUG
-###############################################################################
 ###############################################################################
 
 reallyInstall = ('install' in sys.argv)
 
 ###############################################################################
-###############################################################################
 #               LOCALE-DEPENDENT INFO
-###############################################################################
 ###############################################################################
 
 if os.environ.has_key('LANG') :
@@ -89,9 +269,7 @@ elif lang == 'hu_HU' :
 	defaultZone = 'Europe/Budapest'
 
 ###############################################################################
-###############################################################################
 #               GENERAL FUNCTIONS
-###############################################################################
 ###############################################################################
 
 def safeRun(cmd, context = '', showProgress = 0, logger = None) :
@@ -103,17 +281,13 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None) :
 			(i, oe) = (p.stdin, p.stdout)
 			while 1 :
 				line = oe.readline()
-
 				if not line :
 					break
-
 				if showProgress :
 					if logger :
 						logger.append(line)
-
 					print line,
 					sys.stdout.flush()
-
 				l.append(line.strip())
 			oe.close()
 			return l
@@ -122,8 +296,6 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None) :
 				logger.append('===%s===='%context)
 				logger.append(cmd)
 				logger.append('=======\n')
-
-
 			print '===%s===='%context
 			print cmd
 			print '=======\n\n'
@@ -135,29 +307,6 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None) :
 		print 'Error running '+cmd
 		print str(inst)
 
-###############################################################################
-###############################################################################
-
-#def doRun(cmd, context = '', showProgress = 0, logger = None) :
-#	f = os.popen(cmd)
-#	while 1 :
-#		line = f.readline()
-#
-#		if not line :
-#			break
-#
-#		if showProgress :
-#			if logger :
-#				logger.append(line)
-#
-#			print line,
-#
-#		l.append(line)
-#	f.close()
-#	return l
-
-
-###############################################################################
 ###############################################################################
 
 def safeWriteToFile(fileName, s, logger = None) :
@@ -171,7 +320,8 @@ def safeWriteToFile(fileName, s, logger = None) :
 		else :
 			if reallyInstall :
 				print 'Warning: file %s could not be saved.'%fileName
-				logger.append('Warning: file %s could not be saved.'%fileName)
+				if logger :
+					logger.append('Warning: file %s could not be saved.'%fileName)
 			if not context :
 				context = fileName
 
@@ -193,7 +343,6 @@ def safeWriteToFile(fileName, s, logger = None) :
 
 
 ###############################################################################
-###############################################################################
 
 def safeFileReadLines(fileName, logger = None) :
 	try :
@@ -207,10 +356,10 @@ def safeFileReadLines(fileName, logger = None) :
 			fileUsed = shared + 'TestingInputs/'+os.path.basename(fileName)
 			if reallyInstall :
 				if logger :
-					logger.append('Warning: file %s could not be readed.'%fileName)
+					logger.append('Warning: file %s could not be read.'%fileName)
 					logger.append('Using %s instead.'%fileUsed)
 
-				print 'Warning: file %s could not be readed.'%fileName
+				print 'Warning: file %s could not be read.'%fileName
 				print 'Using %s instead.'%fileUsed
 
 		if os.access(fileUsed, os.F_OK) :
@@ -232,11 +381,8 @@ def safeFileReadLines(fileName, logger = None) :
 
 
 ###############################################################################
-###############################################################################
 #               GETTING SOME DATA REQUIRED ON WIZARD
 ###############################################################################
-###############################################################################
-
 
 fullKeymapsList = \
 ['br-abnt2', 'dvorak', 'us', 'us-acentos',
@@ -260,14 +406,12 @@ fullKeymapsList = \
 
 
 ###############################################################################
-###############################################################################
 
 if reallyInstall and os.access('/System/Variable/tmp/setup/keymap', os.R_OK) :
 	defaultKeymap=open('/System/Variable/tmp/setup/keymap').read().strip()
 else :
 	defaultKeymap=open(shared+'TestingInputs/keymap').read().strip()
 
-###############################################################################
 ###############################################################################
 
 programDescriptions = {}
@@ -278,8 +422,6 @@ for line in lines :
 		programName = l[0].strip()
 		programDescriptions[programName] = l[1].strip()
 
-
-###############################################################################
 ###############################################################################
 
 programSizes = {}
@@ -292,9 +434,6 @@ for line in lines :
 		programSizes[programName] = int(l[0])
 		programShowSizes[programName] = "%0.1f"%(programSizes[programName] / 1024.0)
 
-
-
-###############################################################################
 ###############################################################################
 
 lines = safeFileReadLines('/System/Settings/modprobe.conf')
@@ -306,54 +445,15 @@ else :
 	interfaces = ['eth3','eth4']
 
 ###############################################################################
+#               DEFINING TRANSLATOR
 ###############################################################################
 
-devicesList = open('/System/Kernel/Status/partitions').readlines()[2:]
-temp = []
-devicesSizes = {}
-for device in devicesList :
-	l = device.split()
-	size = int(l[2])
-	if size > 1 :
-		name = l[3]
-		if not os.path.exists('/System/Kernel/Devices/%s' %name) :
-			continue
-		if size > 1024*1024 :
-			c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
-		else :
-			c = name + ' (%0.1fMB)'%(size/1024.0)
-		temp.append(c)
-		devicesSizes[name] = size
-devicesList = temp
+t = AbsTranslator(shared+'Language/tt2_%s.ts'%(lang), lang)
 
-import re
-p = re.compile(r'\b[a-z]+[0-9]+\b')
-partitionsList = filter(lambda x:p.match(x) and not 'loop' in x,devicesList)
-partitionsList.sort()
+#convenience
+def tr(s) :
+	return t.tr(s)
 
-d = re.compile(r'\b[a-z]+\b')
-discsList = filter(lambda x:d.match(x) and not 'loop' in x,devicesList)
-discsList.sort()
-
-hasSwap = False
-for disc in discsList :
-	device = '/System/Kernel/Devices/'+disc.split(' ')[0]
-	partitionfilter = re.compile(r'^/.*')
-	partitions = filter(lambda x:partitionfilter.match(x) and not 'loop' in x,os.popen('fdisk -l %s'%device).readlines())
-	for partition in partitions :
-		part = partition.split()
-		if part[4] == '82' :
-			safeRun('mkswap %s'%part[0])
-			safeRun('swapon %s'%part[0])
-			hasSwap = True
-
-#partitionsList = filter(lambda x:x.find('part') > -1,devicesList)
-#partitionsList.sort()
-
-#discsList = filter(lambda x:x.find('disc') > -1,devicesList)
-#discsList.sort()
-
-###############################################################################
 ###############################################################################
 
 cmd = 'cd /System/Links/Shared/zoneinfo; find -type f'
@@ -362,22 +462,9 @@ for i in range(len(locales)) :
 	locales[i] = locales[i][2:].strip().replace('_', ' ')
 locales.sort()
 
-###############################################################################
-###############################################################################
-#               DEFINING TRANSLATOR
-###############################################################################
-###############################################################################
-
-t = AbsTranslator(shared+'Language/tt2_%s.ts'%(lang), lang)
-
-#convenience
-
-def tr(s) :
-	return t.tr(s)
-
 installer = Wizard('GoboLinux')
 
-
+discsList,partitionsList,devicesSizes,hasSwap = DiskUtility().getDevicesList()
 if not partitionsList :
 	msg = tr('No valid partitions found')
 	msg = msg + '\n' + tr('Create one using "gparted" or "cfdisk"')
@@ -387,15 +474,11 @@ if not partitionsList :
 	sys.exit(1)
 
 
-
-###############################################################################
 ###############################################################################
 #               DEFINING WIZARD SCREENS AND CALLBACKS
 ###############################################################################
-###############################################################################
 
 
-##############################################################################
 ##############################################################################
 introduction = Screen(tr('Welcome!'))
 file=open(shared+'Language/%s/Introduction'%lang)
@@ -405,10 +488,9 @@ installer.addScreen(introduction)
 
 
 ##############################################################################
-##############################################################################
 def showSelectedSetSize() :
 	packages = map(lambda x: x.split()[0], installer.getValue('Packages')[1])
-	sum = 290000 # kbytes from system (102Mb) and files (180Mb)
+	sum = system_plus_data_sum
 	for package in packages :
 		if programSizes.has_key(package) :
 			sum = sum + programSizes[package]
@@ -444,7 +526,7 @@ def doFormatChanged() :
 
 
 deviceSelection.addBoolean('DoFormat',   tr('Format partition'), 0, tr('Erase all contents of the partition and prepare it to receive the new system?'), doFormatChanged)
-deviceSelection.addList('PartitionType', tr('File system'), (['ReiserFS', 'Ext2', 'Ext3'],  'ReiserFS'), tr('Which kind of file system should be used to format the root partition.') )
+deviceSelection.addList('PartitionType', tr('File system'), (['Ext2', 'Ext3', 'Ext4'], 'Ext4'), tr('Which kind of file system should be used to format the root partition.') )
 deviceSelection.setEnabled('PartitionType', 0)
 deviceSelection.onValidate(showSelectedSetSize)
 
@@ -472,12 +554,11 @@ else :
 installer.addScreen(deviceSelection)
 
 ###############################################################################
-###############################################################################
 packageSelection = Screen(tr('Package selection'))
 
 def checkFitPackages() :
 	packages = map(lambda x: x.split()[0], installer.getValue('Packages')[1])
-	sum = 290000 # kbytes from system (102Mb) and files (180Mb)
+	sum = system_plus_data_sum
 	for package in packages :
 		if programSizes.has_key(package) :
 			sum = sum + programSizes[package]
@@ -556,7 +637,6 @@ showSelectedSetSize()
 
 
 ##############################################################################
-##############################################################################
 bootloader = Screen(tr('Bootloader options'))
 
 def installBootloaderChanged() :
@@ -569,7 +649,6 @@ installer.addScreen(bootloader)
 #installer.setEnabled('BootloaderTarget',1)
 
 
-##############################################################################
 ##############################################################################
 generalOptions = Screen(tr('General settings'))
 generalOptions.addLineEdit('HostName', tr('Host name: '), 'NewMachine', tr('Write in a name to identify this computer in a network environment.') )
@@ -595,7 +674,6 @@ localeOptions.addLineEdit('ZoneInfoFilter', tr('Filter:'),'',  tr('Narrow the se
 
 installer.addScreen(localeOptions)
 
-##############################################################################
 ##############################################################################
 # NET INTERFACES SCREENS
 
@@ -680,7 +758,6 @@ for interface in interfaces :
 
 
 ###############################################################################
-###############################################################################
 superUserScreen = Screen(tr('Super-user settings'))
 
 def checkSuperUserPasswords() :
@@ -701,7 +778,6 @@ superUserScreen.onValidate(checkSuperUserPasswords)
 installer.addScreen(superUserScreen)
 
 
-##############################################################################
 ##############################################################################
 usersScreen = Screen(tr('Additional users'))
 
@@ -777,7 +853,6 @@ installer.addScreen(usersScreen)
 
 
 ##############################################################################
-##############################################################################
 lastScreen = Screen(tr('Ready to install'))
 lastScreen.addImage('que.png')
 
@@ -789,9 +864,7 @@ installer.addScreen(lastScreen)
 
 
 ###############################################################################
-###############################################################################
 #               RUNNING WIZARD
-###############################################################################
 ###############################################################################
 
 #installer.showDialog(logger)
@@ -801,9 +874,7 @@ if not ret :
 	exit(1)
 
 ###############################################################################
-###############################################################################
 #               WIZARD DONE. BEGIN INSTALLATION
-###############################################################################
 ###############################################################################
 
 
@@ -839,74 +910,25 @@ try :
 	safeRun('clear')
 	safeRun('umount '+destMountPoint+' &> /dev/null')
 
-
-	##############################################################################
-	##############################################################################
-	def getUUID(partition) :
-		for entry in glob.glob("/dev/disk/by-uuid/*") :
-			target = os.readlink(entry)
-			if os.path.basename(target) == partition :
-				return os.path.basename(entry)
-		return ''
-
-	# Force UUID label to be refreshed
-	def refreshUUID(partition) :
-		target = getUUID(partition)
-		if len(target) :
-			os.unlink("/dev/disk/by-uuid/%s" %target)
-		cmd = 'udevadm trigger'
-		safeRun(cmd, '', 0, logger)
-		cmd = 'udevadm settle'
-		safeRun(cmd, '', 0, logger)
-
-	# Format partition
-	def formatPartition(partition, fileSystem) :
-		if fileSystem == 'ReiserFS' :
-			#yes, two '-f's needed
-			cmd = 'mkreiserfs -f -f /dev/%s'%partition
-
-		elif fileSystem == 'Ext3' :
-			cmd = 'mkfs.ext3 /dev/%s'%partition
-
-		elif fileSystem == 'Ext2' :
-			cmd = 'mkfs.ext2 /dev/%s'%partition
-
-		#elif fileSystem == 'XFS' :
-		#	cmd = 'mkfs.xfs -f -q /dev/%s'%partition
-		else :
-			print 'Unkown FS type: '+fileSystem
-			return
-
-		safeRun(cmd, '', 0, logger)
-		if reallyInstall :
-			refreshUUID(partition)
-
-
+	############################################################################
+	diskutil = DiskUtility(logger, reallyInstall)
 	rootPartition = installer.getValue('RootPartition')[1].split()[0]
-	originalUUID = getUUID(rootPartition)
+	uuidBeforeMkfs = diskutil.getUUID(rootPartition)
 	if installer.getValue('DoFormat') :
 		log(tr('Formatting root partition %s...')%installer.getValue('RootPartition')[1])
-		formatPartition(rootPartition, installer.getValue('PartitionType')[1])
+		diskutil.formatPartition(rootPartition, installer.getValue('PartitionType')[1])
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Mount partition
 	log(tr('Mounting selected root partition %s...')%rootPartition)
-	cmd = 'mount /System/Kernel/Devices/%s /Mount/GoboLinux'%rootPartition
-	safeRun(cmd, 'Mounting root partition', 0, logger)
+	diskutil.mountRoot(rootPartition, destMountPoint)
 
-
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Check out dependencies
 	if not installer.getValue('BypassFillUpDependencies') :
 		fillUpDependencies()
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Create profile file containing packages to install
 	log(tr('Creating temporary profile file...'))
 
@@ -921,77 +943,13 @@ try :
 
 	createProfileFile(map(lambda x: x.split()[0], installer.getValue('Packages')[1]))
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Call ProfileInstall
 	log(tr('Performing file installation (may take a few minutes)...'))
 	cmd = 'ProfileInstall --super-user %s /tmp/%s %s'%(installer.getValue('SuperUserLogin'), profileName, destMountPoint)
 	safeRun(cmd, 'ProfileGen', 1, logger)
 
-
-	cmd = 'mount -o bind /System/Kernel/Status /Mount/GoboLinux/System/Kernel/Status'
-	safeRun(cmd, 'Binding /System/Kernel/Status', 0, logger)
-
-	cmd = 'mount -o bind /System/Kernel/Devices/ /Mount/GoboLinux/System/Kernel/Devices'
-	safeRun(cmd, 'Binding /System/Kernel/Devices', 0, logger)
-
-	##############################################################################
-	##############################################################################
- 	# Create lilo.conf...
-	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
-
-	installLilo = 'LILO' in map(lambda x: x.split()[0], installer.getValue('Packages')[1])
-	try :
-		if installLilo :
-			log(tr('Generating LILO "lilo.conf" file...'))
-			import GenLiloConf
-			lilo_conf = GenLiloConf.generateLiloConfFile(bootloaderTarget, rootPartition)
-			os.mkdir(destMountPoint+'/Programs/LILO/Settings')
-			safeWriteToFile(destMountPoint+'/Programs/LILO/Settings/lilo.conf', lilo_conf, logger)
-	except :
-		log('Error creating lilo.conf file')
-
-
-	##############################################################################
-	# Install GRUB...
-	def installGrub(targetDisc, targetPartition, grubdir) :
-		if len(grubdir) :
-			if not os.path.exists(grubdir) :
-				os.mkdir(grubdir)
-			cmd = 'grub-mkconfig -o %s/grub.cfg' %grubdir
-			safeRun(cmd, 'grub-mkconfig', 0, logger)
-		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot %s' %(destMountPoint, targetDisc)
-		safeRun(cmd, 'grub-install', 0, logger)
-
-	if installer.getValue('InstallBootloader') :
-		log(tr('Installing GRUB in %s...')%bootloaderTarget)
-		grubdir = '%s/System/Kernel/Boot/grub' %destMountPoint
-		if not reallyInstall :
-			installGrub(bootloaderTarget, rootPartition, grubdir)
-		else :
-			# Not pretty, but required to fix issues with grub-mkconfig
-			devroot = os.readlink("/dev/root")
-			os.unlink("/dev/root")
-			os.symlink(rootPartition, "/dev/root")
-			# Install GRUB (yeah, THREE times)
-			installGrub(bootloaderTarget, rootPartition, grubdir)
-			installGrub(bootloaderTarget, rootPartition, '')
-			installGrub(bootloaderTarget, rootPartition, '')
-			# Make sure old UUID is no longer present in the cfg file
-			newUUID = getUUID(rootPartition)
-			if len(newUUID) and len(originalUUID) and newUUID != originalUUID :
-				cmd = 'GrepReplace -B %s %s %s/grub.cfg' %(originalUUID, newUUID, grubdir)
-				safeRun(cmd, 'Update UUID in grub.cfg', 0, logger)
-			# Make the kernel happy
-			cmd = 'GrepReplace -B /System/Kernel/Devices /dev %s/grub.cfg' %grubdir
-			safeRun(cmd, 'Update grub.cfg', 0, logger)
-			# Rollback modifications to /dev/root
-			os.unlink("/dev/root")
-			os.symlink(devroot, "/dev/root")
-
-
-	##############################################################################
+	############################################################################
 	# Create Options file...
 	log('Creating "BootOptions" file...')
 
@@ -1020,7 +978,6 @@ try :
 """
 
 		o = ''
-
 		if (installer.getValue('HostName')) :
 			o += 'HostName' + '=' + installer.getValue('HostName') + '\n\n'
 		else :
@@ -1064,7 +1021,6 @@ lo_IP=127.0.0.1
 lo_Netmask=255.0.0.0
 """
 		o = ''
-
 		o += 'NetworkInterfacesOnBoot=('+'\n'+'   lo'+'\n'
 		for interface in interfaces :
 			if installer.getValue('Automatic'+interface) :
@@ -1102,17 +1058,13 @@ lo_Netmask=255.0.0.0
 	generateOptionsFile()
 	generateNetworkFile()
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Put hostname inside /etc/hosts
 	log(tr('Creating /System/Settings/hosts...'))
 	o = '127.0.0.1 localhost.localdomain localhost %s\n'%installer.getValue('HostName')
 	safeWriteToFile(destMountPoint+'/System/Settings/hosts', o, logger)
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Put DNS inside /etc/resolv.conf
 	log(tr('Creating /System/Settings/resolv.conf...'))
 	o = ''
@@ -1137,8 +1089,7 @@ lo_Netmask=255.0.0.0
 		safeRun('dd if=/dev/zero of=%s%s bs=1M count=%d'%(destMountPoint,swapFileName,size))
 		safeRun('mkswap %s%s' %(destMountPoint,swapFileName))
 
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Create fstab
 	log(tr('Generating /System/Settings/fstab...'))
 	cmd = 'GenFstab %s > %s/System/Settings/fstab'%(genFstabParams,destMountPoint)
@@ -1156,9 +1107,7 @@ lo_Netmask=255.0.0.0
 		else :
 			print 'mkdir '+destMountPoint+m
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Set superuser password
 	log(tr('Setting superuser login and password...'))
 	if installer.getValue('SuperUserPassword') == installer.getValue('SuperUserPasswordRetyped') :
@@ -1196,9 +1145,7 @@ lo_Netmask=255.0.0.0
 		print 'Warning: keeping default superuser password: "gobo" (passwords typed do not match)'
 		salt = 'LE'
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Create regular users with AddUser
 	log(tr('Creating user accounts...'))
 	for login in addedUsers.keys() :
@@ -1219,9 +1166,7 @@ lo_Netmask=255.0.0.0
 			cmd = 'chroot %s rm -f /Users/%s/Desktop/Manager.desktop'%(destMountPoint,login)
 			safeRun(cmd, '', 0, logger)
 
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Set Default Language on Bootscripts Env file
 	log(tr('Setting default locale settings...'))
 
@@ -1230,22 +1175,12 @@ lo_Netmask=255.0.0.0
 	safeWriteToFile(destMountPoint+'/Programs/BootScripts/Current/Resources/Environment', o, logger)
 	safeRun('chroot '+destMountPoint+' SymlinkProgram BootScripts', 'LANG', 0, logger)
 
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# Zoneinfo
 	log(tr('Setting zoneinfo...'))
 	safeRun('chroot '+destMountPoint+' ln -sfn /System/Links/Shared/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
 
-	##############################################################################
-	##############################################################################
-	# [OK]: x11
-	#if os.access(destMountPoint+'/Programs/Xorg/Settings/X11/', os.W_OK) :
-	#	log(tr('Updating X11 config file...'))
-	#	safeRun('cp -fL /System/Settings/X11/xorg.conf %s/Programs/Xorg/Settings/X11/xorg.conf'%destMountPoint)
-
-
-	##############################################################################
-	##############################################################################
+	############################################################################
 	# makewhatis
 	try :
 	    	if os.access(destMountPoint+'/Programs/Man', os.F_OK) :
@@ -1255,47 +1190,40 @@ lo_Netmask=255.0.0.0
 	except :
 		log(tr('Error creating "whatis" database.'))
 
-	##############################################################################
-	##############################################################################
-	# ssh keys gereneration
+	############################################################################
+ 	# Create lilo.conf...
+	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
+	bootloader = BootLoader(bootloaderTarget, rootPartition, destMountPoint, logger, reallyInstall)
 
-	#if os.access(destMountPoint+'/Programs/OpenSSH/', os.R_OK) :
-	if 0 :
-		try :
-			log(tr('Generating new OpenSSH keys...'))
-			cmd = "chroot %s generatessh-keygen -q -t rsa1 -f /Programs/OpenSSH/Settings/ssh/ssh_host_key -C '' -N ''"%destMountPoint
-			safeRun(cmd, 0, logger)
-			cmd = "chroot %s ssh-keygen -q -t rsa -f /Programs/OpenSSH/Settings/ssh/ssh_host_rsa_key -C '' -N ''"%destMountPoint
-			safeRun(cmd, 0, logger)
-			cmd = "chroot %s ssh-keygen -q -t dsa -f /Programs/OpenSSH/Settings/ssh/ssh_host_dsa_key -C '' -N ''"%destMountPoint
-			safeRun(cmd, 0, logger)
-		except :
-			log(tr('Error generating OpenSSH keys.'))
+	installLilo = 'LILO' in map(lambda x: x.split()[0], installer.getValue('Packages')[1])
+	try :
+		if installLilo :
+			log(tr('Generating LILO "lilo.conf" file...'))
+			bootloader.createLiloConfig()
+	except :
+		log('Error creating lilo.conf file')
 
-	##############################################################################
-	##############################################################################
+	############################################################################
+	# Create GRUB settings...
+	log(tr('Creating GRUB config file'))
+	grubdir = '%s/System/Kernel/Boot/grub' %destMountPoint
+	bootloader.createGrubConfig(grubdir, uuidBeforeMkfs)
+	#if installer.getValue('InstallBootloader') :
+		#log(tr('Installing GRUB'))
+		# bootloader.installGrub()
+	
+	############################################################################
+	# Install EXTLINUX
+	if installer.getValue('InstallBootloader') :
+		log(tr('Installing EXTLINUX'))
+		bootloader.createExtLinuxConfig()
+		bootloader.installExtLinux()
+
+	############################################################################
 	# Unmounting mount point
-	cmd = 'umount /Mount/GoboLinux/System/Kernel/Status'
-	safeRun(cmd, 'Unbinding /System/Kernel/Status', 0, logger)
-
-	cmd = 'umount /Mount/GoboLinux/System/Kernel/Devices'
-	safeRun(cmd, 'Unbinding /System/Kernel/Devices', 0, logger)
-
-	log(tr('Unmounting selected root partition %s...')%installer.getValue('RootPartition')[1])
-	safeRun('umount '+destMountPoint)
-
-
-	##############################################################################
-	##############################################################################
-	# debug
-	#if not reallyInstall :
-	#	log(tr('Testing Graphic Tail (may take a few minutes)...'))
-	#	cmd = 'du -h /Programs --max-depth=1'
-	#	doRun(cmd, 'ProfileGen', 1, logger)
-
-
-	##############################################################################
-	##############################################################################
+	diskutil.unmountRoot(rootPartition, destMountPoint)
+	
+	############################################################################
 	# Done message
 	log(tr("That's it!"))
 	log(tr("You should now be able to reboot and enjoy the GoboLinux experience. :)"))
