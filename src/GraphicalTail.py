@@ -1,12 +1,19 @@
-from qt import *
+from PyQt4 import QtCore
+from PyQt4 import QtGui
 from GraphicalTailForm import *
+from PyQt4.QtGui import QApplication, QDialog
 
-class GraphicalTail :
+import threading
+
+class GraphicalTail(QtCore.QObject):
 	output = None
 	w = None
+	
+	textWrittenSignal = QtCore.pyqtSignal(str)
+	
 	def __init__(self) :
+		QtCore.QObject.__init__(self)
 		self.output = open('/tmp/GoboLinuxInstall.log', 'w')
-		self.w = GraphicalTailForm()
 		
 		self.color = {}
 		self.color['Gray']     =('\033[1;30m' , '<font color="#777777">')
@@ -20,36 +27,45 @@ class GraphicalTail :
 		self.color['RedWhite'] =('\033[41;37m', '<font color="#777700">')
 		self.color['Normal']   =('\033[0m'    , '</font>')#'"#000000"')
 
-		#self.w.textWidget.setHScrollBarMode(QScrollView.AlwaysOff)
-		#self.w.textWidget.setVScrollBarMode(QScrollView.AlwaysOff)
+		self.textWrittenSignal.connect(self.textWritten)
+		self.initQt()
 
 	def enableOk(self) :
-		#self.w.textWidget.setHScrollBarMode(QScrollView.Auto)
-		#self.w.textWidget.setVScrollBarMode(QScrollView.Auto)
 		self.output.close()
 		self.w.okButton.setEnabled(1)
 
-	def append(self, s) :
-		qApp.lock()
-		vs = self.w.textWidget.verticalScrollBar()
-		doScroll  = (vs.maxValue() <= vs.value())
-		
+	def append(self, s):
 		try :
 			self.output.write(s)
 		except :
 			pass
+		
+		self.textWrittenSignal.emit(s)
+
+	def textWritten(self, s) :		
 		for key in self.color.keys() :
 			terminal, html = self.color[key]
 			s = s.replace(terminal, html)
-		self.w.textWidget.append(s)
 		
-		if self.w.autoScroll.isChecked() :
-			self.w.textWidget.ensureVisible (0, 999999) # scroll down
+		cursor = self.w.textWidget.textCursor()
+		if self.w.autoScroll.isChecked():
+			cursor.movePosition(QtGui.QTextCursor.End)
+		cursor.insertText(s)
+		if self.w.autoScroll.isChecked():
+			self.w.textWidget.setTextCursor(cursor)
+			self.w.textWidget.ensureCursorVisible()
 		
-		qApp.unlock()
-		#QApplication.
-		#qApp.processEvents()
-	
-	
-	def show(self) :
-		self.w.show()
+	def initQt(self):
+		self.app = QApplication([])
+		self.window = QDialog()
+
+		self.ui = Ui_GraphicalTailFormDialog()
+		self.ui.setupUi(self.window)
+
+		self.window.setGeometry(QtCore.QRect(50, 50, 600, 600))
+		self.window.show()
+		
+		self.w = self.ui
+
+	def exec_(self):
+		self.app.exec_()
