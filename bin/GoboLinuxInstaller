@@ -878,24 +878,7 @@ if not ret :
 ###############################################################################
 
 
-if mode == 'qt' :
-	from GraphicalTail import *
-	logger = GraphicalTail()
-
-	installer.app.setMainWidget(logger.w)
-	logger.w.show()
-	import threading
-	x = threading.Thread()
-	x.run = installer.app.exec_loop
-	x.start() # 'automatic' join
-	#thread.start_new_thread(installer.app.exec_loop, ())
-	#installer.app.exec_loop()
-else :
-	# with curses, printing to stdout is enough
-	logger = None
-
-# Everything inside a try: except. Better than nothing... (I think :) )
-try :
+def _RunInstallation():
 	destMountPoint = '/Mount/GoboLinux'
 
 	def log(s) :
@@ -1235,13 +1218,30 @@ lo_Netmask=255.0.0.0
 	if logger :
 		logger.enableOk()
 
-except Exception, inst :
-	x = '\033[1;31mGoboLinux installation failed.'+'\n'+'Check /tmp/GoboLinuxInstall.log.\033[0m'
-	y = 'Error: '+str(inst)
-	print x
-	print y
-	if logger :
-		logger.append(x)
-		logger.append(y)
-		logger.enableOk()
+def RunInstallation():
+	try:
+		_RunInstallation()
+	except Exception, inst :
+		x = '\033[1;31mGoboLinux installation failed.'+'\n'+'Check /tmp/GoboLinuxInstall.log.\033[0m'
+		y = 'Error: '+str(inst)
+		print x
+		print y
+		if logger :
+			logger.append(x)
+			logger.append(y)
+			logger.enableOk()
 
+if mode == 'qt' :
+	from GraphicalTail import *
+	logger = GraphicalTail()
+
+	x = threading.Thread()
+	x.run = RunInstallation
+	x.start()
+
+	logger.exec_()
+
+else :
+	# with curses, printing to stdout is enough
+	logger = None
+	RunInstallation()
