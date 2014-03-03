@@ -26,6 +26,7 @@ class GraphicalTail(QtCore.QObject):
 		self.color['BoldCyan'] =('\033[1;36m' , '<font color="#777700">')
 		self.color['RedWhite'] =('\033[41;37m', '<font color="#777700">')
 		self.color['Normal']   =('\033[0m'    , '</font>')#'"#000000"')
+		self.color['LineBreak']=('\n'         , '<br>')
 
 		self.textWrittenSignal.connect(self.textWritten)
 		self.initQt()
@@ -50,7 +51,7 @@ class GraphicalTail(QtCore.QObject):
 		cursor = self.w.textWidget.textCursor()
 		if self.w.autoScroll.isChecked():
 			cursor.movePosition(QtGui.QTextCursor.End)
-		cursor.insertText(s)
+		cursor.insertHtml(s)
 		if self.w.autoScroll.isChecked():
 			self.w.textWidget.setTextCursor(cursor)
 			self.w.textWidget.ensureCursorVisible()

@@ -54,7 +54,11 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="3">
-    <widget class="QTextEdit" name="textWidget"/>
+    <widget class="QTextEdit" name="textWidget">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
