@@ -133,7 +133,7 @@ class DiskUtility :
 		cmd = 'umount %s/System/Kernel/Devices' %destMountPoint
 		safeRun(cmd, 'Unbinding /System/Kernel/Devices', 0, self.logger)
 
-		log(tr('Unmounting selected root partition %s...' %partition))
+		#log(tr('Unmounting selected root partition %s...' %partition))
 		safeRun('umount ' + destMountPoint)
 
 
