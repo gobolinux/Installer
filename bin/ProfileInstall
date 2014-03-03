@@ -75,7 +75,7 @@ function install_base() {
    cp -a /Data ${dest_dir}/Data
 
    Log_Normal "Installing legacy links on "${dest_dir}
-   cp -a /bin /dev /etc /lib /proc /sbin /sys /tmp /var /media ${dest_dir}
+   cp -a /bin /dev /etc /lib /proc /sbin /sys /tmp /var /media /run ${dest_dir}
    ln -s "`lstrip ${goboBoot}`" ${dest_dir}/boot
    ln -s "`lstrip ${goboMount}`/Media" ${dest_dir}/media
    ln -s "`lstrip ${goboMount}`" ${dest_dir}/mnt
