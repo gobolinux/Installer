@@ -436,8 +436,6 @@ for line in lines :
 
 ###############################################################################
 
-lines = safeFileReadLines('/System/Settings/modprobe.conf')
-
 cmd = 'NetInterfaces'
 if reallyInstall :
 	interfaces = safeRun(cmd)
