@@ -447,7 +447,7 @@ else :
 #               DEFINING TRANSLATOR
 ###############################################################################
 
-t = AbsTranslator(shared+'Language/tt2_%s.ts'%(lang), lang)
+t = AbsTranslator(shared+'Language/tt2_%s.ts'%(lang), lang, mode)
 
 #convenience
 def tr(s) :
