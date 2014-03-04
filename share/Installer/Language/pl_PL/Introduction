@@ -1,27 +1,27 @@
 Witamy w instalatorze Gobolinuksa!
 
-Instalator poprowadzi Ciê krok-po-kroku
-a¿ do momentu, kiedy system bêdzie gotowy
-do instalacji na dysku. Umo¿liwi Ci sformatowanie
-partycji docelowej - tej, która bêdzie zawieraæ
-instalowany system - wybór pakietów oprogramowania
-przeznaczonego do instalacji, oraz u³atwi
-dokonanie podstawowej konfiguracji, która
-umo¿liwi natychmiastowe uruchomienie systemu.
+Instalator poprowadzi CiÃª krok-po-kroku
+aÂ¿ do momentu, kiedy system bÃªdzie gotowy
+do instalacji na dysku. UmoÂ¿liwi Ci sformatowanie
+partycji docelowej - tej, ktÃ³ra bÃªdzie zawieraÃ¦
+instalowany system - wybÃ³r pakietÃ³w oprogramowania
+przeznaczonego do instalacji, oraz uÂ³atwi
+dokonanie podstawowej konfiguracji, ktÃ³ra
+umoÂ¿liwi natychmiastowe uruchomienie systemu.
 
-Instalator pracuje interaktywnie, zadaj±c
-pytania w celu zebrania informacji niezbêdnych
-do instalacji Gobolinuksa. Zawsze mo¿esz przej¶æ
-do poprzedniego/nastêpnego kroku; samo
-prze³±czanie siê pomiêdzy kolejnymi ekranami
+Instalator pracuje interaktywnie, zadajÂ±c
+pytania w celu zebrania informacji niezbÃªdnych
+do instalacji Gobolinuksa. Zawsze moÂ¿esz przejÂ¶Ã¦
+do poprzedniego/nastÃªpnego kroku; samo
+przeÂ³Â±czanie siÃª pomiÃªdzy kolejnymi ekranami
 nie powoduje jeszcze wykonania jakiejkolwiek
 akcji, zapisania czegokolwiek. Instalacja
-zacznie siê po opuszczeniu ostatniego ekranu.
+zacznie siÃª po opuszczeniu ostatniego ekranu.
 
-Nale¿y pamiêtaæ, ¿e instalacja Gobolinuksa wymaga
-wolnej, przeznaczonej dlañ partycji dysku, ale
+NaleÂ¿y pamiÃªtaÃ¦, Â¿e instalacja Gobolinuksa wymaga
+wolnej, przeznaczonej dlaÃ± partycji dysku, ale
 sam instalator NIE ZMODYFIKUJE tablicy partycji!
-Je¶li jest potrzeba sprawdzenia - b±d¼ dokonania
-zmian w tablicy partycji - nale¿y skorzystaæ
+JeÂ¶li jest potrzeba sprawdzenia - bÂ±dÅ’ dokonania
+zmian w tablicy partycji - naleÂ¿y skorzystaÃ¦
 z programu GParted (przy pracy w trybie graficznym),
-lub np. cfdisk (je¶li pracujesz w trybie znakowym).
+lub np. cfdisk (jeÂ¶li pracujesz w trybie znakowym).

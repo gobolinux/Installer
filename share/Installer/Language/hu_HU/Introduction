@@ -1,20 +1,20 @@
-Üdvözöl téged a GoboLinux telepítõ!
+ÃœdvÃ¶zÃ¶l tÃ©ged a GoboLinux telepÃ­tÃµ!
 
-A rendszer merevlemezre telepítéséhez kövesd a megadott utasításokat.
-E telepítõprogram segítségével lehetõséged nyílik rá, hogy megformázd
-a lemezed azon partícióját, melyre majd az új rendszer kerül,
-kiválaszthatod a telepíteni kívánt csomagokat, és bizonyos
-alapbeállításokat is végrehajthatsz leendõ új rendszered számára.
+A rendszer merevlemezre telepÃ­tÃ©sÃ©hez kÃ¶vesd a megadott utasÃ­tÃ¡sokat.
+E telepÃ­tÃµprogram segÃ­tsÃ©gÃ©vel lehetÃµsÃ©ged nyÃ­lik rÃ¡, hogy megformÃ¡zd
+a lemezed azon partÃ­ciÃ³jÃ¡t, melyre majd az Ãºj rendszer kerÃ¼l,
+kivÃ¡laszthatod a telepÃ­teni kÃ­vÃ¡nt csomagokat, Ã©s bizonyos
+alapbeÃ¡llÃ­tÃ¡sokat is vÃ©grehajthatsz leendÃµ Ãºj rendszered szÃ¡mÃ¡ra.
 
-E telepítõprogram a GoboLinux telepítéséhez szükséges összes
-kérdést fel fogja tenni neked. Bármikor szabadon visszaléphetsz
-vagy épp elõrehaladhatsz benne: a képernyõk közt semmi tényleges
-változtatás nem hajtódik végre. A valódi installálás egy menetben
-hajtódik végre, méghozzá a legvégén.
+E telepÃ­tÃµprogram a GoboLinux telepÃ­tÃ©sÃ©hez szÃ¼ksÃ©ges Ã¶sszes
+kÃ©rdÃ©st fel fogja tenni neked. BÃ¡rmikor szabadon visszalÃ©phetsz
+vagy Ã©pp elÃµrehaladhatsz benne: a kÃ©pernyÃµk kÃ¶zt semmi tÃ©nyleges
+vÃ¡ltoztatÃ¡s nem hajtÃ³dik vÃ©gre. A valÃ³di installÃ¡lÃ¡s egy menetben
+hajtÃ³dik vÃ©gre, mÃ©ghozzÃ¡ a legvÃ©gÃ©n.
 
-Megjegyzendõ, hogy a GoboLinux telepítéséhez
-szükséged van egy hozzáférhetõ partícióra a merevlemezeden
-(ez a telepítõprogram ugyanis nem módosítja a partíciós tábládat).
-Amennyiben meg akarod vizsgálni illetve módosítani óhajtod
-a partícióidat, használd a GParted programot a grafikus környezetben,
-vagy a cfdisk-et konzol üzemmódban.
+MegjegyzendÃµ, hogy a GoboLinux telepÃ­tÃ©sÃ©hez
+szÃ¼ksÃ©ged van egy hozzÃ¡fÃ©rhetÃµ partÃ­ciÃ³ra a merevlemezeden
+(ez a telepÃ­tÃµprogram ugyanis nem mÃ³dosÃ­tja a partÃ­ciÃ³s tÃ¡blÃ¡dat).
+Amennyiben meg akarod vizsgÃ¡lni illetve mÃ³dosÃ­tani Ã³hajtod
+a partÃ­ciÃ³idat, hasznÃ¡ld a GParted programot a grafikus kÃ¶rnyezetben,
+vagy a cfdisk-et konzol Ã¼zemmÃ³dban.
