@@ -17,6 +17,7 @@ from subprocess import *
 from wizard import *
 from sys import *
 import crypt
+import locale
 
 # ConfigTools modules
 import MouseInfo
@@ -480,7 +481,10 @@ if not partitionsList :
 ##############################################################################
 introduction = Screen(tr('Welcome!'))
 file=open(shared+'Language/%s/Introduction'%lang)
-introduction.addMultiLineEdit('IntroText', tr('Installation process'), file.read(), tr('Read this to learn more about the installation.') )
+fileContents = file.read().decode('utf-8')
+if mode == 'curses' :
+	fileContents = fileContents.encode(locale.getpreferredencoding())
+introduction.addMultiLineEdit('IntroText', tr('Installation process'), fileContents, tr('Read this to learn more about the installation.') )
 file.close()
 installer.addScreen(introduction)
 
@@ -855,7 +859,10 @@ lastScreen = Screen(tr('Ready to install'))
 lastScreen.addImage('que.png')
 
 file=open(shared+'Language/%s/Conclusion'%lang)
-lastScreen.addMultiLineEdit('',tr('Done'),file.read(), tr('Continuing from here will perform all the indicated actions.'))
+fileContents = file.read().decode('utf-8')
+if mode == 'curses' :
+	fileContents = fileContents.encode(locale.getpreferredencoding())
+lastScreen.addMultiLineEdit('',tr('Done'),fileContents, tr('Continuing from here will perform all the indicated actions.'))
 file.close()
 
 installer.addScreen(lastScreen)
