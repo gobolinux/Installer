@@ -1061,6 +1061,7 @@ lo_Netmask=255.0.0.0
 		o += 'nameserver 208.67.220.220\n'
 
 	safeWriteToFile(destMountPoint+'/System/Settings/resolv.conf', o, logger)
+	safeWriteToFile(destMountPoint+'/System/Settings/resolv.conf.tail', o, logger)
 
 	genFstabParams = ''
 	if installer.getValue('SwapFile') == 1 :
@@ -1077,8 +1078,6 @@ lo_Netmask=255.0.0.0
 	safeRun(cmd, 'fstab generation', 0, logger)
 
 	lines = safeFileReadLines(destMountPoint+'/System/Settings/fstab', logger)
-	#lines = map(string.strip,lines)
-
 	lines = filter(lambda x:x and x[0] != '#' and x.find('/Mount/') > -1,lines)
 	mountList = map(lambda x:x.split()[1], lines)
 	for m in mountList :
@@ -1164,12 +1163,21 @@ lo_Netmask=255.0.0.0
 	############################################################################
 	# makewhatis
 	try :
-	    	if os.access(destMountPoint+'/Programs/Man', os.F_OK) :
+	   	if os.access(destMountPoint+'/Programs/Man', os.F_OK) :
 			log(tr('Creating "whatis" database...'))
 			cmd = 'chroot %s makewhatis -w'%destMountPoint
 			safeRun(cmd)
 	except :
 		log(tr('Error creating "whatis" database.'))
+	
+	############################################################################
+	# module dependencies
+	try :
+		log(tr('Updating kernel modules dependencies...'))
+		cmd = 'chroot %s depmod -a' %destMountPoint
+		safeRun(cmd)
+	except :
+		pass
 
 	############################################################################
  	# Create lilo.conf...
