@@ -1006,7 +1006,7 @@ def _RunInstallation():
 		o += 'ConsoleFont=' + consoleFont + '\n'
 		o += comments['Modules']
 		# Make sure users have a /dev/dsp by default, and that they're allowed to remove it if they want/need. 
-		o += 'UserDefinedModules=(\n   snd-pcm-oss\n   snd-mixer-oss\n)\n'
+		o += 'UserDefinedModules=(\n   fuse\n   snd-pcm-oss\n   snd-mixer-oss\n)\n'
 		o += '\n'
 
 		safeWriteToFile(destMountPoint+'/Programs/BootScripts/Settings/BootOptions', o, logger)
