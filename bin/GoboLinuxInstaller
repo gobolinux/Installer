@@ -36,7 +36,7 @@ class DiskUtility :
 		self.reallyInstall = reallyInstall
 
 	def getDevicesList(self) :
-		devicesList = open('/System/Kernel/Status/partitions').readlines()[2:]
+		devicesList = open('/proc/partitions').readlines()[2:]
 		temp = []
 		devicesSizes = {}
 		for device in devicesList :
@@ -44,7 +44,7 @@ class DiskUtility :
 			size = int(l[2])
 			if size > 1 :
 				name = l[3]
-				if not os.path.exists('/System/Kernel/Devices/%s' %name) :
+				if not os.path.exists('/dev/%s' %name) :
 					continue
 				if size > 1024*1024 :
 					c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
@@ -64,7 +64,7 @@ class DiskUtility :
 
 		hasSwap = False
 		for disc in discsList :
-			device = '/System/Kernel/Devices/'+disc.split(' ')[0]
+			device = '/dev/'+disc.split(' ')[0]
 			partitionfilter = re.compile(r'^/.*')
 			partitions = filter(lambda x:partitionfilter.match(x) and not 'loop' in x,os.popen('fdisk -l %s'%device).readlines())
 			for partition in partitions :
@@ -118,21 +118,21 @@ class DiskUtility :
 			self.__refreshUUID(partition)
 
 	def mountRoot(self, partition, destMountPoint) :
-		cmd = 'mount /System/Kernel/Devices/%s %s'%(partition, destMountPoint)
+		cmd = 'mount /dev/%s %s'%(partition, destMountPoint)
 		safeRun(cmd, 'Mounting root partition', 0, self.logger)
 	
-		cmd = 'mount -o bind /System/Kernel/Status %s/System/Kernel/Status' %destMountPoint
-		safeRun(cmd, 'Binding /System/Kernel/Status', 0, self.logger)
+		cmd = 'mount -o bind /proc %s/proc' %destMountPoint
+		safeRun(cmd, 'Binding /proc', 0, self.logger)
 
-		cmd = 'mount -o bind /System/Kernel/Devices/ %s/System/Kernel/Devices' %destMountPoint
-		safeRun(cmd, 'Binding /System/Kernel/Devices', 0, self.logger)
+		cmd = 'mount -o bind /dev %s/dev' %destMountPoint
+		safeRun(cmd, 'Binding /dev', 0, self.logger)
 
 	def unmountRoot(self, partition, destMountPoint) :
-		cmd = 'umount %s/System/Kernel/Status' %destMountPoint
-		safeRun(cmd, 'Unbinding /System/Kernel/Status', 0, self.logger)
+		cmd = 'umount %s/proc' %destMountPoint
+		safeRun(cmd, 'Unbinding /proc', 0, self.logger)
 
-		cmd = 'umount %s/System/Kernel/Devices' %destMountPoint
-		safeRun(cmd, 'Unbinding /System/Kernel/Devices', 0, self.logger)
+		cmd = 'umount %s/dev' %destMountPoint
+		safeRun(cmd, 'Unbinding /dev', 0, self.logger)
 
 		#log(tr('Unmounting selected root partition %s...' %partition))
 		safeRun('umount ' + destMountPoint)
@@ -162,26 +162,36 @@ class BootLoader :
 	def installGrub(self) :
 		self.__fixDevRoot()
 		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot /dev/%s' %(self.destMountPoint, self.targetDisc)
-		safeRun(cmd, 'grub-install', 0, self.logger)
+		altEnv = os.environ.copy()
+		altEnv['GRUB_DISTRIBUTOR'] = 'GoboLinux'
+		safeRun(cmd, 'grub-install', 0, self.logger, altEnv)
 		self.__rollbackDevRoot()
 	
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
+			self.__fixDevRoot()
 			if not os.path.exists(grubdir) :
 				os.mkdir(grubdir)
 			cmd = 'grub-mkconfig -o %s/grub.cfg' %grubdir
-			safeRun(cmd, 'grub-mkconfig', 0, self.logger)
+			altEnv = os.environ.copy()
+			altEnv['GRUB_DISTRIBUTOR'] = 'GoboLinux'
+			safeRun(cmd, 'grub-mkconfig', 0, self.logger, altEnv)
 
 			# Make sure old UUID is no longer present in the cfg file
 			diskutil = DiskUtility(self.logger, self.reallyInstall)
 			uuidAfterMkfs = diskutil.getUUID(self.targetPartition)
 			if len(uuidAfterMkfs) and len(uuidBeforeMkfs) and uuidAfterMkfs != uuidBeforeMkfs :
 				cmd = 'GrepReplace -B %s %s %s/grub.cfg' %(uuidBeforeMkfs, uuidAfterMkfs, grubdir)
-				safeRun(cmd, 'Update UUID in grub.cfg', 0, self.logger)
+				safeRun(cmd, 'Update UUID on grub.cfg', 0, self.logger)
 
 			# The kernel doesn't know about /System/Kernel/Devices
 			cmd = 'GrepReplace -B /System/Kernel/Devices /dev %s/grub.cfg' %grubdir
-			safeRun(cmd, 'Update grub.cfg', 0, self.logger)
+			safeRun(cmd, 'Fixing device names on grub.cfg', 0, self.logger)
+
+			# Make the OS string prettier
+			cmd = 'GrepReplace -B "GoboLinux GNU/Linux" "GoboLinux" %s/grub.cfg' %grubdir
+			safeRun(cmd, 'Updating OS name on grub.cfg', 0, self.logger)
+			self.__rollbackDevRoot()
 		return True
 
 	def installLilo(self) :
@@ -273,12 +283,14 @@ elif lang == 'hu_HU' :
 #               GENERAL FUNCTIONS
 ###############################################################################
 
-def safeRun(cmd, context = '', showProgress = 0, logger = None) :
+def safeRun(cmd, context = '', showProgress = 0, logger = None, altEnv=None) :
 	l = []
 	try :
 		if reallyInstall :
+			if altEnv is None :
+				altEnv = os.environ.copy()
 			#(i,oe) = os.popen4(cmd)
-			p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+			p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True, env=altEnv)
 			(i, oe) = (p.stdin, p.stdout)
 			while 1 :
 				line = oe.readline()
@@ -645,7 +657,7 @@ def installBootloaderChanged() :
    installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
 bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
-bootloader.addList('BootloaderTarget',     tr('Install at'), (discsList,''), tr("On the MBR of which disk should the bootloader be installed.") )
+bootloader.addList('BootloaderTarget',     tr('Install at'), (discsList + partitionsList,''), tr("On the MBR of which disk should the bootloader be installed.") )
 #bootloader.addBoolean('EnableGraphicGRUB', tr('Boot GRUB in graphic mode'), 1, tr("Select this if you want a background image to be displayed in the bootloader screen."))
 installer.addScreen(bootloader)
 #installer.setEnabled('BootloaderTarget',1)
@@ -655,7 +667,7 @@ installer.addScreen(bootloader)
 generalOptions = Screen(tr('General settings'))
 generalOptions.addLineEdit('HostName', tr('Host name: '), 'NewMachine', tr('Write in a name to identify this computer in a network environment.') )
 generalOptions.addList('KeymapLayout', tr('Keyboard map'), (fullKeymapsList, defaultKeymap), tr('Select the layout type that matches your keyboard.'), None)
-generalOptions.addList('BootTheme',    tr('Boot theme'), (['Progress-II', 'AppleII', 'CheckList', 'Hat', 'Progress', 'Quotes', 'ScanDisk', 'Slack', 'SplitScreen'],'Progress'), tr('The appearance of the boot process can be selected here.') )
+generalOptions.addList('BootTheme',    tr('Boot theme'), (['Progress-II', 'AppleII', 'CheckList', 'Hat', 'Progress', 'Quotes', 'ScanDisk', 'Slack', 'SplitScreen'],'Progress-II'), tr('The appearance of the boot process can be selected here.') )
 generalOptions.addList('ClockMode',    tr('BIOS clock is set in'), (['GMT','Local'], 'Local'), tr('Use local time especially if your computer dual-boots with another OS.') )
 installer.addScreen(generalOptions)
 
@@ -1204,16 +1216,16 @@ lo_Netmask=255.0.0.0
 	log(tr('Creating GRUB config file'))
 	grubdir = '%s/System/Kernel/Boot/grub' %destMountPoint
 	bootloader.createGrubConfig(grubdir, uuidBeforeMkfs)
-	#if installer.getValue('InstallBootloader') :
-		#log(tr('Installing GRUB'))
-		# bootloader.installGrub()
+	if installer.getValue('InstallBootloader') :
+		log(tr('Installing GRUB'))
+		bootloader.installGrub()
 	
 	############################################################################
 	# Install EXTLINUX
 	if installer.getValue('InstallBootloader') :
 		log(tr('Installing EXTLINUX'))
 		bootloader.createExtLinuxConfig()
-		bootloader.installExtLinux()
+	#	bootloader.installExtLinux()
 
 	############################################################################
 	# Unmounting mount point
