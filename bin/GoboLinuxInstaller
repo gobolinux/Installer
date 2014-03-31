@@ -28,7 +28,7 @@ sys.path = ['GraphicalTail'] + sys.path
 
 # Approximate size (in kb) from /System (88Mb) and /Data (6Mb)
 system_plus_data_sum = 100000
-shared = "/System/Links/Shared/Installer/"
+shared = "/System/Index/share/Installer/"
 
 class DiskUtility :
 	def __init__(self, logger=None, reallyInstall=True) :
@@ -206,9 +206,9 @@ class BootLoader :
 		self.__fixDevRoot()
 		cmd = 'extlinux --install %s/System/Kernel/Boot/extlinux' %self.destMountPoint
 		safeRun(cmd, 'extlinux --install', 0, self.logger)
-		cmd = 'cp -v /System/Links/Shared/syslinux/{menu.c32,vesamenu.c32,memdisk,libcom32.c32,libutil.c32} %s/System/Kernel/Boot/extlinux' %self.destMountPoint
+		cmd = 'cp -v /System/Index/share/syslinux/{menu.c32,vesamenu.c32,memdisk,libcom32.c32,libutil.c32} %s/System/Kernel/Boot/extlinux' %self.destMountPoint
 		safeRun(cmd, 'install syslinux modules', 0, self.logger)
-		cmd = 'dd bs=440 conv=notrunc count=1 if=/System/Links/Shared/syslinux/mbr.bin of=/dev/%s' %self.targetDisc
+		cmd = 'dd bs=440 conv=notrunc count=1 if=/System/Index/share/syslinux/mbr.bin of=/dev/%s' %self.targetDisc
 		safeRun(cmd, 'install mbr.bin', 0, self.logger)
 		self.__rollbackDevRoot()
 	
@@ -420,8 +420,8 @@ fullKeymapsList = \
 
 ###############################################################################
 
-if reallyInstall and os.access('/System/Variable/tmp/setup/keymap', os.R_OK) :
-	defaultKeymap=open('/System/Variable/tmp/setup/keymap').read().strip()
+if reallyInstall and os.access('/Data/Variable/tmp/setup/keymap', os.R_OK) :
+	defaultKeymap=open('/Data/Variable/tmp/setup/keymap').read().strip()
 else :
 	defaultKeymap=open(shared+'TestingInputs/keymap').read().strip()
 
@@ -467,7 +467,7 @@ def tr(s) :
 
 ###############################################################################
 
-cmd = 'cd /System/Links/Shared/zoneinfo; find -type f'
+cmd = 'cd /System/Index/share/zoneinfo; find -type f'
 locales = os.popen(cmd).readlines()
 for i in range(len(locales)) :
 	locales[i] = locales[i][2:].strip().replace('_', ' ')
@@ -687,88 +687,6 @@ localeOptions.addList('ZoneInfo', tr('Time zone'), (locales,defaultZone), tr('Se
 localeOptions.addLineEdit('ZoneInfoFilter', tr('Filter:'),'',  tr('Narrow the selection by searching for a particular word'), updateLocaleList )
 
 installer.addScreen(localeOptions)
-
-##############################################################################
-# NET INTERFACES SCREENS
-
-def checkDHCP() :
-	global networkOptionsScreen
-	if networkOptionsScreen == "added" :
-		# if the interface is configured as DHCP, disable Gateway and DNS edit
-		if installer.getValue('BootProto'+installer.getValue('GatewayInterface')[1]) :
-			installer.setEnabled('Gateway', 0)
-			installer.setEnabled('PrimaryDNS', 0)
-			installer.setEnabled('SecondaryDNS', 0)
-		else :
-			installer.setEnabled('Gateway', 1)
-			installer.setEnabled('PrimaryDNS', 1)
-			installer.setEnabled('SecondaryDNS', 1)
-		
-networkOptions = Screen(tr('General network settings'))
-networkOptions.addLineEdit('Gateway',      tr('Gateway IP:'), '192.168.1.1', tr('Default gateway: the IP which redirects requests to the outside world.') )
-networkOptions.addList('GatewayInterface', tr('Gateway interface:'),(interfaces,'eth0'), tr('The network interface through which the default gateway can be reached.'),checkDHCP )
-networkOptions.addLineEdit('PrimaryDNS',   tr('Primary DNS:'), '', tr('Primary server for solving hostnames. Contact your sysadmin or ISP for these.') )
-networkOptions.addLineEdit('SecondaryDNS', tr('Secondary DNS:'), '', tr('Fallback server for when the primary one fails to respond.') )
-# remember if the screen was added or not
-networkOptionsScreen = "not added"
-
-def useDHCPChanged() :
-	for interface in interfaces :
-		enable = not installer.getValue('BootProto'+interface)
-		installer.setEnabled('IP'+interface, enable)
-		installer.setEnabled('Netmask'+interface, enable)
-		installer.setEnabled('Broadcast'+interface, enable)
-
-def generalNetworkOptions() :
-	# registers if any interface is configured with static address
-	staticinterface = 0
-	global networkOptionsScreen
-	# go through all interfaces and see if any is configured as static
-	for interface in interfaces :
-		if not installer.getValue('BootProto'+interface) :
-			staticinterface = 1
-			
-	# if we have more than one interface or any interface is configured as static
-	# we should try and add the screen for general network options
-	if len(interfaces) > 1 or staticinterface == 1 :
-		if networkOptionsScreen == "not added" :
-			installer.addScreen(networkOptions,-1)
-			networkOptionsScreen = "added"
-	# we have only one interface configured as DHCP, so we remove general network
-	# options screen
-	elif staticinterface == 0 :
-		if networkOptionsScreen == "added" :
-			installer.removeScreen(networkOptions)
-			networkOptionsScreen = "not added"
-			
-	# update general options if any field should be disabled
-	checkDHCP()
-	return 1
-	
-	    
-for interface in interfaces :
-	interfaceScreen = Screen(tr('Settings for network interface %s')%(interface))
-	interfaceScreen.addBoolean('Automatic' + interface, tr('Enable interface on boot'), 1, tr('Should this network interface be brought up when the system is powered up?') )
-	useDHCP = 0
-	# Detect the live-CD default attempt for DHCP
-	if interface == "eth0":
-		if os.system("ps aux | grep '[d]hcpcd' | grep -qv 'eth'") == 0:
-			useDHCP = 1
-	# Also detect hand-launched dhcpcd
-	if os.system("ps aux | grep '[d]hcpcd' | grep -q '%s'" % interface) == 0:
-		useDHCP = 1
-	interfaceScreen.addBoolean('BootProto'+ interface,  tr('Automatic configuration via DHCP'), useDHCP, tr('Select this if your network server is configured to use the DHCP protocol.'), useDHCPChanged )
-	interfaceScreen.addLineEdit('IP'+ interface,        tr('IP:'),'', tr('The IP address of this computer in your network.') )
-	interfaceScreen.addLineEdit('Netmask'+ interface,   tr('Netmask:'),'',  tr("Your network's netmask.") )
-	interfaceScreen.addLineEdit('Broadcast'+ interface, tr('Broadcast:'), '', tr("The broadcast address of this network (optional).") )
-	# if we're configuring the last interface we should call the function that adds general network options
-	if interface == interfaces[-1] :
-		interfaceScreen.onValidate(generalNetworkOptions)
-	installer.addScreen(interfaceScreen)
-	if useDHCP == 1:
-		installer.setEnabled('IP'+interface, False)
-		installer.setEnabled('Netmask'+interface, False)
-		installer.setEnabled('Broadcast'+interface, False)
 
 
 ###############################################################################
@@ -1011,52 +929,7 @@ def _RunInstallation():
 
 		safeWriteToFile(destMountPoint+'/Programs/BootScripts/Settings/BootOptions', o, logger)
 
-	def generateNetworkFile() :
-		comments = {}
-		comments['HostName']  = '#Hostname=NewMachine'
-		comments['Gateway']         = '#Gateway=192.168.2.1'
-		comments['GatewayInterface'] = '#GatewayInterface=eth0'
-		comments['NetworkInterfaces'] = """
-lo_IP=127.0.0.1
-lo_Netmask=255.0.0.0
-"""
-		o = ''
-		o += 'NetworkInterfacesOnBoot=('+'\n'+'   lo'+'\n'
-		for interface in interfaces :
-			if installer.getValue('Automatic'+interface) :
-				o += '   '+interface + '\n'
-		o += ')\n'
-
-		o += comments['NetworkInterfaces']
-		for interface in interfaces :
-			if installer.getValue('BootProto'+interface) :
-				o += interface+'_'+'BootProto=DHCP'+ '   # DHCP (requires DHCPCD package), Static (default if empty)\n'
-			else :
-				o += '#'+interface+'_'+'BootProto=Static'+ '   # DHCP (requires DHCPCD package), Static (default if empty)\n'
-
-			fieldsT = [ 'IP', 'Netmask', 'Broadcast' ]
-			for field in fieldsT :
-				if installer.isEnabled(field+interface) :
-					if (installer.getValue(field+interface)) :
-						o += interface+'_'+field+ '=' + installer.getValue(field+interface)+ '\n'
-					else :
-						o += "#"+interface+'_'+field+'='
-
-		o += '\n'
-		if (installer.getValue('Gateway')) :
-			o += 'Gateway' + '=' + installer.getValue('Gateway') + '\n'
-		else :
-			o += comments['Gateway'] + '\n'
-
-		if (installer.getValue('GatewayInterface')) :
-			o += 'GatewayInterface' + '=' + str(installer.getValue('GatewayInterface')[1]) + '\n'
-		else :
-			o += comments['GatewayInterface'] + '\n'
-
-		safeWriteToFile(destMountPoint+'/Programs/BootScripts/Settings/NetworkOptions', o, logger)
-
 	generateOptionsFile()
-	generateNetworkFile()
 
 	############################################################################
 	# Put hostname inside /etc/hosts
@@ -1084,7 +957,7 @@ lo_Netmask=255.0.0.0
 
 	genFstabParams = ''
 	if installer.getValue('SwapFile') == 1 :
-		swapFileName = '/System/Variable/swap'
+		swapFileName = '/Data/Variable/swap'
 		genFstabParams = '--swap-file '+swapFileName
 		size = int(installer.getValue('SwapSize'))
 		safeRun('dd if=/dev/zero of=%s%s bs=1M count=%d'%(destMountPoint,swapFileName,size))
@@ -1177,7 +1050,7 @@ lo_Netmask=255.0.0.0
 	############################################################################
 	# Zoneinfo
 	log(tr('Setting zoneinfo...'))
-	safeRun('chroot '+destMountPoint+' ln -sfn /System/Links/Shared/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
+	safeRun('chroot '+destMountPoint+' ln -sfn /System/Index/share/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
 
 	############################################################################
 	# makewhatis
