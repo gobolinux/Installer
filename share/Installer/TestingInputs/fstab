@@ -33,7 +33,7 @@
 proc  /System/Kernel/Status  proc  defaults  0  0
 
 # If you have a lot a memory, you can mount /tmp as a RAM-based device:
-#tmpfs  /System/Variable/tmp  tmpfs  defaults  0  0	
+#tmpfs  /Data/Variable/tmp  tmpfs  defaults  0  0	
 # This is also optional:
 #tmpfs	/dev/shm  tmpfs  defaults  0  0
 

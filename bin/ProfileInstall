@@ -48,8 +48,11 @@ function install_base() {
    cp -a ${goboVariable}/*  ${dest_dir}/${goboVariable} 2> /dev/null
    rm -rf ${dest_dir}/${goboVariable}/run/*
 
-   Log_Normal "Installing directory "${goboSystem}/Links
-   cp -a ${goboSystem}/Links  ${dest_dir}/${goboSystem}
+   Log_Normal "Installing directory "${goboLinks}
+   cp -a ${goboLinks}  ${dest_dir}/${goboSystem}
+   
+   Log_Normal "Installing directory "${goboIndex}
+   cp -a ${goboIndex} ${dest_dir}/${goboSystem}
    
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel
@@ -99,7 +102,7 @@ function install_base() {
    GrepReplace -B "prompt lode cyan" "prompt lode red" "${dest_dir}/${goboUsers}/${superuser}/.zshrc"
    cd - &> /dev/null
 
-   mkdir -p ${dest_dir}/System/Variable/tmp/{.ICE-unix,.X11-unix} -m a+rwxt
+   mkdir -p ${dest_dir}/Data/Variable/tmp/{.ICE-unix,.X11-unix} -m a+rwxt
 
    Log_Normal "Creating directory "${goboPrograms}
    mkdir -p ${dest_dir}/${goboPrograms}
@@ -153,10 +156,12 @@ function install_packages() {
 
 install_packages
 
-Log_Normal "Removing broken links from ${dest_dir}${goboLinks}"
-chroot ${dest_dir} find ${goboLinks} > /tmp/Links
+Log_Normal "Removing broken links from ${dest_dir}${goboIndex}"
+chroot ${dest_dir} find ${goboIndex} > /tmp/Links
 chroot ${dest_dir} RemoveBroken < /tmp/Links &> /dev/null
-chroot ${dest_dir} rm -f /tmp/Links
+Log_Normal "Removing broken links from ${dest_dir}${goboSystem}"
+chroot ${dest_dir} find ${goboSystem} > /tmp/Links
+chroot ${dest_dir} RemoveBroken < /tmp/Links &> /dev/null
 Log_Normal "Removing broken links from ${dest_dir}${goboSettings}"
 chroot ${dest_dir} find ${goboSettings} > /tmp/Links
 chroot ${dest_dir} RemoveBroken < /tmp/Links &> /dev/null
