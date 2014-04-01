@@ -68,7 +68,8 @@ class DiskUtility :
 			partitionfilter = re.compile(r'^/.*')
 			partitions = filter(lambda x:partitionfilter.match(x) and not 'loop' in x,os.popen('fdisk -l %s'%device).readlines())
 			for partition in partitions :
-				part = partition.split()
+				# The bootable flag indicator (*) needs to be removed before the string is tokenized.
+				part = partition.replace('*', ' ').split()
 				if part[4] == '82' :
 					safeRun('mkswap %s'%part[0])
 					safeRun('swapon %s'%part[0])
