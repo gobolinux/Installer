@@ -62,7 +62,7 @@ class DiskUtility :
 		discsList = filter(lambda x:d.match(x) and not 'loop' in x,devicesList)
 		discsList.sort()
 
-		hasSwap = False
+		# initialize any swap partitions
 		for disc in discsList :
 			device = '/dev/'+disc.split(' ')[0]
 			partitionfilter = re.compile(r'^/.*')
@@ -73,9 +73,8 @@ class DiskUtility :
 				if part[4] == '82' :
 					safeRun('mkswap %s'%part[0])
 					safeRun('swapon %s'%part[0])
-					hasSwap = True
 
-		return discsList, partitionsList, devicesSizes, hasSwap
+		return discsList, partitionsList, devicesSizes
 
 	def getUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
@@ -476,7 +475,7 @@ locales.sort()
 
 installer = Wizard('GoboLinux')
 
-discsList,partitionsList,devicesSizes,hasSwap = DiskUtility().getDevicesList()
+discsList, partitionsList, devicesSizes = DiskUtility().getDevicesList()
 if not partitionsList :
 	msg = tr('No valid partitions found')
 	msg = msg + '\n' + tr('Create one using "gparted" or "cfdisk"')
@@ -559,12 +558,6 @@ def doSwapFile() :
 deviceSelection.addBoolean('SwapFile', tr('Create a swap file'), 0, tr('Create a special file in the root partition to function as memory swap space'), doSwapFile)
 # FIXME: default number should be based on memory size and root partition size
 deviceSelection.addLineEdit('SwapSize', tr('Swap file size (in MB)'), str(256), tr('Size of the swap file, in megabytes.'))
-if not hasSwap :
-	deviceSelection.setValue('SwapFile', 1)
-	deviceSelection.setEnabled('SwapSize', 1)
-else :
-	deviceSelection.setValue('SwapFile', 0)
-	deviceSelection.setEnabled('SwapSize', 0)
 
 installer.addScreen(deviceSelection)
 
