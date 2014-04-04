@@ -51,8 +51,8 @@ function install_base() {
    Log_Normal "Installing directory "${goboLinks}
    cp -a ${goboLinks}  ${dest_dir}/${goboSystem}
    
-   Log_Normal "Installing directory "${goboIndex}
-   cp -a ${goboIndex} ${dest_dir}/${goboSystem}
+   Log_Normal "Installing directory "${goboSystem}/Index
+   cp -a ${goboSystem}/Index ${dest_dir}/${goboSystem}
    
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel
@@ -156,8 +156,8 @@ function install_packages() {
 
 install_packages
 
-Log_Normal "Removing broken links from ${dest_dir}${goboIndex}"
-chroot ${dest_dir} find ${goboIndex} > /tmp/Links
+Log_Normal "Removing broken links from ${dest_dir}${goboSystem}/Index"
+chroot ${dest_dir} find ${goboSystem}/Index > /tmp/Links
 chroot ${dest_dir} RemoveBroken < /tmp/Links &> /dev/null
 Log_Normal "Removing broken links from ${dest_dir}${goboSystem}"
 chroot ${dest_dir} find ${goboSystem} > /tmp/Links
