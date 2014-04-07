@@ -18,6 +18,7 @@ from wizard import *
 from sys import *
 import crypt
 import locale
+import shutil
 
 # ConfigTools modules
 import MouseInfo
@@ -162,35 +163,16 @@ class BootLoader :
 	def installGrub(self) :
 		self.__fixDevRoot()
 		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot /dev/%s' %(self.destMountPoint, self.targetDisc)
-		altEnv = os.environ.copy()
-		altEnv['GRUB_DISTRIBUTOR'] = 'GoboLinux'
-		safeRun(cmd, 'grub-install', 0, self.logger, altEnv)
+		safeRun(cmd, 'grub-install', 0, self.logger)
 		self.__rollbackDevRoot()
 	
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
 			self.__fixDevRoot()
-			if not os.path.exists(grubdir) :
-				os.mkdir(grubdir)
-			cmd = 'grub-mkconfig -o %s/grub.cfg' %grubdir
-			altEnv = os.environ.copy()
-			altEnv['GRUB_DISTRIBUTOR'] = 'GoboLinux'
-			safeRun(cmd, 'grub-mkconfig', 0, self.logger, altEnv)
-
-			# Make sure old UUID is no longer present in the cfg file
 			diskutil = DiskUtility(self.logger, self.reallyInstall)
 			uuidAfterMkfs = diskutil.getUUID(self.targetPartition)
-			if len(uuidAfterMkfs) and len(uuidBeforeMkfs) and uuidAfterMkfs != uuidBeforeMkfs :
-				cmd = 'GrepReplace -B %s %s %s/grub.cfg' %(uuidBeforeMkfs, uuidAfterMkfs, grubdir)
-				safeRun(cmd, 'Update UUID on grub.cfg', 0, self.logger)
-
-			# The kernel doesn't know about /System/Kernel/Devices
-			cmd = 'GrepReplace -B /System/Kernel/Devices /dev %s/grub.cfg' %grubdir
-			safeRun(cmd, 'Fixing device names on grub.cfg', 0, self.logger)
-
-			# Make the OS string prettier
-			cmd = 'GrepReplace -B "GoboLinux GNU/Linux" "GoboLinux" %s/grub.cfg' %grubdir
-			safeRun(cmd, 'Updating OS name on grub.cfg', 0, self.logger)
+			cmd = 'GenGrubConf %s "%s" "%s"' %(grubdir, uuidBeforeMkfs, uuidAfterMkfs)
+			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
 		return True
 
@@ -634,8 +616,8 @@ def setProfile() :
 	installer.setValue('Packages',(p,profiles[profileName]))
 	showSelectedSetSize()
 
-packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Base','Typical','Full'], 'Typical'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
-packageSelection.addCheckList('Packages', tr('Select packages'), (profiles['Full'],  profiles['Typical']), tr('Mark the packages that should be installed in the system.'), showSelectedSetSize)
+packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Base','Typical','Full'], 'Full'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
+packageSelection.addCheckList('Packages', tr('Select packages'), (profiles['Full'],  profiles['Full']), tr('Mark the packages that should be installed in the system.'), showSelectedSetSize)
 packageSelection.addLabel('SpaceRequired',tr('Space required: %s (available space: %s)')%('1.5GB',installer.getValue('RootPartition')[1].split()[1]), '', tr('Space required to install the selected packages'))
 packageSelection.addButton('',tr('Satisfy dependencies'), '', tr('Mark all packages in the list that are needed by the ones already marked.'), fillUpDependencies)
 packageSelection.addBoolean('BypassFillUpDependencies', tr('Bypass dependencies check'), 0, tr("Check if you want to install only the above selected packages."))
@@ -1056,15 +1038,6 @@ def _RunInstallation():
 	except :
 		log(tr('Error creating "whatis" database.'))
 	
-	############################################################################
-	# module dependencies
-	try :
-		log(tr('Updating kernel modules dependencies...'))
-		cmd = 'chroot %s depmod -a' %destMountPoint
-		safeRun(cmd)
-	except :
-		pass
-
 	############################################################################
  	# Create lilo.conf...
 	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
