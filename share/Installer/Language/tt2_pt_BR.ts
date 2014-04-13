@@ -265,12 +265,12 @@
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="577"/>
         <source>The appearance of the boot process can be selected here.</source>
-        <translation type="unfinished">A aparência do processo de inicialização do sistema pode se selecionado aqui.</translation>
+        <translation type="unfinished">A aparência do processo de inicialização do sistema pode ser selecionada aqui.</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="578"/>
         <source>Use local time especially if your computer dual-boots with another OS.</source>
-        <translation type="unfinished">Selecione tempo local especialmente se seu computador possui dual-boot.</translation>
+        <translation type="unfinished">Selecione a hora local, especialmente se seu computador possui dual-boot.</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="659"/>
