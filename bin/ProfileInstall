@@ -4,6 +4,7 @@ Import GoboLinux
 Import Log
 Import OptionParser
 Import PostInstall
+Import Requirements
 
 source GoboPath
 
@@ -143,6 +144,12 @@ function install_packages() {
          Log_Normal "Processing PostInstall script for ${line}..."
          version="`readlink ${goboPrograms}/${line}/Current`"
          Run_PostInstall "${line}" "${version}" "" "" "${dest_dir}"
+      fi
+      if [ -e ${goboPrograms}/${line}/Current/Resources/Requirements ]
+      then
+         Log_Normal "Processing Requirements script for ${line}..."
+         version="`readlink ${goboPrograms}/${line}/Current`"
+         Run_Requirements_Wrapper "${goboPrograms}/${line}/${version}" "${dest_dir}"
       fi
    done < ${profile}
    umount ${dest_dir}/${goboStatus}
