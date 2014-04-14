@@ -2,6 +2,11 @@
 
 unset NO_UNIONFS
 
+if [ "x$DISPLAY" != "x" ]
+then args="qt"
+else args=""
+fi
+
 if $(grep -q "localhost LiveCD" "/System/Settings/hosts")
 then
     #
@@ -16,7 +21,7 @@ then
     LIVECD_DEVICE=$(grep "/Mount/.Pivot/Mount/CD-ROM" /proc/mounts | awk {'print $1'})
     RENAMED_DEVICE=$(echo "$LIVECD_DEVICE" | sed 's,/dev/,/dev/_,g')
     mv "$LIVECD_DEVICE" "$RENAMED_DEVICE"
-    GoboLinuxInstaller install
+    GoboLinuxInstaller install $args
     mv "$RENAMED_DEVICE" "$LIVECD_DEVICE"
 else
     GoboLinuxInstaller
