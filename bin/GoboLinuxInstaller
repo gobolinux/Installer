@@ -247,7 +247,7 @@ reallyInstall = ('install' in sys.argv)
 ###############################################################################
 
 if os.environ.has_key('LANG') :
-	lang = os.environ['LANG']
+	lang = os.environ['LANG'].split('.')[0].split('@')[0]
 else :
 	lang = 'en_US'
 
