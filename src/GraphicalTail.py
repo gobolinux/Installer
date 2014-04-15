@@ -36,6 +36,8 @@ class GraphicalTail(QtCore.QObject):
 		self.w.okButton.setEnabled(1)
 
 	def append(self, s):
+		if not s.endswith('\n'):
+			s += '\n'
 		try :
 			self.output.write(s)
 		except :
