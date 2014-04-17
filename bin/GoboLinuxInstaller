@@ -956,6 +956,10 @@ def _RunInstallation():
 			print 'mkdir '+destMountPoint+m
 
 	############################################################################
+	# Create inittab
+	safeRun('chroot '+destMountPoint+' ln -sfn /Programs/BootScripts/Settings/inittab /System/Settings/inittab', 'inittab', 0, logger)
+
+	############################################################################
 	# Set superuser password
 	log(tr('Setting superuser login and password...'))
 	if installer.getValue('SuperUserPassword') == installer.getValue('SuperUserPasswordRetyped') :
@@ -983,7 +987,7 @@ def _RunInstallation():
 		o = string.join(shadowLines,'\n')
 		safeWriteToFile(destMountPoint+'/System/Settings/shadow', o, logger)
 
-		cmd = 'chroot %s GrepReplace "gobo" "%s" /etc/passwd /etc/group /Programs/Sudo/Settings/sudoers'%(destMountPoint,goboLogin)
+		cmd = 'chroot %s GrepReplace "gobo" "%s" /etc/passwd /etc/group /Programs/Sudo/Settings/sudoers /System/Settings/enlightenment/sysactions.conf '%(destMountPoint,goboLogin)
 		safeRun(cmd, '', 0, logger)
 
 		cmd = 'chroot %s rm -f /etc/passwd~ /etc/group~ /Programs/Sudo/Settings/sudoers~'%destMountPoint
