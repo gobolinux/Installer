@@ -235,6 +235,7 @@ else :
 	print 'Undefined mode:',mode
 	sys.exit(1)
 
+settable_root_name = (os.getenv("GOBO_LIVES") == "somewhere in time")
 
 ###############################################################################
 #               INSTALL OR DEBUG
@@ -680,7 +681,10 @@ def checkSuperUserPasswords() :
 			return False
 	return True
 
-superUserScreen.addLineEdit('SuperUserLogin',tr('Login:'),'root', tr('Select the account name for the superuser.') )
+# Keeping as an Easter Egg, after all that Lucas went through
+if settable_root_name:
+	superUserScreen.addLineEdit('SuperUserLogin',tr('Login:'),'root', tr('Select the account name for the superuser.') )
+
 superUserScreen.addPassword('SuperUserPassword', tr('Password:'), '', tr('Enter the password for the superuser.') )
 superUserScreen.addPassword('SuperUserPasswordRetyped', tr('Retype password:'), '', tr('Enter the same password as above, to verify for typing mistakes.') )
 superUserScreen.onValidate(checkSuperUserPasswords)
@@ -841,7 +845,13 @@ def _RunInstallation():
 	############################################################################
 	# Call ProfileInstall
 	log(tr('Performing file installation (may take a few minutes)...'))
-	cmd = 'ProfileInstall --super-user %s /tmp/%s %s'%(installer.getValue('SuperUserLogin'), profileName, destMountPoint)
+	
+	# Last remnants of a configurable username
+	root_name = "root"
+	if settable_root_name:
+		root_name = installer.getValue('SuperUserLogin')
+	
+	cmd = 'ProfileInstall --super-user %s /tmp/%s %s'%(root_name, profileName, destMountPoint)
 	safeRun(cmd, 'ProfileGen', 1, logger)
 
 	############################################################################
