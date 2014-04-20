@@ -673,11 +673,12 @@ def checkSuperUserPasswords() :
 		x = installer.showMessageBox(tr('Passwords typed do not match'), ['Ok'])
 		installer.setValue('SuperUserPasswordRetyped', '')
 		installer.setValue('SuperUserPassword', '')
+		return False
 	else :
 		if installer.getValue('SuperUserPassword') == '' :
 			x = installer.showMessageBox(tr('Password is not allowed to be empty.'), ['Ok'])
-		else :
-			return 1
+			return False
+	return True
 
 superUserScreen.addLineEdit('SuperUserLogin',tr('Login:'),'root', tr('Select the account name for the superuser.') )
 superUserScreen.addPassword('SuperUserPassword', tr('Password:'), '', tr('Enter the password for the superuser.') )
@@ -762,7 +763,7 @@ installer.addScreen(usersScreen)
 
 ##############################################################################
 lastScreen = Screen(tr('Ready to install'))
-lastScreen.addImage('que.png')
+lastScreen.addImage(shared+'Images/que.png')
 
 file=open(shared+'Language/%s/Conclusion'%lang)
 fileContents = file.read().decode('utf-8')
