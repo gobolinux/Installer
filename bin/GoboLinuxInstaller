@@ -798,7 +798,10 @@ def _RunInstallation():
 	destMountPoint = '/Mount/GoboLinux'
 
 	def log(s) :
-		s  = "\033[36m"+'=> '+s+"\033[0m"
+		if mode == 'qt' :
+			s  = "\033[1;36m" + '=> ' + s + "\033[0m"
+		else :
+			s  = "\033[36m" + '=> ' + s + "\033[0m"
 		if logger :
 			logger.append(s)
 			#logger.show()
@@ -984,7 +987,7 @@ def _RunInstallation():
 		goboLine = shadowLines[index]
 		goboLineList = goboLine.split(':')
 
-		goboLogin = installer.getValue('SuperUserLogin')
+		goboLogin = root_name
 		goboLineList[0] = goboLogin
 
 		goboOldPassword = goboLineList[1]

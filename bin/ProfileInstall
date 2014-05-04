@@ -49,11 +49,17 @@ function install_base() {
    cp -a ${goboVariable}/*  ${dest_dir}/${goboVariable} 2> /dev/null
    rm -rf ${dest_dir}/${goboVariable}/run/*
 
-   Log_Normal "Installing directory "${goboLinks}
-   cp -a ${goboLinks}  ${dest_dir}/${goboSystem}
-   
    Log_Normal "Installing directory "${goboSystem}/Index
    cp -a ${goboSystem}/Index ${dest_dir}/${goboSystem}
+
+   Log_Normal "Installing directory "${goboSystem}/Aliens
+   cp -a ${goboSystem}/Aliens ${dest_dir}/${goboSystem}
+
+   Log_Normal "Installing directory "${goboSystem}/Environment
+   cp -a ${goboSystem}/Environment ${dest_dir}/${goboSystem}
+
+   Log_Normal "Installing directory "${goboSystem}/Tasks
+   cp -a ${goboSystem}/Tasks ${dest_dir}/${goboSystem}
    
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel
@@ -91,6 +97,15 @@ function install_base() {
    Log_Normal "Installing directory "${goboUsers}/${superuser}
    mkdir -p ${dest_dir}/${goboUsers}
    cp -a ${goboPrograms}/EnhancedSkel/Current/testuser ${dest_dir}/${goboUsers}/${superuser} || mkdir ${dest_dir}/${goboUsers}/${superuser}
+   if [ -d "$HOME/.e" ]
+   then
+      # Override Enlightenment settings configured by the LiveCD session
+      e_cfg=".e/e/config/standard/e.cfg"
+      eet -d "$HOME/$e_cfg" config /tmp/setup/e.cfg.tmp
+      GrepReplace -B "gobo" "${superuser}" /tmp/setup/e.cfg.tmp
+      rm -f  "${dest_dir}/${goboUsers}/${superuser}/$e_cfg"
+      eet -e "${dest_dir}/${goboUsers}/${superuser}/$e_cfg" config /tmp/setup/e.cfg.tmp 1
+   fi
    chmod 600 ${dest_dir}/${goboUsers}/${superuser}/
 
    cd ${goboPrograms}/EnhancedSkel/Current/testuser
