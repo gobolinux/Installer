@@ -252,7 +252,7 @@ if os.environ.has_key('LANG') :
 else :
 	lang = 'en_US'
 
-consoleFont = '/Data/Fonts/Console/lode-lat1u-16.psf.gz'
+consoleFont = '/System/Index/share/consolefonts/lode-2.0-lat1u-16.psfu.gz'
 defaultZone = ''
 
 # Configure known locale settings
