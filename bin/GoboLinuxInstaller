@@ -196,7 +196,7 @@ class BootLoader :
 			self.__fixDevRoot()
 			diskutil = DiskUtility(self.logger, self.reallyInstall)
 			uuidAfterMkfs = diskutil.getUUID(self.targetPartition)
-			cmd = 'GenGrubConf %s "%s" "%s"' %(grubdir, uuidBeforeMkfs, uuidAfterMkfs)
+			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir, uuidBeforeMkfs, uuidAfterMkfs)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
 		return True
