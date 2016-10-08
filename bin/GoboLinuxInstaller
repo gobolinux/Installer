@@ -1117,6 +1117,11 @@ def _RunInstallation():
 	#	bootloader.installExtLinux()
 
 	############################################################################
+	# Make /System/Settings/mtab a symlink to /proc/mounts
+	os.unlink(destMountPoint+"/etc/mtab")
+	os.symlink("/proc/mounts", destMountPoint+"/etc/mtab")
+
+	############################################################################
 	# Unmounting mount point
 	diskutil.unmountPseudoFS(destMountPoint)
 	diskutil.unmountRoot(rootPartition, destMountPoint)
