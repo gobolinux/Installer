@@ -124,6 +124,9 @@ class DiskUtility :
 		elif fileSystem == 'XFS' :
 			cmd = 'mkfs.xfs -f -q /dev/%s'%partition
 
+		elif fileSystem == 'FAT32' :
+			cmd = 'mkfs.fat -F 32 /dev/%s'%partition
+
 		else :
 			print 'Unkown FS type: '+fileSystem
 			return
