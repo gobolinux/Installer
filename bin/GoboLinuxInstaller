@@ -113,10 +113,10 @@ class DiskUtility :
 			cmd = 'mkreiserfs -f -f /dev/%s'%partition
 		
 		elif fileSystem == 'Ext4' :
-			cmd = 'mkfs.ext4 /dev/%s'%partition
+			cmd = 'mkfs.ext4 -j /dev/%s'%partition
 
 		elif fileSystem == 'Ext3' :
-			cmd = 'mkfs.ext3 /dev/%s'%partition
+			cmd = 'mkfs.ext3 -j /dev/%s'%partition
 
 		elif fileSystem == 'Ext2' :
 			cmd = 'mkfs.ext2 /dev/%s'%partition
