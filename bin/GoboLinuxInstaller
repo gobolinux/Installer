@@ -203,7 +203,7 @@ class BootLoader :
 
 	def installExtLinux(self) :
 		self.__fixDevRoot()
-		cmd = 'extlinux --install %s/System/Kernel/Boot/extlinux' %self.destMountPoint
+		cmd = 'chroot %s extlinux --install /System/Kernel/Boot/extlinux' %self.destMountPoint
 		safeRun(cmd, 'extlinux --install', 0, self.logger)
 		cmd = 'cp -v /System/Index/share/syslinux/{menu.c32,vesamenu.c32,memdisk,libcom32.c32,libutil.c32} %s/System/Kernel/Boot/extlinux' %self.destMountPoint
 		safeRun(cmd, 'install syslinux modules', 0, self.logger)
