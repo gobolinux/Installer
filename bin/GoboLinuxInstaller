@@ -966,7 +966,7 @@ def _RunInstallation():
 	genFstabParams = ''
 	if installer.getValue('SwapFile') == 1 :
 		swapFileName = '/Data/Variable/swap'
-		genFstabParams = '--swap-file '+swapFileName
+		genFstabParams += ' --swap-file '+swapFileName
 		size = int(installer.getValue('SwapSize'))
 		safeRun('dd if=/dev/zero of=%s%s bs=1M count=%d'%(destMountPoint,swapFileName,size))
 		safeRun('mkswap %s%s' %(destMountPoint,swapFileName))
