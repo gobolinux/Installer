@@ -174,16 +174,31 @@ class BootLoader :
 		self.devroot = os.readlink("/dev/root")
 
 	def __fixDevRoot(self) :
-		if self.reallyInstall :
-			# Not pretty, but required to fix issues with grub-mkconfig
-			os.unlink("/dev/root")
-			os.symlink(self.targetPartition, "/dev/root")
+		if not self.reallyInstall :
+			return
+
+		# Required to fix issues with grub-mkconfig
+		os.unlink("/dev/root")
+		os.symlink(self.targetPartition, "/dev/root")
+
+		# Grub cannot handle /S/K/Devices
+		shutil.copy(self.destMountPoint+"/etc/mtab", self.destMountPoint+"/etc/mtab.orig")
+		newmtab = open(self.destMountPoint+"/etc/mtab").read().replace("/System/Kernel/Devices", "/dev")
+
+		# Force unlink just in case mtab is a symlink to /proc/mounts
+		os.unlink(self.destMountPoint+"/etc/mtab")
+		f = open(self.destMountPoint+"/etc/mtab", "w")
+		f.write(newmtab)
+		f.close()
 
 	def __rollbackDevRoot(self) :
-		if self.reallyInstall :
-			# Rollback modifications to /dev/root
-			os.unlink("/dev/root")
-			os.symlink(self.devroot, "/dev/root")
+		if not self.reallyInstall :
+			return
+
+		# Rollback modifications to /dev/root and /etc/mtab
+		os.unlink("/dev/root")
+		os.symlink(self.devroot, "/dev/root")
+		shutil.move(self.destMountPoint+"/etc/mtab.orig", self.destMountPoint+"/etc/mtab")
 
 	def installGrub(self) :
 		self.__fixDevRoot()
