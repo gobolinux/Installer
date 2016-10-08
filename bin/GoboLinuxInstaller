@@ -36,6 +36,18 @@ class DiskUtility :
 		self.logger = logger
 		self.reallyInstall = reallyInstall
 
+	def isDisk(self, device) :
+		ret = True
+		try :
+			f = open('/sys/block/%s/device/model' %device)
+			data = f.readline()
+			if data.lower().find('dvd-rom') >= 0 or data.lower.find('cd-rom') >= 0 :
+				ret = False
+			f.close()
+		except :
+			pass
+		return ret
+
 	def getDevicesList(self) :
 		devicesList = open('/proc/partitions').readlines()[2:]
 		temp = []
@@ -43,9 +55,11 @@ class DiskUtility :
 		for device in devicesList :
 			l = device.split()
 			size = int(l[2])
-			if size > 1 :
+			if size > system_plus_data_sum :
 				name = l[3]
 				if not os.path.exists('/dev/%s' %name) :
+					continue
+				elif not self.isDisk(name) :
 					continue
 				if size > 1024*1024 :
 					c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
