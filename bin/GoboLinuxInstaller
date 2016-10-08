@@ -187,8 +187,10 @@ class BootLoader :
 
 	def installGrub(self) :
 		self.__fixDevRoot()
-		cmd = 'grub-install --boot-directory=%s/System/Kernel/Boot /dev/%s' %(self.destMountPoint, self.targetDisc)
-		safeRun(cmd, 'grub-install', 0, self.logger)
+		grub_modules = 'normal part_gpt part_msdos multiboot biosdisk nativedisk fat'
+		grub_cmd = 'grub-install --no-floppy --modules="%s" /dev/%s' %(grub_modules, self.targetDisc)
+		cmd = 'chroot %s %s' %(self.destMountPoint, grub_cmd)
+		safeRun(cmd, 'grub-install', 1, self.logger)
 		self.__rollbackDevRoot()
 	
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
