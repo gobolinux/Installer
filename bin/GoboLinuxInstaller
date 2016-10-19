@@ -568,11 +568,21 @@ def doFormatChanged() :
 	else :
 		installer.setEnabled('PartitionType', 0)
 
+def updateBootloaderTargets() :
+	bootloaderTargetList = discsList + partitionsList
+	bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
+	bootloader.delWidget('BootloaderTarget')
+	bootloader.addList('BootloaderTarget',     tr('Install at'), (bootloaderTargetList,''), tr("On the MBR of which disk should the bootloader be installed.") )
 
+def deviceSelectionComplete() :
+	updateBootloaderTargets()
+	return showSelectedSetSize()
+
+bootloaderTargetList = discsList + partitionsList
 deviceSelection.addBoolean('DoFormat',   tr('Format partition'), 0, tr('Erase all contents of the partition and prepare it to receive the new system?'), doFormatChanged)
 deviceSelection.addList('PartitionType', tr('File system'), (['Ext2', 'Ext3', 'Ext4'], 'Ext4'), tr('Which kind of file system should be used to format the root partition.') )
 deviceSelection.setEnabled('PartitionType', 0)
-deviceSelection.onValidate(showSelectedSetSize)
+deviceSelection.onValidate(deviceSelectionComplete)
 
 def doSwapFile() :
 	if installer.getValue('SwapFile') == 1 :
@@ -682,7 +692,6 @@ def installBootloaderChanged() :
    installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
 bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
-bootloader.addList('BootloaderTarget',     tr('Install at'), (discsList + partitionsList,''), tr("On the MBR of which disk should the bootloader be installed.") )
 #bootloader.addBoolean('EnableGraphicGRUB', tr('Boot GRUB in graphic mode'), 1, tr("Select this if you want a background image to be displayed in the bootloader screen."))
 installer.addScreen(bootloader)
 #installer.setEnabled('BootloaderTarget',1)
