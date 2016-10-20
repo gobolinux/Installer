@@ -96,7 +96,8 @@ function install_base() {
 
    Log_Normal "Installing directory "${goboUsers}/${superuser}
    mkdir -p ${dest_dir}/${goboUsers}
-   cp -a ${goboPrograms}/EnhancedSkel/Current/testuser ${dest_dir}/${goboUsers}/${superuser} || mkdir ${dest_dir}/${goboUsers}/${superuser}
+   eskeldir=${goboPrograms}/EnhancedSkel/Current/Resources/Defaults/Settings/skel
+   cp -a ${eskeldir}/.* ${dest_dir}/${goboUsers}/${superuser} || mkdir ${dest_dir}/${goboUsers}/${superuser}
    if [ -d "$HOME/.e" ]
    then
       # Override Enlightenment settings configured by the LiveCD session
@@ -108,7 +109,7 @@ function install_base() {
    fi
    chmod 600 ${dest_dir}/${goboUsers}/${superuser}/
 
-   cd ${goboPrograms}/EnhancedSkel/Current/testuser
+   cd ${eskeldir}
    for i in `find . -type f`
    do
       GrepReplace -B "/Users/testuser" "${goboUsers}/${superuser}/" "${dest_dir}/${goboUsers}/${superuser}/$i"
