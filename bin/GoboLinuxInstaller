@@ -1104,6 +1104,16 @@ def _RunInstallation():
 	safeRun('chroot '+destMountPoint+' SymlinkProgram BootScripts', 'LANG', 0, logger)
 
 	############################################################################
+	# Propagate changes made to .xinitrc and .Xresources
+	for login in addedUsers.keys() + [root_name]:
+		for rcfile in ['.xinitrc', '.Xresources']:
+			if os.path.exists('/Users/%s/%s' %(root_name, rcfile)):
+				cmd = 'cp /Users/%s/%s %s/Users/%s/' %(root_name, rcfile, destMountPoint, login)
+				safeRun(cmd, 'copy %s' %rcfile, 0, logger)
+				cmd = 'chroot %s chown %s /Users/%s/%s'%(destMountPoint, login, login, rcfile)
+				safeRun(cmd, '', 0, logger)
+
+	############################################################################
 	# Zoneinfo
 	log(tr('Setting zoneinfo...'))
 	safeRun('chroot '+destMountPoint+' ln -sfn /System/Index/share/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
