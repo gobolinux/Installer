@@ -95,9 +95,9 @@ function install_base() {
    ln -s "Data" ${dest_dir}/srv
 
    Log_Normal "Installing directory "${goboUsers}/${superuser}
-   mkdir -p ${dest_dir}/${goboUsers}
+   mkdir -p ${dest_dir}/${goboUsers}/${superuser}
    eskeldir=${goboPrograms}/EnhancedSkel/Current/Resources/Defaults/Settings/skel
-   cp -a ${eskeldir}/.* ${dest_dir}/${goboUsers}/${superuser} || mkdir ${dest_dir}/${goboUsers}/${superuser}
+   cp -a ${eskeldir}/.[a-zA-Z]* ${dest_dir}/${goboUsers}/${superuser}
    if [ -d "$HOME/.e" ]
    then
       # Override Enlightenment settings configured by the LiveCD session
