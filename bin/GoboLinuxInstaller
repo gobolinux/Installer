@@ -1081,16 +1081,15 @@ def _RunInstallation():
 		cmd = 'chroot %s AddUser'%destMountPoint
 		cmd = cmd + ' -f "'+addedUsers[login]['FullName'].strip()+'" '
 		cmd = cmd + ' -p '+ crypt.crypt(addedUsers[login]['Password'], salt)
-
 		if addedUsers[login]['SuperSkel'] :
 			cmd = cmd + ' --skel'
-
 		cmd = cmd + ' ' + login
 		safeRun(cmd, '', 0, logger)
+
 		if addedUsers[login]['NewUserEnableSudo'] :
-			cmd = 'chroot %s usermod -aG sys lpadmin %s'%(destMountPoint,login)
+			cmd = 'chroot %s usermod -aG sys,lpadmin %s'%(destMountPoint,login)
 			safeRun(cmd, '', 0, logger)
-		elif addedUsers[login]['SuperSkel'] :
+		if addedUsers[login]['SuperSkel'] :
 			cmd = 'chroot %s rm -f /Users/%s/Desktop/Manager.desktop'%(destMountPoint,login)
 			safeRun(cmd, '', 0, logger)
 
