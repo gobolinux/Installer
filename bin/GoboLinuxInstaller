@@ -31,6 +31,19 @@ sys.path = ['GraphicalTail'] + sys.path
 system_plus_data_sum = 100000
 shared = "/System/Index/share/Installer/"
 
+class Platform :
+	def __init__(self) :
+		self.bios_vendor = ""
+
+	def biosVendor(self) :
+		if len(self.bios_vendor) == 0 :
+			try :
+				self.bios_vendor = os.popen('dmidecode --string bios-vendor').readline()
+			except :
+				self.bios_vendor = ""
+		return self.bios_vendor.strip('\n')
+
+
 class DiskUtility :
 	def __init__(self, logger=None, reallyInstall=True) :
 		self.logger = logger
@@ -77,19 +90,13 @@ class DiskUtility :
 		discsList = filter(lambda x:d.match(x) and not 'loop' in x,devicesList)
 		discsList.sort()
 
-		# initialize any swap partitions
-		for disc in discsList :
-			device = '/dev/'+disc.split(' ')[0]
-			partitionfilter = re.compile(r'^/.*')
-			partitions = filter(lambda x:partitionfilter.match(x) and not 'loop' in x,os.popen('fdisk -l %s'%device).readlines())
-			for partition in partitions :
-				# The bootable flag indicator (*) needs to be removed before the string is tokenized.
-				part = partition.replace('*', ' ').split()
-				if part[4] == '82' :
-					safeRun('mkswap %s'%part[0])
-					safeRun('swapon %s'%part[0])
-
 		return discsList, partitionsList, devicesSizes
+
+	def getEFIPartitionsList(self, disk) :
+		efi_parts = [ part for part in os.popen('parted -m %s print' %disk).readlines() if part.find("EFI System Partition") >= 0 ]
+		if len(efi_parts) == 0 :
+			return []
+		return [ '%s%s' %(disk, part.split(":")[0]) for part in efi_parts ]
 
 	def getUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
@@ -155,11 +162,13 @@ class DiskUtility :
 		safeRun(cmd, 'Unbinding /sys', 0, self.logger)
 
 
-	def mountRoot(self, partition, destMountPoint) :
+	def mount(self, partition, destMountPoint) :
+		if not os.path.exists(destMountPoint) :
+			os.makedirs(destMountPoint)
 		cmd = 'mount /dev/%s %s'%(partition, destMountPoint)
 		safeRun(cmd, 'Mounting root partition', 0, self.logger)
 
-	def unmountRoot(self, partition, destMountPoint) :
+	def unmount(self, partition, destMountPoint) :
 		#log(tr('Unmounting selected root partition %s...' %partition))
 		safeRun('umount ' + destMountPoint)
 
@@ -172,6 +181,7 @@ class BootLoader :
 		self.logger = logger
 		self.reallyInstall = reallyInstall
 		self.devroot = os.readlink("/dev/root")
+		self.diskutil = DiskUtility(self.logger, self.reallyInstall)
 
 	def __fixDevRoot(self) :
 		if not self.reallyInstall :
@@ -216,8 +226,7 @@ class BootLoader :
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
 			self.__fixDevRoot()
-			diskutil = DiskUtility(self.logger, self.reallyInstall)
-			uuidAfterMkfs = diskutil.getUUID(self.targetPartition)
+			uuidAfterMkfs = self.diskutil.getUUID(self.targetPartition)
 			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir, uuidBeforeMkfs, uuidAfterMkfs)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
@@ -248,6 +257,30 @@ class BootLoader :
 			os.mkdir(extlinux_dir)
 		safeWriteToFile(extlinux_dir+'/extlinux.conf', extlinux_conf, self.logger)
 
+	def createEFIConfig(self, grubdir, efimnt) :
+		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
+		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
+		if len(lines) == 0 :
+			log(tr('Error parsing generated grub.cfg file'))
+			return
+
+		old_part_uuid = lines[0].split()[-1]
+		new_part_uuid = self.diskutil.getUUID(self.targetPartition)
+		grub_cfg = grub_cfg.replace(old_part_uuid, new_part_uuid)
+		efidir = "%s/EFI/BOOT" %efimnt
+		if not os.path.exists(efidir) :
+			os.makedirs(efidir)
+		safeWriteToFile(efidir + "/grub-efi.cfg", grub_cfg, self.logger)
+
+		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
+		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
+		cmd += '--fonts="unicode" --themes="" -o %s/BOOTX64.EFI --compress=gz ' %efidir
+		cmd += '"boot/grub/grub.cfg=%s/grub-efi.cfg"' %efidir
+		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
+
+		# rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
+		# partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
+		# safeRun('efibootmgr --create --label "GoboLinux" --loader %s/BOOTX64.EFI --disk %s --part %d' %(efidir, rootDisk, partitionNum))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
@@ -554,6 +587,7 @@ def showSelectedSetSize() :
 	installer.setValue('SpaceRequired', tr('Space required: %s (%s%% of %s)')%(s,percentage,formattedTargetSize))
 	return 1
 
+platform = Platform()
 deviceSelection = Screen(tr('Target device selection'))
 deviceSelection.addList('RootPartition', tr('Root partition'), (partitionsList,''), tr('Which partition of your hard drive should the system be copied to?') )
 
@@ -569,10 +603,17 @@ def doFormatChanged() :
 		installer.setEnabled('PartitionType', 0)
 
 def updateBootloaderTargets() :
-	bootloaderTargetList = discsList + partitionsList
-	bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
-	bootloader.delWidget('BootloaderTarget')
-	bootloader.addList('BootloaderTarget',     tr('Install at'), (bootloaderTargetList,''), tr("On the MBR of which disk should the bootloader be installed.") )
+	if platform.biosVendor() == 'Apple Inc.' :
+		rootDisk = installer.getValue('RootPartition')[1].split()[0]
+		rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
+		bootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
+		bootloader.delWidget('BootloaderTarget')
+		bootloader.addList('BootloaderTarget', tr('Install at'), (bootloaderTargetList,''), tr("EFI boot partition.") )
+	else :
+		bootloaderTargetList = discsList + partitionsList
+		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
+		bootloader.delWidget('BootloaderTarget')
+		bootloader.addList('BootloaderTarget', tr('Install at'), (bootloaderTargetList,''), tr("On the MBR of which disk should the bootloader be installed.") )
 
 def deviceSelectionComplete() :
 	updateBootloaderTargets()
@@ -689,9 +730,12 @@ showSelectedSetSize()
 bootloader = Screen(tr('Bootloader options'))
 
 def installBootloaderChanged() :
-   installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
+	installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
-bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
+if platform.biosVendor() == 'Apple Inc.' :
+	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI partition."), installBootloaderChanged)
+else :
+	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
 #bootloader.addBoolean('EnableGraphicGRUB', tr('Boot GRUB in graphic mode'), 1, tr("Select this if you want a background image to be displayed in the bootloader screen."))
 installer.addScreen(bootloader)
 #installer.setEnabled('BootloaderTarget',1)
@@ -880,7 +924,7 @@ def _RunInstallation():
 	############################################################################
 	# Mount partition
 	log(tr('Mounting selected root partition %s...')%rootPartition)
-	diskutil.mountRoot(rootPartition, destMountPoint)
+	diskutil.mount(rootPartition, destMountPoint)
 
 	############################################################################
 	# Check out dependencies
@@ -1141,17 +1185,20 @@ def _RunInstallation():
 		log('Error creating lilo.conf file')
 
 	############################################################################
-	# Create GRUB settings...
+	# Configure bootloaders
 	log(tr('Creating GRUB config file'))
-	if installer.getValue('InstallBootloader') :
+	if installer.getValue('InstallBootloader') and platform.biosVendor() == 'Apple Inc.' :
+		log(tr('Installing BOOTX64.EFI on %s' %bootloaderTarget))
+		diskutil.mount(bootloaderTarget, '/Mount/EFI')
+		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
+		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
+		diskutil.unmount(bootloaderTarget, '/Mount/EFI')
+	elif installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
-	bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
-	bootloader.configureGrubFonts()
+		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
+		bootloader.configureGrubFonts()
 	
-	############################################################################
-	# Install EXTLINUX
-	if installer.getValue('InstallBootloader') :
 		log(tr('Installing EXTLINUX'))
 		bootloader.createExtLinuxConfig()
 	#	bootloader.installExtLinux()
@@ -1164,7 +1211,7 @@ def _RunInstallation():
 	############################################################################
 	# Unmounting mount point
 	diskutil.unmountPseudoFS(destMountPoint)
-	diskutil.unmountRoot(rootPartition, destMountPoint)
+	diskutil.unmount(rootPartition, destMountPoint)
 	
 	############################################################################
 	# Done message
