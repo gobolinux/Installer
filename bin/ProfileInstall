@@ -78,7 +78,6 @@ function install_base() {
    Log_Normal "Installing directory "${goboMount}
    mkdir -p ${dest_dir}/${goboMount}
    mkdir -p ${dest_dir}/${goboMount}/CD-ROM
-   mkdir -p ${dest_dir}/${goboMount}/Floppy
    mkdir -p ${dest_dir}/${goboMount}/Media
 
    Log_Normal "Installing legacy directory "/usr
