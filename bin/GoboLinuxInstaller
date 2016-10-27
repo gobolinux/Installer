@@ -272,11 +272,14 @@ class BootLoader :
 			os.makedirs(efidir)
 		safeWriteToFile(efidir + "/grub-efi.cfg", grub_cfg, self.logger)
 
+		olddir = os.getenv("PWD")
+		os.chdir(efidir)
 		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
 		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
-		cmd += '--fonts="unicode" --themes="" -o %s/BOOTX64.EFI --compress=gz ' %efidir
-		cmd += '"boot/grub/grub.cfg=%s/grub-efi.cfg"' %efidir
+		cmd += '--fonts="unicode" --themes="" -o BOOTX64.EFI --compress=gz '
+		cmd += '"boot/grub/grub.cfg=grub-efi.cfg"'
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
+		os.chdir(olddir)
 
 		# rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
 		# partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
@@ -603,23 +606,25 @@ def doFormatChanged() :
 		installer.setEnabled('PartitionType', 0)
 
 def updateBootloaderTargets() :
+	rootDisk = installer.getValue('RootPartition')[1].split()[0]
+	rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
+	bootloaderTargetList = discsList + partitionsList
+	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
+
 	if platform.biosVendor() == 'Apple Inc.' :
-		rootDisk = installer.getValue('RootPartition')[1].split()[0]
-		rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
 		bootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
-		bootloader.delWidget('BootloaderTarget')
-		bootloader.addList('BootloaderTarget', tr('Install at'), (bootloaderTargetList,''), tr("EFI boot partition.") )
-	else :
-		bootloaderTargetList = discsList + partitionsList
+		bootloaderInstallLabel = " EFI boot partition"
+	try :
 		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
-		bootloader.delWidget('BootloaderTarget')
-		bootloader.addList('BootloaderTarget', tr('Install at'), (bootloaderTargetList,''), tr("On the MBR of which disk should the bootloader be installed.") )
+	except ValueError :
+		pass
+	bootloader.delWidget('BootloaderTarget')
+	bootloader.addList('BootloaderTarget', tr('Install at'), (bootloaderTargetList,''), tr(bootloaderInstallLabel) )
 
 def deviceSelectionComplete() :
 	updateBootloaderTargets()
 	return showSelectedSetSize()
 
-bootloaderTargetList = discsList + partitionsList
 deviceSelection.addBoolean('DoFormat',   tr('Format partition'), 0, tr('Erase all contents of the partition and prepare it to receive the new system?'), doFormatChanged)
 deviceSelection.addList('PartitionType', tr('File system'), (['Ext2', 'Ext3', 'Ext4'], 'Ext4'), tr('Which kind of file system should be used to format the root partition.') )
 deviceSelection.setEnabled('PartitionType', 0)
@@ -1189,10 +1194,10 @@ def _RunInstallation():
 	log(tr('Creating GRUB config file'))
 	if installer.getValue('InstallBootloader') and platform.biosVendor() == 'Apple Inc.' :
 		log(tr('Installing BOOTX64.EFI on %s' %bootloaderTarget))
-		diskutil.mount(bootloaderTarget, '/Mount/EFI')
+		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
 		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
-		diskutil.unmount(bootloaderTarget, '/Mount/EFI')
+		diskutil.unmount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 	elif installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
