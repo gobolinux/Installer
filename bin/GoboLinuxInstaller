@@ -1036,7 +1036,7 @@ def _RunInstallation():
 	# Set Default Language on Bootscripts Env file
 	log(tr('Setting default locale settings...'))
 
-	o = 'export LANG=%s\nexport LC_ALL=%s\n'%(lang,lang)
+	o = 'export LANG=%s.UTF-8\nexport LC_ALL=%s.UTF-8\n'%(lang,lang)
 
 	safeWriteToFile(destMountPoint+'/Programs/BootScripts/Current/Resources/Environment', o, logger)
 	safeRun('chroot '+destMountPoint+' SymlinkProgram BootScripts', 'LANG', 0, logger)
