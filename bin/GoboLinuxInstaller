@@ -276,9 +276,11 @@ class BootLoader :
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
-		# rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
-		# partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		# safeRun('efibootmgr --create --label "GoboLinux" --loader %s/BOOTx64.EFI --disk %s --part %d' %(efidir, rootDisk, partitionNum))
+		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
+		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
+		lines = safeRun('efibootmgr | grep GoboLinux')
+		if len(lines) == 0 :
+			safeRun('efibootmgr --create --label "GoboLinux" --loader %s/BOOTx64.EFI --disk %s --part %d' %(efidir, rootDisk, partitionNum))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
