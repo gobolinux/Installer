@@ -35,13 +35,8 @@ class Platform :
 	def __init__(self) :
 		self.bios_vendor = ""
 
-	def biosVendor(self) :
-		if len(self.bios_vendor) == 0 :
-			try :
-				self.bios_vendor = os.popen('dmidecode --string bios-vendor').readline()
-			except :
-				self.bios_vendor = ""
-		return self.bios_vendor.strip('\n')
+	def pureEFI(self) :
+		return os.path.exists("/sys/firmware/efi/vars")
 
 
 class DiskUtility :
@@ -276,14 +271,16 @@ class BootLoader :
 		os.chdir(efidir)
 		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
 		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
-		cmd += '--fonts="unicode" --themes="" -o BOOTX64.EFI --compress=gz '
+		cmd += '--fonts="unicode" --themes="" -o BOOTx64.EFI --compress=gz '
 		cmd += '"boot/grub/grub.cfg=grub-efi.cfg"'
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
-		# rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
-		# partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		# safeRun('efibootmgr --create --label "GoboLinux" --loader %s/BOOTX64.EFI --disk %s --part %d' %(efidir, rootDisk, partitionNum))
+		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
+		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
+		lines = safeRun('efibootmgr | grep GoboLinux')
+		if len(lines) == 0 :
+			safeRun('efibootmgr --create --label "GoboLinux" --loader %s/BOOTx64.EFI --disk %s --part %d' %(efidir, rootDisk, partitionNum))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
@@ -611,7 +608,7 @@ def updateBootloaderTargets() :
 	bootloaderTargetList = discsList + partitionsList
 	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
 
-	if platform.biosVendor() == 'Apple Inc.' :
+	if platform.pureEFI() :
 		bootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
 		bootloaderInstallLabel = " EFI boot partition"
 	try :
@@ -737,7 +734,7 @@ bootloader = Screen(tr('Bootloader options'))
 def installBootloaderChanged() :
 	installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
-if platform.biosVendor() == 'Apple Inc.' :
+if platform.pureEFI() :
 	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI partition."), installBootloaderChanged)
 else :
 	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
@@ -1192,8 +1189,8 @@ def _RunInstallation():
 	############################################################################
 	# Configure bootloaders
 	log(tr('Creating GRUB config file'))
-	if installer.getValue('InstallBootloader') and platform.biosVendor() == 'Apple Inc.' :
-		log(tr('Installing BOOTX64.EFI on %s' %bootloaderTarget))
+	if installer.getValue('InstallBootloader') and platform.pureEFI() :
+		log(tr('Installing BOOTx64.EFI on %s' %bootloaderTarget))
 		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
 		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
