@@ -13,6 +13,7 @@ PYTHON_SITE=lib/python$(PYTHON_VERSION)/site-packages
 
 all:
 	make -C src all
+	cp -v src/partinfo bin
 	[ -e $(PYTHON_SITE) ] || mkdir -p $(PYTHON_SITE)
 	for f in $(PYTHON_LIBS); \
 	do libf=$(PYTHON_SITE)/$$f.py; \

@@ -88,10 +88,8 @@ class DiskUtility :
 		return discsList, partitionsList, devicesSizes
 
 	def getEFIPartitionsList(self, disk) :
-		efi_parts = [ part for part in os.popen('parted -m %s print' %disk).readlines() if part.find("EFI System Partition") >= 0 ]
-		if len(efi_parts) == 0 :
-			return []
-		return [ '%s%s' %(disk, part.split(":")[0]) for part in efi_parts ]
+		efi_parts = [ x.split(":")[0] for x in safeRun("partinfo %s" %disk) if x.find("boot") >= 0 and x.find("esp") >= 0 ]
+		return efi_parts
 
 	def getUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
