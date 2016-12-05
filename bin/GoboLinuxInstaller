@@ -33,10 +33,10 @@ shared = "/System/Index/share/Installer/"
 
 class Platform :
 	def __init__(self) :
-		self.bios_vendor = ""
+		self.efi = os.path.exists("/sys/firmware/efi/vars")
 
 	def pureEFI(self) :
-		return os.path.exists("/sys/firmware/efi/vars")
+		return self.efi
 
 
 class DiskUtility :
@@ -605,9 +605,13 @@ def updateBootloaderTargets() :
 	rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
 	bootloaderTargetList = discsList + partitionsList
 	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
+	efibootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
 
-	if platform.pureEFI() :
-		bootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
+	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
+		log(tr('No FAT partitions found on selected disk, falling back to BIOS/MBR installation mode'))
+		platform.efi = False
+	elif platform.pureEFI() and len(efibootloaderTargetList):
+		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI boot partition"
 	try :
 		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
