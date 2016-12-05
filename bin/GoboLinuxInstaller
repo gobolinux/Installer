@@ -611,8 +611,11 @@ def updateBootloaderTargets() :
 		log(tr('No FAT partitions found on selected disk, falling back to BIOS/MBR installation mode'))
 		platform.efi = False
 	elif platform.pureEFI() and len(efibootloaderTargetList):
+		log(tr('Proceeding with EFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI boot partition"
+	else:
+		log(tr('Proceeding with BIOS/MBR installation mode'))
 	try :
 		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
 	except ValueError :
