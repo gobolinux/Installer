@@ -23,7 +23,6 @@ import shutil
 # ConfigTools modules
 import MouseInfo
 import GenLiloConf
-from GenExtLinuxConf import ExtLinuxConf
 
 sys.path = ['GraphicalTail'] + sys.path
 
@@ -232,23 +231,6 @@ class BootLoader :
 		lilo_conf = GenLiloConf.generateLiloConfFile(self.targetDisc, self.targetPartition)
 		os.mkdir(self.destMountPoint + '/Programs/LILO/Settings')
 		safeWriteToFile(self.destMountPoint + '/Programs/LILO/Settings/lilo.conf', lilo_conf, self.logger)
-
-	def installExtLinux(self) :
-		self.__fixDevRoot()
-		cmd = 'chroot %s extlinux --install /System/Kernel/Boot/extlinux' %self.destMountPoint
-		safeRun(cmd, 'extlinux --install', 0, self.logger)
-		cmd = 'cp -v /System/Index/share/syslinux/{menu.c32,vesamenu.c32,memdisk,libcom32.c32,libutil.c32} %s/System/Kernel/Boot/extlinux' %self.destMountPoint
-		safeRun(cmd, 'install syslinux modules', 0, self.logger)
-		cmd = 'dd bs=440 conv=notrunc count=1 if=/System/Index/share/syslinux/mbr.bin of=/dev/%s' %self.targetDisc
-		safeRun(cmd, 'install mbr.bin', 0, self.logger)
-		self.__rollbackDevRoot()
-	
-	def createExtLinuxConfig(self) :
-		extlinux_conf = ExtLinuxConf(self.targetDisc, self.targetPartition).generate()
-		extlinux_dir = self.destMountPoint + '/System/Kernel/Boot/extlinux'
-		if not os.path.exists(extlinux_dir) :
-			os.mkdir(extlinux_dir)
-		safeWriteToFile(extlinux_dir+'/extlinux.conf', extlinux_conf, self.logger)
 
 	def createEFIConfig(self, grubdir, efimnt) :
 		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
