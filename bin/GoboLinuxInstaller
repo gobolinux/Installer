@@ -1205,10 +1205,6 @@ def _RunInstallation():
 		bootloader.installGrub()
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
 		bootloader.configureGrubFonts()
-	
-		log(tr('Installing EXTLINUX'))
-		bootloader.createExtLinuxConfig()
-	#	bootloader.installExtLinux()
 
 	############################################################################
 	# Make /System/Settings/mtab a symlink to /proc/mounts
