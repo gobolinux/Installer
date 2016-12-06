@@ -33,6 +33,8 @@ shared = "/System/Index/share/Installer/"
 class Platform :
 	def __init__(self) :
 		self.efi = os.path.exists("/sys/firmware/efi/vars")
+		if os.getenv("FORCE_MBR_INSTALL") is not None :
+		    self.efi = False
 
 	def pureEFI(self) :
 		return self.efi
@@ -86,9 +88,11 @@ class DiskUtility :
 
 		return discsList, partitionsList, devicesSizes
 
-	def getEFIPartitionsList(self, disk) :
-		efi_parts = [ x.split(":")[0] for x in safeRun("partinfo %s" %disk) if x.find("boot") >= 0 and x.find("esp") >= 0 ]
-		return efi_parts
+	def getEFIPartitionsList(self, disk=None) :
+		cmd = "partinfo"
+		if disk is not None :
+		    cmd += " " + disk
+		return [ x.split(":")[0] for x in safeRun(cmd) if x.find("boot") >= 0 and x.find("esp") >= 0 ]
 
 	def getUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
@@ -587,17 +591,22 @@ def updateBootloaderTargets() :
 	rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
 	bootloaderTargetList = discsList + partitionsList
 	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
-	efibootloaderTargetList = DiskUtility().getEFIPartitionsList('/dev/'+rootDisk)
+	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
-	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
-		log(tr('No FAT partitions found on selected disk, falling back to BIOS/MBR installation mode'))
-		platform.efi = False
+	# Note that one EFI partition comes from the LiveCD
+	if platform.pureEFI() and len(efibootloaderTargetList) == 1:
+		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
+		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
+		print msg
+		installer.showMessageBox(msg, ['Ok'])
+		installer.done()
+		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
-		log(tr('Proceeding with EFI installation mode'))
+		print(tr('Proceeding with EFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI boot partition"
 	else:
-		log(tr('Proceeding with BIOS/MBR installation mode'))
+		print(tr('Proceeding with BIOS/MBR installation mode'))
 	try :
 		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
 	except ValueError :
