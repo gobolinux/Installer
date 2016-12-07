@@ -593,8 +593,7 @@ def updateBootloaderTargets() :
 	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
 	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
-	# Note that one EFI partition comes from the LiveCD
-	if platform.pureEFI() and len(efibootloaderTargetList) == 1:
+	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
 		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
 		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
 		print msg
