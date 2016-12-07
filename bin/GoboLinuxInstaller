@@ -1228,7 +1228,8 @@ def _RunInstallation():
 
 	############################################################################
 	# Make /System/Settings/mtab a symlink to /proc/mounts
-	os.unlink(destMountPoint+"/etc/mtab")
+	if os.path.exists(destMountPoint+"/etc/mtab"):
+		os.unlink(destMountPoint+"/etc/mtab")
 	os.symlink("/proc/mounts", destMountPoint+"/etc/mtab")
 
 	############################################################################
