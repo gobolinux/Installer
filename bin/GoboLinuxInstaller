@@ -240,7 +240,7 @@ class BootLoader :
 		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
 		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
 		if len(lines) == 0 :
-			log(tr('Error parsing generated grub.cfg file'))
+			self.logger.append(tr('Error parsing generated grub.cfg file'))
 			return
 
 		old_part_uuid = lines[0].split()[-1]
@@ -263,8 +263,8 @@ class BootLoader :
 		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
 		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
 		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk %s --part %s' %(efidir, rootDisk, partitionNum))
-		log(tr('EFI boot manager entries:'))
-		log(tr(''.join(safeRun('efibootmgr -v'))))
+		self.logger.append(tr('EFI boot manager entries:'))
+		self.logger.append(tr(''.join(safeRun('efibootmgr -v'))))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
