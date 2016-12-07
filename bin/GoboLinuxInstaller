@@ -625,16 +625,17 @@ def updateBootloaderTargets() :
 	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
 		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
 		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
-		print msg
 		installer.showMessageBox(msg, ['Ok'])
 		installer.done()
 		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
-		print(tr('Proceeding with EFI installation mode'))
+		if mode != 'curses' :
+			print(tr('Proceeding with EFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI boot partition"
 	else:
-		print(tr('Proceeding with BIOS/MBR installation mode'))
+		if mode != 'curses' :
+			print(tr('Proceeding with BIOS/MBR installation mode'))
 	try :
 		bootloaderTargetList.remove(rootPartitionName_and_Size())
 	except ValueError :
