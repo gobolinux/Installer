@@ -34,7 +34,7 @@ class Platform :
 	def __init__(self) :
 		self.efi = os.path.exists("/sys/firmware/efi/vars")
 		if os.getenv("FORCE_MBR_INSTALL") is not None :
-		    self.efi = False
+			self.efi = False
 
 	def pureEFI(self) :
 		return self.efi
