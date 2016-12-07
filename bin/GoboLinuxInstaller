@@ -262,7 +262,7 @@ class BootLoader :
 
 		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
 		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk %s --part %s' %(efidir, rootDisk, partitionNum))
+		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk /dev/%s --part %s' %(efidir, rootDisk, partitionNum))
 		print tr('EFI boot manager entries:')
 		print tr(''.join(safeRun('efibootmgr -v')))
 
