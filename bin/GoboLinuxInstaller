@@ -204,6 +204,9 @@ class BootLoader :
 		os.unlink("/dev/root")
 		os.symlink(self.targetPartition, "/dev/root")
 
+		if not os.path.exists(self.destMountPoint+"/etc/mtab") :
+			shutil.copy("/proc/mounts", self.destMountPoint+"/etc/mtab")
+
 		# Grub cannot handle /S/K/Devices
 		shutil.copy(self.destMountPoint+"/etc/mtab", self.destMountPoint+"/etc/mtab.orig")
 		newmtab = open(self.destMountPoint+"/etc/mtab").read().replace("/System/Kernel/Devices", "/dev")
