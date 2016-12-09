@@ -218,7 +218,22 @@ class BootLoader :
 		grub_cmd = 'grub-editenv - set feature_default_font_path=n'
 		cmd = 'chroot %s %s' %(self.destMountPoint, grub_cmd)
 		safeRun(cmd, 'grub-editenv', 0, self.logger)
-	
+
+	def convertGrubDeviceToUUID(self, grubdir, outputdir) :
+		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
+		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
+		if len(lines) == 0 :
+			log(tr('Error parsing generated grub.cfg file'))
+			return
+
+		old_part_uuid = lines[0].split()[-1]
+		new_part_uuid = self.diskutil.getUUID(self.targetPartition)
+		grub_cfg = grub_cfg.replace(old_part_uuid, new_part_uuid)
+		grub_cfg = grub_cfg.replace("root=/dev/"+self.targetPartition, "root=UUID="+new_part_uuid)
+		if not os.path.exists(outputdir) :
+			os.makedirs(outputdir)
+		safeWriteToFile(outputdir + "/grub-efi.cfg", grub_cfg, self.logger)
+
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
 			self.__fixDevRoot()
@@ -237,19 +252,8 @@ class BootLoader :
 		safeWriteToFile(self.destMountPoint + '/Programs/LILO/Settings/lilo.conf', lilo_conf, self.logger)
 
 	def createEFIConfig(self, grubdir, efimnt) :
-		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
-		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
-		if len(lines) == 0 :
-			log(tr('Error parsing generated grub.cfg file'))
-			return
-
-		old_part_uuid = lines[0].split()[-1]
-		new_part_uuid = self.diskutil.getUUID(self.targetPartition)
-		grub_cfg = grub_cfg.replace(old_part_uuid, new_part_uuid)
 		efidir = "%s/EFI/BOOT" %efimnt
-		if not os.path.exists(efidir) :
-			os.makedirs(efidir)
-		safeWriteToFile(efidir + "/grub-efi.cfg", grub_cfg, self.logger)
+		self.convertGrubDeviceToUUID(grubdir, efidir)
 
 		olddir = os.getenv("PWD")
 		os.chdir(efidir)
@@ -1195,6 +1199,7 @@ def _RunInstallation():
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
+		bootloader.convertGrubDeviceToUUID('/boot/grub', '/boot/grub')
 		bootloader.configureGrubFonts()
 
 	############################################################################
