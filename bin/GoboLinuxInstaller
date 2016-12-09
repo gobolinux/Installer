@@ -34,7 +34,7 @@ class Platform :
 	def __init__(self) :
 		self.efi = os.path.exists("/sys/firmware/efi/vars")
 		if os.getenv("FORCE_MBR_INSTALL") is not None :
-		    self.efi = False
+			self.efi = False
 
 	def pureEFI(self) :
 		return self.efi
@@ -58,6 +58,20 @@ class DiskUtility :
 		return ret
 
 	def getDevicesList(self) :
+		# Prepare the partition label to be shown next to each device path
+		names = safeRun("partinfo --name")
+		types = safeRun("partinfo --fstype")
+		flags = safeRun("partinfo --flags")
+		devicesNames = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in names)
+		devicesTypes = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in types)
+		devicesFlags = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in flags)
+		for key in devicesNames.keys():
+			if len(devicesNames[key]) == 0 and devicesTypes.has_key(key):
+				devicesNames[key] = devicesTypes[key]
+			if len(devicesNames[key]) == 0 and devicesFlags.has_key(key):
+				if devicesFlags[key].find("bios_grub") >= 0:
+					devicesNames[key] = "BIOS boot partition"
+
 		devicesList = open('/proc/partitions').readlines()[2:]
 		temp = []
 		devicesSizes = {}
@@ -71,9 +85,12 @@ class DiskUtility :
 				elif not self.isDisk(name) :
 					continue
 				if size > 1024*1024 :
-					c = name + ' (%0.1fGB)'%(size/(1024*1024.0))
+					c = name + ' (%0.1fGB'%(size/(1024*1024.0))
 				else :
-					c = name + ' (%0.1fMB)'%(size/1024.0)
+					c = name + ' (%0.1fMB'%(size/1024.0)
+				if devicesNames.has_key(name) and len(devicesNames[name]) :
+					c += ' - ' + devicesNames[name]
+				c += ')'
 				temp.append(c)
 				devicesSizes[name] = size
 		devicesList = temp
@@ -89,7 +106,7 @@ class DiskUtility :
 		return discsList, partitionsList, devicesSizes
 
 	def getEFIPartitionsList(self, disk=None) :
-		cmd = "partinfo"
+		cmd = "partinfo --flags"
 		if disk is not None :
 		    cmd += " " + disk
 		return [ x.split(":")[0] for x in safeRun(cmd) if x.find("boot") >= 0 and x.find("esp") >= 0 ]
@@ -187,6 +204,9 @@ class BootLoader :
 		os.unlink("/dev/root")
 		os.symlink(self.targetPartition, "/dev/root")
 
+		if not os.path.exists(self.destMountPoint+"/etc/mtab") :
+			shutil.copy("/proc/mounts", self.destMountPoint+"/etc/mtab")
+
 		# Grub cannot handle /S/K/Devices
 		shutil.copy(self.destMountPoint+"/etc/mtab", self.destMountPoint+"/etc/mtab.orig")
 		newmtab = open(self.destMountPoint+"/etc/mtab").read().replace("/System/Kernel/Devices", "/dev")
@@ -266,9 +286,9 @@ class BootLoader :
 
 		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
 		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk %s --part %s' %(efidir, rootDisk, partitionNum))
-		log(tr('EFI boot manager entries:'))
-		log(tr(''.join(safeRun('efibootmgr -v'))))
+		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk /dev/%s --part %s' %(efidir, rootDisk, partitionNum))
+		print tr('EFI boot manager entries:')
+		print tr('\n'.join(safeRun('efibootmgr -v')))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
@@ -553,6 +573,18 @@ installer.addScreen(introduction)
 
 
 ##############################################################################
+def rootPartitionName() :
+	return installer.getValue('RootPartition')[1].split()[0]
+
+def rootPartitionName_and_Size() :
+	return installer.getValue('RootPartition')[1]
+
+def rootPartitionSizeStr() :
+	return installer.getValue('RootPartition')[1].split()[1].split("-")[0].strip()
+
+def rootPartitionSize() :
+	return devicesSizes[rootPartitionName()]
+
 def showSelectedSetSize() :
 	packages = map(lambda x: x.split()[0], installer.getValue('Packages')[1])
 	sum = system_plus_data_sum
@@ -563,7 +595,7 @@ def showSelectedSetSize() :
 		s = '%0.2f'%(sum / (1024 * 1024.0)) + 'GB'
 	else :
 		s = '%0.1f'%(sum / (1024.0)) + 'MB'
-	targetSize=devicesSizes[installer.getValue('RootPartition')[1].split()[0]]
+	targetSize = rootPartitionSize()
 	if targetSize > (1024 * 1024.0) :
 		formattedTargetSize = '%0.2f'%(targetSize / (1024 * 1024.0)) + 'GB'
 	else :
@@ -581,7 +613,7 @@ deviceSelection.addList('RootPartition', tr('Root partition'), (partitionsList,'
 
 def doFormatChanged() :
 	if installer.getValue('DoFormat') :
-		msg = tr('Warning, this will destroy all data in')+'\n'+installer.getValue('RootPartition')[1]
+		msg = tr('Warning, this will destroy all data in')+'\n'+rootPartitionName_and_Size()
 		ret = installer.showMessageBox(msg, ['Ok', 'Cancel'])
 		if ret == 'Ok' :
 			installer.setEnabled('PartitionType', 1)
@@ -591,28 +623,28 @@ def doFormatChanged() :
 		installer.setEnabled('PartitionType', 0)
 
 def updateBootloaderTargets() :
-	rootDisk = installer.getValue('RootPartition')[1].split()[0]
+	rootDisk = rootPartitionName()
 	rootDisk = ''.join(i for i in rootDisk if not i.isdigit())
 	bootloaderTargetList = discsList + partitionsList
 	bootloaderInstallLabel = "On the MBR of which disk should the bootloader be installed."
 	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
-	# Note that one EFI partition comes from the LiveCD
-	if platform.pureEFI() and len(efibootloaderTargetList) == 1:
+	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
 		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
 		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
-		print msg
 		installer.showMessageBox(msg, ['Ok'])
 		installer.done()
 		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
-		print(tr('Proceeding with EFI installation mode'))
+		if mode != 'curses' :
+			print(tr('Proceeding with EFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI boot partition"
 	else:
-		print(tr('Proceeding with BIOS/MBR installation mode'))
+		if mode != 'curses' :
+			print(tr('Proceeding with BIOS/MBR installation mode'))
 	try :
-		bootloaderTargetList.remove(installer.getValue('RootPartition')[1])
+		bootloaderTargetList.remove(rootPartitionName_and_Size())
 	except ValueError :
 		pass
 	bootloader.delWidget('BootloaderTarget')
@@ -653,7 +685,7 @@ def checkFitPackages() :
 	for package in packages :
 		if programSizes.has_key(package) :
 			sum = sum + programSizes[package]
-	if sum > devicesSizes[installer.getValue('RootPartition')[1].split()[0]] :
+	if sum > rootPartitionSize() :
 		x = installer.showMessageBox(tr('Selected packages does not fit target partition.\nEither deselect packages or go back and choose another target partition.'), ['Ok'])
 	else :
 		return 1
@@ -720,7 +752,7 @@ def setProfile() :
 #packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Base','Typical','Full'], 'Full'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
 packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Full'], 'Full'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
 packageSelection.addCheckList('Packages', tr('Select packages'), (profiles['Full'],  profiles['Full']), tr('Mark the packages that should be installed in the system.'), showSelectedSetSize)
-packageSelection.addLabel('SpaceRequired',tr('Space required: %s (available space: %s)')%('1.5GB',installer.getValue('RootPartition')[1].split()[1]), '', tr('Space required to install the selected packages'))
+packageSelection.addLabel('SpaceRequired',tr('Space required: %s (available space: %s)')%('1.5GB', rootPartitionSizeStr()), '', tr('Space required to install the selected packages'))
 packageSelection.addButton('',tr('Satisfy dependencies'), '', tr('Mark all packages in the list that are needed by the ones already marked.'), fillUpDependencies)
 packageSelection.addBoolean('BypassFillUpDependencies', tr('Bypass dependencies check'), 0, tr("Check if you want to install only the above selected packages."))
 packageSelection.onValidate(checkFitPackages)
@@ -917,10 +949,10 @@ def _RunInstallation():
 
 	############################################################################
 	diskutil = DiskUtility(logger, reallyInstall)
-	rootPartition = installer.getValue('RootPartition')[1].split()[0]
+	rootPartition = rootPartitionName()
 	uuidBeforeMkfs = diskutil.getUUID(rootPartition)
 	if installer.getValue('DoFormat') :
-		log(tr('Formatting root partition %s...')%installer.getValue('RootPartition')[1])
+		log(tr('Formatting root partition %s...') %rootPartitionName_and_Size())
 		diskutil.formatPartition(rootPartition, installer.getValue('PartitionType')[1])
 
 	############################################################################
@@ -1204,7 +1236,8 @@ def _RunInstallation():
 
 	############################################################################
 	# Make /System/Settings/mtab a symlink to /proc/mounts
-	os.unlink(destMountPoint+"/etc/mtab")
+	if os.path.exists(destMountPoint+"/etc/mtab"):
+		os.unlink(destMountPoint+"/etc/mtab")
 	os.symlink("/proc/mounts", destMountPoint+"/etc/mtab")
 
 	############################################################################
