@@ -1193,7 +1193,9 @@ def _RunInstallation():
 	############################################################################
 	# Zoneinfo
 	log(tr('Setting zoneinfo...'))
-	safeRun('chroot '+destMountPoint+' ln -sfn /System/Index/share/zoneinfo/%s /Programs/Glibc/Settings/localtime'%installer.getValue('ZoneInfo')[1].replace(' ','_'), 'zoneinfo', 0, logger)
+	zoneinfo = installer.getValue('ZoneInfo')[1].replace(' ','_')
+	safeRun('chroot '+destMountPoint+' ln -sfn /System/Index/share/zoneinfo/%s /Programs/Glibc/Settings/localtime' %zoneinfo, 'zoneinfo', 0, logger)
+	safeRun('chroot '+destMountPoint+' ln -sfn /System/Index/share/zoneinfo/%s /System/Settings/localtime' %zoneinfo, 'zoneinfo', 0, logger)
 
 	############################################################################
 	# makewhatis
