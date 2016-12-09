@@ -239,7 +239,7 @@ class BootLoader :
 		cmd = 'chroot %s %s' %(self.destMountPoint, grub_cmd)
 		safeRun(cmd, 'grub-editenv', 0, self.logger)
 
-	def convertGrubDeviceToUUID(self, grubdir, outputdir) :
+	def convertGrubDeviceToUUID(self, grubdir, outputdir, outputfile) :
 		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
 		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
 		if len(lines) == 0 :
@@ -252,7 +252,7 @@ class BootLoader :
 		grub_cfg = grub_cfg.replace("root=/dev/"+self.targetPartition, "root=UUID="+new_part_uuid)
 		if not os.path.exists(outputdir) :
 			os.makedirs(outputdir)
-		safeWriteToFile(outputdir + "/grub-efi.cfg", grub_cfg, self.logger)
+		safeWriteToFile(outputdir + "/" + outputfile, grub_cfg, self.logger)
 
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
@@ -273,7 +273,7 @@ class BootLoader :
 
 	def createEFIConfig(self, grubdir, efimnt) :
 		efidir = "%s/EFI/BOOT" %efimnt
-		self.convertGrubDeviceToUUID(grubdir, efidir)
+		self.convertGrubDeviceToUUID(grubdir, efidir, "grub-efi.cfg")
 
 		olddir = os.getenv("PWD")
 		os.chdir(efidir)
@@ -1233,7 +1233,7 @@ def _RunInstallation():
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
-		bootloader.convertGrubDeviceToUUID('/boot/grub', '/boot/grub')
+		bootloader.convertGrubDeviceToUUID('/boot/grub', '/boot/grub', 'grub.cfg')
 		bootloader.configureGrubFonts()
 
 	############################################################################
