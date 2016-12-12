@@ -114,12 +114,11 @@ class DiskUtility :
 	def getPartitionUUID(self, partition) :
 		try :
 			lines = safeRun('blkid /dev/%s' %partition)
-			line = [ x for x in lines if x.find('PARTUUID=') >= 0 ]
-			partuuid = [ x.split('=')[1].replace('"', '') for x in line.split() if x.find('PARTUUID') == 0 ]
+			line = [ x for x in lines if x.find('PARTUUID=') >= 0 ][0]
+			partuuid = [ x.split('=')[1].replace('"', '').replace('\n','') for x in line.split() if x.find('PARTUUID') == 0 ]
 			return partuuid[0]
 		except :
 			return ''
-		return ''
 
 	def getFilesystemUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
