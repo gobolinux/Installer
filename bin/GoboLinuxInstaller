@@ -111,7 +111,17 @@ class DiskUtility :
 		    cmd += " " + disk
 		return [ x.split(":")[0] for x in safeRun(cmd) if x.find("boot") >= 0 and x.find("esp") >= 0 ]
 
-	def getUUID(self, partition) :
+	def getPartitionUUID(self, partition) :
+		try :
+			lines = safeRun('blkid /dev/%s' %partition)
+			line = [ x for x in lines if x.find('PARTUUID=') >= 0 ]
+			partuuid = [ x.split('=')[1].replace('"', '') for x in line.split() if x.find('PARTUUID') == 0 ]
+			return partuuid[0]
+		except :
+			return ''
+		return ''
+
+	def getFilesystemUUID(self, partition) :
 		for entry in glob.glob("/dev/disk/by-uuid/*") :
 			target = os.readlink(entry)
 			if os.path.basename(target) == partition :
@@ -119,7 +129,7 @@ class DiskUtility :
 		return ''
 	
 	def __refreshUUID(self, partition) :
-		target = self.getUUID(partition)
+		target = self.getFilesystemUUID(partition)
 		if len(target) :
 			os.unlink("/dev/disk/by-uuid/%s" %target)
 		cmd = 'udevadm trigger'
@@ -246,10 +256,14 @@ class BootLoader :
 			log(tr('Error parsing generated grub.cfg file'))
 			return
 
-		old_part_uuid = lines[0].split()[-1]
-		new_part_uuid = self.diskutil.getUUID(self.targetPartition)
-		grub_cfg = grub_cfg.replace(old_part_uuid, new_part_uuid)
-		grub_cfg = grub_cfg.replace("root=/dev/"+self.targetPartition, "root=UUID="+new_part_uuid)
+		old_fs_uuid = lines[0].split()[-1]
+		new_fs_uuid = self.diskutil.getFilesystemUUID(self.targetPartition)
+		grub_cfg = grub_cfg.replace(old_fs_uuid, new_fs_uuid)
+
+		part_uuid = self.diskutil.getPartitionUUID(self.targetPartition)
+		if len(part_uuid) :
+		    grub_cfg = grub_cfg.replace("root=/dev/"+self.targetPartition, "root=PARTUUID="+part_uuid)
+
 		if not os.path.exists(outputdir) :
 			os.makedirs(outputdir)
 		safeWriteToFile(outputdir + "/" + outputfile, grub_cfg, self.logger)
@@ -257,7 +271,7 @@ class BootLoader :
 	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
 		if len(grubdir) :
 			self.__fixDevRoot()
-			uuidAfterMkfs = self.diskutil.getUUID(self.targetPartition)
+			uuidAfterMkfs = self.diskutil.getFilesystemUUID(self.targetPartition)
 			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir, uuidBeforeMkfs, uuidAfterMkfs)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
@@ -950,7 +964,7 @@ def _RunInstallation():
 	############################################################################
 	diskutil = DiskUtility(logger, reallyInstall)
 	rootPartition = rootPartitionName()
-	uuidBeforeMkfs = diskutil.getUUID(rootPartition)
+	uuidBeforeMkfs = diskutil.getFilesystemUUID(rootPartition)
 	if installer.getValue('DoFormat') :
 		log(tr('Formatting root partition %s...') %rootPartitionName_and_Size())
 		diskutil.formatPartition(rootPartition, installer.getValue('PartitionType')[1])
