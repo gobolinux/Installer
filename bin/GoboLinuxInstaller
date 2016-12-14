@@ -249,7 +249,8 @@ class BootLoader :
 		safeRun(cmd, 'grub-editenv', 0, self.logger)
 
 	def convertGrubDeviceToUUID(self, grubdir, outputdir, outputfile) :
-		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
+		configpath = os.path.realpath("%s/%s/grub.cfg" %(self.destMountPoint, grubdir))
+		grub_cfg = open(configpath).read()
 		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
 		if len(lines) == 0 :
 			log(tr('Error parsing generated grub.cfg file'))
@@ -286,20 +287,24 @@ class BootLoader :
 
 	def createEFIConfig(self, grubdir, efimnt) :
 		efidir = "%s/EFI/BOOT" %efimnt
+		efiapp = "BOOTx64.EFI"
 		self.convertGrubDeviceToUUID(grubdir, efidir, "grub-efi.cfg")
+		goboversion = open("/System/Settings/GoboLinuxVersion").read().strip("\n")
 
 		olddir = os.getenv("PWD")
 		os.chdir(efidir)
+		if os.path.exists(efiapp) :
+		    efiapp = "Gobo" + goboversion + ".EFI"
 		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
 		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
-		cmd += '--fonts="unicode" --themes="" -o BOOTx64.EFI --compress=gz '
+		cmd += '--fonts="unicode" --themes="" -o %s --compress=gz ' %efiapp
 		cmd += '"boot/grub/grub.cfg=grub-efi.cfg"'
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
-		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
-		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk /dev/%s --part %s' %(efidir, rootDisk, partitionNum))
+		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
+		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
+		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\%s" --disk /dev/%s --part %s' %(goboversion, efiapp, rootDisk, partitionNum))
 		print tr('EFI boot manager entries:')
 		print tr('\n'.join(safeRun('efibootmgr -v')))
 
@@ -643,16 +648,16 @@ def updateBootloaderTargets() :
 	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
 	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
-		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
+		msg = tr('Error: cannot install GoboLinux on an UEFI system without an ESP partition.')
 		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
 		installer.showMessageBox(msg, ['Ok'])
 		installer.done()
 		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
 		if mode != 'curses' :
-			print(tr('Proceeding with EFI installation mode'))
+			print(tr('Proceeding with UEFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
-		bootloaderInstallLabel = " EFI boot partition"
+		bootloaderInstallLabel = " EFI System Partition"
 	else:
 		if mode != 'curses' :
 			print(tr('Proceeding with BIOS/MBR installation mode'))
@@ -780,7 +785,7 @@ def installBootloaderChanged() :
 	installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
 if platform.pureEFI() :
-	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI partition."), installBootloaderChanged)
+	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI System Partition."), installBootloaderChanged)
 else :
 	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
 #bootloader.addBoolean('EnableGraphicGRUB', tr('Boot GRUB in graphic mode'), 1, tr("Select this if you want a background image to be displayed in the bootloader screen."))
@@ -1237,7 +1242,7 @@ def _RunInstallation():
 	# Configure bootloaders
 	log(tr('Creating GRUB config file'))
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
-		log(tr('Installing BOOTx64.EFI on %s' %bootloaderTarget))
+		log(tr('Installing EFI application on %s' %bootloaderTarget))
 		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
 		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
