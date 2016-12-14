@@ -287,20 +287,24 @@ class BootLoader :
 
 	def createEFIConfig(self, grubdir, efimnt) :
 		efidir = "%s/EFI/BOOT" %efimnt
+		efiapp = "BOOTx64.EFI"
 		self.convertGrubDeviceToUUID(grubdir, efidir, "grub-efi.cfg")
+		goboversion = open("/System/Settings/GoboLinuxVersion").read().strip("\n")
 
 		olddir = os.getenv("PWD")
 		os.chdir(efidir)
+		if os.path.exists(efiapp) :
+		    efiapp = "Gobo" + goboversion + ".EFI"
 		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
 		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
-		cmd += '--fonts="unicode" --themes="" -o BOOTx64.EFI --compress=gz '
+		cmd += '--fonts="unicode" --themes="" -o %s --compress=gz ' %efiapp
 		cmd += '"boot/grub/grub.cfg=grub-efi.cfg"'
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
 		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
 		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux 016" --loader "\EFI\BOOT\BOOTx64.EFI" --disk /dev/%s --part %s' %(rootDisk, partitionNum))
+		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\%s" --disk /dev/%s --part %s' %(goboversion, efiapp, rootDisk, partitionNum))
 		print tr('EFI boot manager entries:')
 		print tr('\n'.join(safeRun('efibootmgr -v')))
 
@@ -1238,7 +1242,7 @@ def _RunInstallation():
 	# Configure bootloaders
 	log(tr('Creating GRUB config file'))
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
-		log(tr('Installing BOOTx64.EFI on %s' %bootloaderTarget))
+		log(tr('Installing EFI application on %s' %bootloaderTarget))
 		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
 		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
