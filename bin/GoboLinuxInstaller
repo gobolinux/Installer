@@ -249,7 +249,8 @@ class BootLoader :
 		safeRun(cmd, 'grub-editenv', 0, self.logger)
 
 	def convertGrubDeviceToUUID(self, grubdir, outputdir, outputfile) :
-		grub_cfg = open("%s/%s/grub.cfg" %(self.destMountPoint, grubdir)).read()
+		configpath = os.path.realpath("%s/%s/grub.cfg" %(self.destMountPoint, grubdir))
+		grub_cfg = open(configpath).read()
 		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
 		if len(lines) == 0 :
 			log(tr('Error parsing generated grub.cfg file'))
@@ -297,9 +298,9 @@ class BootLoader :
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
-		rootDisk = ''.join(i for i in self.targetPartition if not i.isdigit())
-		partitionNum = ''.join(i for i in self.targetPartition if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux 016" --loader %s/BOOTx64.EFI --disk /dev/%s --part %s' %(efidir, rootDisk, partitionNum))
+		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
+		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
+		safeRun('efibootmgr --create --label "GoboLinux 016" --loader "\EFI\BOOT\BOOTx64.EFI" --disk /dev/%s --part %s' %(rootDisk, partitionNum))
 		print tr('EFI boot manager entries:')
 		print tr('\n'.join(safeRun('efibootmgr -v')))
 
