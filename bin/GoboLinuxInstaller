@@ -644,16 +644,16 @@ def updateBootloaderTargets() :
 	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
 	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
-		msg = tr('Error: cannot install GoboLinux on an EFI system without a FAT partition.')
+		msg = tr('Error: cannot install GoboLinux on an UEFI system without an ESP partition.')
 		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
 		installer.showMessageBox(msg, ['Ok'])
 		installer.done()
 		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
 		if mode != 'curses' :
-			print(tr('Proceeding with EFI installation mode'))
+			print(tr('Proceeding with UEFI installation mode'))
 		bootloaderTargetList = efibootloaderTargetList
-		bootloaderInstallLabel = " EFI boot partition"
+		bootloaderInstallLabel = " EFI System Partition"
 	else:
 		if mode != 'curses' :
 			print(tr('Proceeding with BIOS/MBR installation mode'))
@@ -781,7 +781,7 @@ def installBootloaderChanged() :
 	installer.setEnabled('BootloaderTarget', installer.getValue('InstallBootloader'))
 
 if platform.pureEFI() :
-	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI partition."), installBootloaderChanged)
+	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB application in an existing EFI System Partition."), installBootloaderChanged)
 else :
 	bootloader.addBoolean('InstallBootloader', tr('Install bootloader'), 1, tr("Install GRUB in the MBR of your hard disk in order to load up the system."), installBootloaderChanged)
 #bootloader.addBoolean('EnableGraphicGRUB', tr('Boot GRUB in graphic mode'), 1, tr("Select this if you want a background image to be displayed in the bootloader screen."))
