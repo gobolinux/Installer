@@ -1115,7 +1115,13 @@ def _RunInstallation():
 	############################################################################
 	# Create fstab
 	log(tr('Generating /System/Settings/fstab...'))
-	cmd = 'GenFstab %s > %s/System/Settings/fstab'%(genFstabParams,destMountPoint)
+
+	espParams = ""
+	if installer.getValue('InstallBootloader') and platform.pureEFI() :
+	    espParams = "--esp /dev/%s" %(os.path.basename(bootloaderTarget))
+	    safeRun('mkdir -p %s/boot/efi' %destMountPoint)
+
+	cmd = 'GenFstab %s %s > %s/System/Settings/fstab'%(espParams, genFstabParams,destMountPoint)
 	safeRun(cmd, 'fstab generation', 0, logger)
 
 	lines = safeFileReadLines(destMountPoint+'/System/Settings/fstab', logger)
