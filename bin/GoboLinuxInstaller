@@ -243,36 +243,10 @@ class BootLoader :
 		safeRun(cmd, 'grub-install', 1, self.logger)
 		self.__rollbackDevRoot()
 
-	def configureGrubFonts(self) :
-		grub_cmd = 'grub-editenv - set feature_default_font_path=n'
-		cmd = 'chroot %s %s' %(self.destMountPoint, grub_cmd)
-		safeRun(cmd, 'grub-editenv', 0, self.logger)
-
-	def convertGrubDeviceToUUID(self, grubdir, outputdir, outputfile) :
-		configpath = os.path.realpath("%s/%s/grub.cfg" %(self.destMountPoint, grubdir))
-		grub_cfg = open(configpath).read()
-		lines = [ line.strip("\n") for line in grub_cfg.split("\n") if line.find("search --no-floppy") >= 0 ]
-		if len(lines) == 0 :
-			log(tr('Error parsing generated grub.cfg file'))
-			return
-
-		old_fs_uuid = lines[0].split()[-1]
-		new_fs_uuid = self.diskutil.getFilesystemUUID(self.targetPartition)
-		grub_cfg = grub_cfg.replace(old_fs_uuid, new_fs_uuid)
-
-		part_uuid = self.diskutil.getPartitionUUID(self.targetPartition)
-		if len(part_uuid) :
-		    grub_cfg = grub_cfg.replace("root=/dev/"+self.targetPartition, "root=PARTUUID="+part_uuid)
-
-		if not os.path.exists(outputdir) :
-			os.makedirs(outputdir)
-		safeWriteToFile(outputdir + "/" + outputfile, grub_cfg, self.logger)
-
-	def createGrubConfig(self, grubdir, uuidBeforeMkfs="") :
+	def createGrubConfig(self, grubdir) :
 		if len(grubdir) :
 			self.__fixDevRoot()
-			uuidAfterMkfs = self.diskutil.getFilesystemUUID(self.targetPartition)
-			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir, uuidBeforeMkfs, uuidAfterMkfs)
+			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
 		return True
@@ -288,7 +262,6 @@ class BootLoader :
 	def createEFIConfig(self, grubdir, efimnt) :
 		efidir = "%s/EFI/BOOT" %efimnt
 		efiapp = "BOOTx64.EFI"
-		self.convertGrubDeviceToUUID(grubdir, efidir, "grub-efi.cfg")
 		goboversion = open("/System/Settings/GoboLinuxVersion").read().strip("\n")
 
 		olddir = os.getenv("PWD")
@@ -1251,15 +1224,13 @@ def _RunInstallation():
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
 		log(tr('Installing EFI application on %s' %bootloaderTarget))
 		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
-		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
+		bootloader.createGrubConfig('/boot/grub')
 		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
 		diskutil.unmount(os.path.basename(bootloaderTarget), '/Mount/EFI')
 	elif installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
-		bootloader.createGrubConfig('/boot/grub', uuidBeforeMkfs)
-		bootloader.convertGrubDeviceToUUID('/boot/grub', '/boot/grub', 'grub.cfg')
-		bootloader.configureGrubFonts()
+		bootloader.createGrubConfig('/boot/grub')
 
 	############################################################################
 	# Make /System/Settings/mtab a symlink to /proc/mounts
