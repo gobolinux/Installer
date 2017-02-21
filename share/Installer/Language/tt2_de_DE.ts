@@ -275,7 +275,7 @@
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="616"/>
         <source>Default gateway: the IP which redirects requests to the outside world.</source>
-        <translation type="obsolete">Die IP-Adresse des Computers der sie mit der Außenwelt verbindet.</translation>
+        <translation type="obsolete">Die IP-Adresse des Computers der sie mit der Aussenwelt verbindet.</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="617"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Enter the same password as above, to verify for typing mistakes.</source>
-        <translation>Geben sie das gleiche Kennwort wie oben ein um Tippfehler auszuschließen.</translation>
+        <translation>Geben sie das gleiche Kennwort wie oben ein um Tippfehler auszuschliessen.</translation>
     </message>
     <message>
         <location filename="" line="7536741"/>
@@ -570,7 +570,7 @@
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1103"/>
         <source>You should now be able to reboot and enjoy the GoboLinux experience. :)</source>
-        <translation>Sie können den Computer jetzt neu starten. Viel Spaß mit GoboLinux! :)</translation>
+        <translation>Sie können den Computer jetzt neu starten. Viel Spass mit GoboLinux! :)</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1106"/>
