@@ -1,228 +1,355 @@
 AALib :: Library for displaying graphics as Ascii Art
 AbsTK :: A python Abtract ToolKit for interface building (used in this installer)
+Acpid :: Advanced Configuration and Power Interface event daemon
+Adwaita-Icon-Theme :: GNOME Icon theme
 ALSA-Driver :: Advanced Linux Sound Architecture drivers
 ALSA-Lib :: Advanced Linux Sound Architecture libraries
 ALSA-Utils :: Advanced Linux Sound Architecture utilities, including alsamixer and aplay
+AsciiDoc :: Text based document generation
+Aspell :: Intelligent Spell Checker
 ATK ::  Gnome Accessibility ToolKit
+ATKMM :: AtkMM is the official C++ interface for the ATK accessibility toolkit library.
 Atool :: Script for managing file archives
+At-Spi2-ATK :: Bridges ATK to At-Spi2 D-Bus service
+At-Spi2-Core :: A GNOME Service Provider Interface for the Assistive Technologies
 Audiofile :: Libraries and programs to support basic sound file formats
 Aumix :: Volume control and mixer for terminal or X
 Autoconf :: Produces shell scripts which automatically configure source code
 Automake :: Generates Makefile.in files, for use with Autoconf
+Avahi :: A system which facilitates service discovery on a local network
+Awesome :: Awesome Window Manager
+Babl :: Babl is a dynamic, any to any, pixel format translation library.
 Bash :: Shell of the GNU operating system
 BC :: Interactive algebraic language
 Bin86 :: 8086 assembler and loader
 BinUtils :: Tools for linking and managing archives
 Bison :: General purpose parser generator
 BOGL :: Ben's Own Graphics Library
+Boost :: A collection of C++ libraries
 BootScripts :: GoboLinux bootscripts
 Bzip2 :: Patent free, high-quality data compressor
+Cairo :: A 2D graphics library with support for multiple output devices.
+Cairomm :: A C++ API for cairo 
 Cdparanoia-III :: CD ripper
+CDRDAO :: Write CD-Rs in Disk-At-Once mode
 CDRTools :: (formerly cdrecord) Burns CDs with a CDR/CDRW recorder
 CloopUtils :: Tools to deal with compressed ISO images
+CMake :: A cross-platform make system
 Compile :: GoboLinux program to download, compile and install packages
+Compton :: A compositor for X11.
+ConfigTools :: Tools that help the configuration process of a GoboLinux installation
 CoreUtils :: Collection of basic file, shell and text manipulation utilities
 Cpio :: Archiver that handles various types of cpio and tar archives
+CryptSetup :: Encrypted partition manager supporting LUKS
 CUPS :: Common Unix Printing System, a portable printing layer
+CUPS-Filters :: Backends, filters and other software for CUPS.
+Curl :: Command line tool and library for client-side URL transfers.
 CVS :: Concurrent Versioning System, for collaborative work over a network
+Cyrus-SASL :: Implementation of the Simple Authentication and Security \
+DB ::  Berkeley DB Database Library
+DBus :: D-Bus message bus
+DBus-GLib :: DBus bindings for GLib
+DejaVu-Fonts-TTF :: DejaVu font set 
 DevFSd :: Manages entries in the Device Filesystem
+Device-Mapper :: Device Mapper Tools
 DHCPCD :: DHCP client IP configuration daemon
+Dialog :: A tool to display dialog boxes from shell scripts
 DiffUtils :: Finds differences between and among files
+Dit :: A text editor
+Dmidecode :: Reports hardware info from bios
+DocBook-XML-DTD :: XML DTDs for DocBook V4.5
+DocBook-XSL-Stylesheets :: DocBook XSL stylesheets
+DosFSTools :: Utilities for Making and Checking MS-DOS FAT Filesystems on Linux
 E2FSProgs :: Utilities for ext2, the standard linux filesystem
 Ed :: The Standard Unix Text Editor
+EFIBootMgr :: Displays and allows the user to edit the Intel Extensible Firmware Interface (EFI) boot manager menu
 Eject :: Puts removable media under software control
+ELFUtils :: Utilities to manipulate ELF files
 EnhancedSkel :: GoboLinux default user settings
+Esound :: The Enlightened Sound Daemon.
+Eudev ::  A userspace implementation of devfs
+Exempi :: Library to parse XMP metadata
 Expat :: XML parser library
+FAAD2 :: An AAC decoder.
+FAM ::  File Alteration Monitoring Daemon
 FBSH :: A graphical shell and getty to run under the Linux framebuffer device
+FFmpeg :: Library and tools for audio/video.
 File :: Classifies files depending on their contents
 FindUtils :: Tools to find files and to operate on groups of files
 Firefox :: Lightweight Mozilla browser
+Flac :: Free Lossless Audio Coder.
 Flex :: Generates text-scanning programs
 Fontconfig :: A library for configuring and customizing font access
 FreeType :: Font engine
 Freshen :: Tool to update Recipes for Compile
+Fuse :: Filesystem in Userspace
 Gawk :: String manipulation language
-GCC :: Gnu Compiler Collection
-GDB :: Gnu Debugger
+GCC :: GNU Compiler Collection
+GDB :: GNU Debugger
 GDK-Pixbuf :: a replacement for Imlib
 GDKXFT :: Provides anti-aliased fonts
+Gegl :: GEGL (Generic Graphics Library) is a graph based image processing framework.
 Gettext :: Tools to produce multi-lingual messages
+Ghostscript :: An interpreter for the PostScript language and for PDF.
 GhostScript :: Interpreter for the Postscript and PDF graphics languages
+Giflib :: Library for GIF images
 Gimp :: GNU image manipulation program
 Gimp-Print :: Printer drivers for use with Ghostscript, CUPS, Foomatic, and the Gimp
+Git :: Git is a popular version control system designed to handle very large projects with speed and efficiency; it is used mainly for various open source projects, most notably the Linux kernel.
 Glade :: A user interface builder for GTK+ and Gnome
+Glibc :: GNU C Library
 GLib :: Core library that forms the basis of GTK+ and GNOME
-Glibc :: Gnu C Library
+GLibmm :: C++ bindings for Glib
+Gnuplot :: A command-line driven interactive datafile and function plotting utility
+GObject-Introspection :: Describes the program APIs and collect them in a uniform, machine readable format
 GoboHide :: GoboLinux program for concealing and managing the legacy tree.
+GoboNet :: Ultra-minimalistic wifi network manager
 GParted :: A graphical partitioner. Uses Parted as backend.
 GPM :: (General Purpose Mouse) A mouse server for the console
 Grep :: Globally search for Regular Expression and Print - Finds lines that match entered patterns
 Groff :: Document formatting system
+GRUB-EFI ::  GRand Unified Bootloader
 Grub :: GRand Unified Bootloader
-GTK+ :: Gimp ToolKit - for X windows GUI development
+GRUB ::  GRand Unified Bootloader
 GTK-Engines :: A collection of basic theme engines for GTK+
+GTK+ :: Gimp ToolKit - for X windows GUI development
+GTKMM :: A C++ interface for the popular GUI library GTK+.
+Gutenprint :: High quality drivers for Canon, Epson, Lexmark, Sony, Olympus, and PCL printers for use with Ghostscript, CUPS, Foomatic, and the Gimp 
 GV :: Frontend for ghostscript
 Gzip :: Compresses and decompresses files
+HarfBuzz :: HarfBuzz is an OpenType text shaping engine.
 Hdparm :: Utility for manipulating hard drive parameters
+Help2Man :: Generate manual pages from program output
+HiColor-Icons :: The hicolor-icon-theme package contains a default fallback theme for implementations of the icon theme specification.
+Hotplug :: Automatic configuration of hotplugged devices
+Hplip :: HP print, scan and fax drivers for Linux
+Htop :: Interactive text-mode process viewer
 HwData :: Hardware identification and configuration data, for Kudzu
+ID3Lib :: An ID3v1/ID3v2 tagging library
+IJS :: A library which implements a protocol for transmission of raster page images
+ILMBase :: A set of libraries that handles OpenEXR images
 ImageMagick :: Image display and manipulation program
 IMLib :: General Image loading and rendering library
+Indent :: Formats C source code
 InetUtils :: Collection of common network programs
+Installer :: The GoboLinux installer application
+internetworking over dialup lines
+Iptables :: A Linux kernel packet control tool.
 Ispell :: Interactive spell checker
 JPEG :: Libraries for compression of images based on the Joint
-Photographic Experts Group standard
+K3B :: A CD/DVD burning application
 KBD :: Keytable files and keyboard utilities
+KDE-I18n-de :: KDE translations for german
+KDE-I18n-pt_BR :: KDE translations for brazilian portuguese
 KDE :: The K Desktop Environment
+Kerberos :: A network authentication protocol
 Kudzu :: Hardware Probing Tool
 Lame :: MP3 encoding tool
+Lazy :: A console-based CD player with digital audio extraction and freedb support
+LCMS :: A little color management system
 Lcms :: Little Color Management System
 Less :: Display paginator
 Lesstif :: Free implementation of OSF/Motif widget set
 LibART_LGPL :: Basic vector graphics library
+LibAssuan :: The IPC library used by some GnuPG related software, implementing the "Assuan protocol"
+LibCroco :: A general CSS parsing and manipulation library
+LibDaemon :: A lightweight C library that eases the writing of UNIX daemons
+LibDRM :: Library for accessing the Linux kernel's Direct Rendering Modules
+LibEpoxy ::  Epoxy is a library for handling OpenGL function pointer management for you 
+LibEvdev :: A library for handling evdev kernel devices
+LibExif :: An EXIF tags parsing library
+LibFFI :: A portable foreign function interface library
+LibGCrypt :: General-purpose cryptographic library based on the code from GnuPG
 LibGlade :: Lets users load GLADE interfaces at runtime
+LibGPG-Error :: A small library that defines common error values for all GnuPG components
+LibGPhoto2 :: A digital camera library
+LibICU4C :: C Internationalization library.
+LibID3Tag :: ID3 tag manipulation library
+LibIDN :: Support for Internationalized Domain Names (IDN)
+LibJPEG-Turbo :: SIMD-accelerated libjpeg-compatible JPEG codec library 
+LibMad :: MPEG Audio Decoder library
 LibMng :: Libraries to deal with mng, the animation extension to the PNG format
+LibMNG :: reference library for MNG, the animation extension to PNG
+LibNL :: A netlink sockets library 
 LibOGG :: Ogg Vorbis is a free compressed audio format.  LibOGG contains the Ogg file structure
+LibOpenRAW :: Library for decoding RAW files produced by digital cameras
+LibPaper :: Library for handling paper characteristics
 LibPNG :: Portable Network Graphics library.
+LibPthread-Stubs :: Pthread functions stubs for platforms missing them
 LibRSVG :: Scalable Vector Graphics rendering engine
+LibSamplerate :: Sample Rate Converter for audio
 LibSigc++ :: Callback Framework for C++
+LibSigc++ :: Typesafe Callback Framework for C++
+LibSndfile :: A library for reading and writing  sound files
+LibSpiro :: Library for drawing curves (based on clothoid splines)
 LibStdC++ :: An implementation of the ISO 14882 Standard C++ library
-LibTool :: Gnu Generic library support script
+LibTheora ::  A free and open video compression format 
+LibTIRPC :: Libtirpc is a port of Suns Transport-Independent RPC library to Linux
+LibTool :: GNU Generic library support script
+Libungif :: An uncompressed GIF library compatible with giflib
 LibUngif :: Operates on GIF files using uncompressed GIFs
+LibUSB :: Library for userspace access to USB devices
+LibVA :: Userspace Video Acceleration (VA) x11 interface
+LibVDPAU :: The Video Decode and Presentation API for UNIX
 LibVorbis :: Ogg Vorbis is a free compressed audio format.  LibVorbis contains the Vorbis encoding format.
+LibXDG-BaseDir ::  An implementation of the XDG Base Directory specifications
 LibXML2 :: eXtensible Markup Language C library for the Gnome project
 LibXSLT :: eXtensible Stylesheet Language Transformations library
 Licq :: ICQ instant messenger clone
 LILO :: Linux Loader - an x86 bootloader
+Links :: A text and graphics mode portable WWW browser
 Linux :: A clone of the Unix kernel
+Linux-Firmware :: Firmware files for the Linux kernel
+Linux-Headers :: Linux kernel headers
+Linux-PAM :: A flexible mechanism for authenticating users
 Liquid :: High Performance Liquid KDE style engine
+Listener :: A generic inotify consumer with regular expression support
+LiveCD :: Scripts used at the GoboLinux live cd environment
+Lode-Fonts :: Custom fonts for GoboLinux
+Lsof :: An Unix-specific diagnostic tool
+Lua :: An extensible extension language
+LuaRocks :: Manager for Lua modules
+LVM2 :: User space toolset that provides logical volume management on Linux
 Lyx :: Advanced document processor
 M4 :: GNU Macro Processor
+Makedepend :: Create dependencies in makefiles
 Make :: Generates executables and other non-source programs
-Man :: Programs used to read GNU/Linux documentation
+Manager :: A graphical management front-end for GoboLinux
 Man-Pages :: Collection of standard documentation
+Man :: Programs used to read GNU/Linux documentation
 MC :: Midnight Commander, a console directory browser/file manager
+Mdadm :: A tool for managing Linux Software RAID arrays
 Mesa :: Open source implementation of the OpenGL graphics API
 MkTemp :: A small program to allow safe temporary file creation from shell scripts
-ModUtils :: Kernel module management utilities for the Linux 2.4 kernels
 Module-Init-Tools :: Kernel module management utilities for the Linux 2.6 kernels
+ModUtils :: Kernel module management utilities for the Linux 2.4 kernels
 MPlayer :: Framebuffer or X movie and audio player
 Mtail :: A colorized tail workalike
+MtDev :: Multitouch Protocol Translation Library
 Nano :: Small, user friendly text editor (a Pico clone)
 Nasm :: Netwide Assembler - Portable, Modular 80x86 assembler
+NCSA-Mosaic :: This is NCSA Mosaic 2.7, one of the first graphical web browsers.
 Ncurses :: Console display and update toolkit
+NcursesW :: A System V Release 4.0 curses emulation library.
 Netkit-Base :: Network applications and daemons
 Net-Tools :: Important tools for controlling the network subsystem of Linux
 Newt :: A development library for text mode user interfaces
+NSPR :: The Netscape Portable Runtime
+NSS :: The Network Security Services
+NTFSProgs :: NTFS Utilities
+OpenEXR :: Tools for manipulating OpenEXR images 
+OpenLDAP :: LDAP suite of applications and development tools
+OpenOffice :: An open-source office suite
 OpenSSH :: Free implementation of the SSH 1 and 2 remote login protocols
 OpenSSL :: Toolkit for Secure Sockets Layer and Transport Layer Security
+ORC :: Oil Runtime Compilier
+OS-Prober :: Tool for adding other distros to GRUB
+PangoMM :: A C++ API for Pango 
 Pango :: Text rendering internationalization framework
 Parted :: Manipulates disk partitions
 Patch :: Intelligently applies a patch to a file
 PCIUtils :: Utilities dealing with devices on the Personal Computer Interface bus
+Pcmcia-CS :: A complete PCMCIA support package for Linux
 PCRE :: Library of Perl-compatible regular expressions
+PCSC-Lite :: Middleware to access a smart card using SCard API (PC/SC).
 Perl :: A high-level programming language with an eclectic heritage
+Perl-XML-Parser :: XML Parser (Perl Module)
+Photographic Experts Group standard
+Pilot-Link :: PalmPilot Link Utility (Backup, Uploading Tools, and more)
+Pinentry :: Presents password dialogs in a secure way
 Pinfo :: Ncurses based info documentation browser
+PIP :: The PyPA recommended tool for installing Python packages
+Pixman :: Pixel-manipulation library for X and cairo
 Pkgconfig :: A system for managing library compile/link flags that works with automake and autoconf
+Poppler :: PDF rendering library
 Popt :: Library for parsing command line options
+Portmap :: RPC connection manager
+PowerTOP :: Power consumption measurement and estimation tool
 PPP :: A daemon which implements the Point to Point Protocol for
-internetworking over dialup lines
 Procinfo :: Gets useful information from /proc
 Procps :: Utilties that monitor system status
 ProgsReiserFS :: A collection of tools for manipulating ReiserFS filesystems using libreiserfs
 Psmisc :: Proc filesystem tools
+PyCairo :: A set of Python bindings for the cairo graphics library.
+PyGObject :: Python bindings for the GObject library.
 PyGTK :: Python Bindings for the GTK Widget Set
 PyQt :: Python Bindings for the Qt Toolkit
 Python :: An interpreted, interactive, object-oriented programming language
+Qpdf :: A content-preserving PDF transformation system
 Qt :: Toolkit for GUI developers
 Readline :: Lets users edit command lines as they are typed in
 ReiserFSProgs :: User-level tools for ReiserFS filesystems
+RFKill :: Tool for handling radio switches
 RHPL :: Red Hat Python Libraries
 RPM :: Red Hat Package Manager
 RP-PPPoE :: Roaring Penguin Point to Point Protocol over Ethernet - for many ADSL services
+Rsync :: A file transfer program to keep remote files in sync
 Ruby :: Object-oriented programming language
 Runit :: Replacement for SysV-init and other init schemes
+RXVT-Unicode :: A terminal emulator for X.
 Sash :: Stand-alone shell
+Schroedinger :: Library for encoding/decoding of Dirac video streams
 Scripts :: GoboLinux Scripts
 SDL ::  Simple DirectMedia Layer Game Programming Library
 Sed :: A stream-oriented non-interactive text editor
+SetupTools :: Easily download, build, install, upgrade, and uninstall Python packages
 Shadow :: Programs to use encrypted passwords
 SIP ::  Python/C++ Bindings Generator
 S-Lang :: C-like programming language
+SPICE-Protocol :: Headers defining protocols of Spice
+SquashFS-Tools :: Tools required to prepare squashfs images
+Startup-Notification ::  Reference Implementation for the Startup-Notification Protocol
 Strace :: Debugging tool
+Subversion :: An open-source revision control system
 Sudo :: Allows users to run commands as superuser
 SVGALib :: A low-level graphics library that provides VGA and SVGA modes in a console
+SysFSUtils :: Linux Diagnostic Tools
 Sysklogd :: System log daemons
+SYSLINUX :: Syslinux is a package that contains a family of bootloaders.
 Sysvinit :: Linux System V Init
+T1Lib :: A library which implements functions for generating bitmaps from Adobe Type 1 fonts
+Tabbedex-URxvt :: Tabbed plugin for rxvt-unicode with many enhancements 
+TagLib :: An audio meta data (tag) reading and modification library
 Tar :: Creates and extracts tar archives
+Tcl ::  The Tcl scripting language
+TCPWrappers :: TCP Wrappers Toolkit
 TeTeX :: A complete TeX distribution for UNIX compatible systems
 Texinfo :: Produces manuals, ASCII text, and on-line documentation
+Thunderbird :: A total redesign of the Mozilla mail component
 TIFF :: libraries for reading and writing tiff image files
 TraceRoute :: Determine route of packets in TCP/IP networks
+Udev :: A userspace implementation of devfs
+UnionFS-Fuse :: A FUSE-based UnionFS filesystem implementation
+Unsermake :: A replacement for automake
 Unzip :: Collection of archiving and compression tools
 Util-Linux :: A suite of essential utilities for any Linux system
+Util-macros :: X.Org autotools utility macros
 Vim :: Vi IMproved text editor
 Wget :: Retrieves files from the Web
 WindowMaker :: Window manager for X Window System
+Wireless-Tools :: Tools to configure wireless interfaces
+WPA_Supplicant :: WPA_Supplicant is a WPA Supplicant with support for WPA and WPA2 (IEEE 802.11i / RSN).
+X264 :: A free library for encoding H264/AVC video streams.
 Xaw3d :: A 3D version of the MIT Athena widget set for X
+XCB-Util-Cursor :: XCB cursor library (libxcursor port)
 XFS-Utils :: Utilities for the XFS journaled filesystem
+XKBcommon :: xkbcommon is a library to handle keyboard descriptions.
+XMLTO :: A frontend to an XSL toolchain
 XMMS :: X MultiMedia System - Winamp-like music player
 Xorg :: An open source implementation of the X Window System
+Xorg-App :: Applications from Xorg
+Xorg-Driver :: Intel video driver for Xorg.
+Xorg-Font :: Fonts for Xorg
+Xorg-Lib :: Libraries for X11
+Xorg-Proto :: DRI3 protocol specification and Xlib/Xserver headers
+Xorg-Server :: The Xorg X server
+Xpdf :: A X11 PDF viewer
+XTerm :: Classic X terminal
 Xtest :: A X11 server testing tool
+Xvidcore :: An MPEG-4 video codec
+YAFC :: Yet another FTP client
+Yasm :: An x86 and AMD64 assembler
 Zip :: A compression and file packaging utility
 ZLib :: Data compression library
 ZSH :: GoboLinux's default shell
 ZSNES :: Super Nintendo emulator
-Htop :: Interactive text-mode process viewer
-OpenOffice :: An open-source office suite
-Xpdf :: A X11 PDF viewer
-Gnuplot :: A command-line driven interactive datafile and function plotting utility
-LibMad :: MPEG Audio Decoder library
-T1Lib :: A library which implements functions for generating bitmaps from Adobe Type 1 fonts
-KDE-I18n-pt_BR :: KDE translations for brazilian portuguese
-KDE-I18n-de :: KDE translations for german
-LibSigc++ :: Typesafe Callback Framework for C++
-Aspell :: Intelligent Spell Checker
-Device-Mapper :: Device Mapper Tools
-Dialog :: A tool to display dialog boxes from shell scripts
-DosFSTools :: Utilities for Making and Checking MS-DOS FAT Filesystems on Linux
-Esound :: The Enlightened Sound Daemon.
-Flac :: Free Lossless Audio Coder.
-Hotplug :: Automatic configuration of hotplugged devices
-ID3Lib :: An ID3v1/ID3v2 tagging library
-Indent :: Formats C source code
-K3B :: A CD/DVD burning application
-LCMS :: A little color management system
-LibExif :: An EXIF tags parsing library
-LibIDN :: Support for Internationalized Domain Names (IDN)
-LibMNG :: reference library for MNG, the animation extension to PNG
-LibSndfile :: A library for reading and writing  sound files
-Libungif :: An uncompressed GIF library compatible with giflib
-Links :: A text and graphics mode portable WWW browser
-Pcmcia-CS :: A complete PCMCIA support package for Linux
-Pilot-Link :: PalmPilot Link Utility (Backup, Uploading Tools, and more)
-Rsync :: A file transfer program to keep remote files in sync
-Thunderbird :: A total redesign of the Mozilla mail component
-Udev :: A userspace implementation of devfs
-YAFC :: Yet another FTP client
-ConfigTools :: Tools that help the configuration process of a GoboLinux installation
-CDRDAO :: Write CD-Rs in Disk-At-Once mode
-Lazy :: A console-based CD player with digital audio extraction and freedb support
-LibGPhoto2 :: A digital camera library
-LibID3Tag :: ID3 tag manipulation library
-LibSamplerate :: Sample Rate Converter for audio
-LibUSB :: Library for userspace access to USB devices
-Linux-Headers :: Linux kernel headers
-Listener :: A generic inotify consumer with regular expression support
-LiveCD :: Scripts used at the GoboLinux live cd environment
-Lsof :: An Unix-specific diagnostic tool
-Manager :: A graphical management front-end for GoboLinux
-NTFSProgs :: NTFS Utilities
-Perl-XML-Parser :: XML Parser (Perl Module)
-SquashFS-Tools :: Tools required to prepare squashfs images
-Subversion :: An open-source revision control system
-SysFSUtils :: Linux Diagnostic Tools
-TagLib :: An audio meta data (tag) reading and modification library
-Unsermake :: A replacement for automake
-Wireless-Tools :: Tools to configure wireless interfaces
-XTerm :: Classic X terminal
-Mdadm :: A tool for managing Linux Software RAID arrays
