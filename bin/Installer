@@ -21,8 +21,16 @@ then
     LIVECD_DEVICE=$(grep "/Mount/.Pivot/Mount/CD-ROM" /proc/mounts | awk {'print $1'})
     RENAMED_DEVICE=$(echo "$LIVECD_DEVICE" | sed 's,/dev/,/dev/_,g')
     mv "$LIVECD_DEVICE" "$RENAMED_DEVICE"
+
+    #
+    # Temporarily disable kernel messages to prevent console trashing
+    #
+    printk=$(cat /System/Kernel/Status/sys/kernel/printk)
+    [ -z "$args" ] && echo 1 > /System/Kernel/Status/sys/kernel/printk
+
     GoboLinuxInstaller install $args
     mv "$RENAMED_DEVICE" "$LIVECD_DEVICE"
+    echo $printk > /System/Kernel/Status/sys/kernel/printk
 else
     GoboLinuxInstaller
 fi
