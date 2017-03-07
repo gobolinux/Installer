@@ -246,7 +246,7 @@ class BootLoader :
 	def createGrubConfig(self, grubdir) :
 		if len(grubdir) :
 			self.__fixDevRoot()
-			cmd = 'chroot %s GenGrubConf %s "%s" "%s"' %(self.destMountPoint, grubdir)
+			cmd = 'chroot %s GenGrubConf %s' %(self.destMountPoint, grubdir)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
 		return True
