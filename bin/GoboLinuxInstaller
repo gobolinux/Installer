@@ -843,7 +843,6 @@ def addUser() :
 		return
 	newUser = {}
 	newUser['Password']  = installer.getValue('NewUserPassword')  # obs: existe o parametro '-p' no useradd para passar a senha
-	newUser['SuperSkel'] = installer.getValue('NewUserSuperSkel')
 	newUser['FullName'] = installer.getValue('NewUserFullName')
 	newUser['NewUserEnableSudo'] = installer.getValue('NewUserEnableSudo')
 	#newUser['Shell']     = installer.getValue('NewUserShell')
@@ -883,7 +882,6 @@ usersScreen.addPassword('NewUserPassword',       tr('Password:'), '', tr('Enter 
 usersScreen.addPassword('NewUserPasswordRetyped',tr('Retype password:'), '', tr('Enter the same password as above, to verify for typing mistakes.'))
 usersScreen.addLineEdit('NewUserFullName',       tr('Full name:'), '', tr('Type here the real name of the user, e.g. "John Doe"'))
 #usersScreen.addList    ('NewUserShell',          tr('Default shell'), (['ZSH', 'Bash'], 'ZSH'))
-usersScreen.addBoolean ('NewUserSuperSkel',      tr('Use advanced default settings'), 1, tr("Add enhanced application settings files at the user's home directory."))
 usersScreen.addBoolean ('NewUserEnableSudo',     tr('Enable super-user privileges'), 0, tr("Adds the user to the 'sys' group, enabling it to run all commands as super-user via 'sudo'"))
 usersScreen.addButton  ('',                      tr('Add user'), '', tr('Create an user account using the information entered above.'), addUser)
 usersScreen.addButton  ('',                      tr('Remove user'), '', tr('Remove the user that is currently selected in the list below.'), removeUser)
@@ -1157,16 +1155,15 @@ def _RunInstallation():
 		cmd = 'chroot %s AddUser'%destMountPoint
 		cmd = cmd + ' -f "'+addedUsers[login]['FullName'].strip()+'" '
 		cmd = cmd + ' -p '+ crypt.crypt(addedUsers[login]['Password'], salt)
-		if addedUsers[login]['SuperSkel'] :
-			cmd = cmd + ' --skel'
+		cmd = cmd + ' --skel'
 		cmd = cmd + ' ' + login
+		safeRun(cmd, '', 0, logger)
+
+		cmd = 'chroot %s rm -f /Users/%s/Desktop/Manager.desktop'%(destMountPoint,login)
 		safeRun(cmd, '', 0, logger)
 
 		if addedUsers[login]['NewUserEnableSudo'] :
 			cmd = 'chroot %s usermod -aG sys,lpadmin %s'%(destMountPoint,login)
-			safeRun(cmd, '', 0, logger)
-		if addedUsers[login]['SuperSkel'] :
-			cmd = 'chroot %s rm -f /Users/%s/Desktop/Manager.desktop'%(destMountPoint,login)
 			safeRun(cmd, '', 0, logger)
 
 	############################################################################
