@@ -1,5 +1,6 @@
 AALib :: Library for displaying graphics as Ascii Art
 AbsTK :: A python Abtract ToolKit for interface building (used in this installer)
+ACL :: Contains the getfacl and setfacl utilities needed for manipulating access control lists
 Acpid :: Advanced Configuration and Power Interface event daemon
 Adwaita-Icon-Theme :: GNOME Icon theme
 ALSA-Driver :: Advanced Linux Sound Architecture drivers
@@ -12,6 +13,9 @@ ATKMM :: AtkMM is the official C++ interface for the ATK accessibility toolkit l
 Atool :: Script for managing file archives
 At-Spi2-ATK :: Bridges ATK to At-Spi2 D-Bus service
 At-Spi2-Core :: A GNOME Service Provider Interface for the Assistive Technologies
+ATTR :: Utilities to administer the extended attributes on filesystem objects
+APR :: The Apache Portable Runtime (APR) supporting library for the Apache web server
+APR-Util :: Provides a predictable and consistent interface to underlying client library interfaces
 Audiofile :: Libraries and programs to support basic sound file formats
 Aumix :: Volume control and mixer for terminal or X
 Autoconf :: Produces shell scripts which automatically configure source code
@@ -28,6 +32,7 @@ BOGL :: Ben's Own Graphics Library
 Boost :: A collection of C++ libraries
 BootScripts :: GoboLinux bootscripts
 Bzip2 :: Patent free, high-quality data compressor
+CAcerts :: Package implementing cacert scripts from Linux From Scratch
 Cairo :: A 2D graphics library with support for multiple output devices.
 Cairomm :: A C++ API for cairo 
 Cdparanoia-III :: CD ripper
@@ -63,6 +68,7 @@ DosFSTools :: Utilities for Making and Checking MS-DOS FAT Filesystems on Linux
 E2FSProgs :: Utilities for ext2, the standard linux filesystem
 Ed :: The Standard Unix Text Editor
 EFIBootMgr :: Displays and allows the user to edit the Intel Extensible Firmware Interface (EFI) boot manager menu
+EFIVar :: Tools to manage UEFI variables
 Eject :: Puts removable media under software control
 ELFUtils :: Utilities to manipulate ELF files
 EnhancedSkel :: GoboLinux default user settings
@@ -86,6 +92,7 @@ Fuse :: Filesystem in Userspace
 Gawk :: String manipulation language
 GCC :: GNU Compiler Collection
 GDB :: GNU Debugger
+GDBM :: GNU DBM database routines
 GDK-Pixbuf :: a replacement for Imlib
 GDKXFT :: Provides anti-aliased fonts
 Gegl :: GEGL (Generic Graphics Library) is a graph based image processing framework.
@@ -101,10 +108,12 @@ Glibc :: GNU C Library
 GLib :: Core library that forms the basis of GTK+ and GNOME
 GLibmm :: C++ bindings for Glib
 Gnuplot :: A command-line driven interactive datafile and function plotting utility
+GnuTLS :: Libraries and userspace tools which provide a secure layer over a reliable transport layer
 GObject-Introspection :: Describes the program APIs and collect them in a uniform, machine readable format
 GoboHide :: GoboLinux program for concealing and managing the legacy tree.
 GoboNet :: Ultra-minimalistic wifi network manager
 GParted :: A graphical partitioner. Uses Parted as backend.
+Gperf :: GNU gperf is a perfect hash function generator
 GPM :: (General Purpose Mouse) A mouse server for the console
 Grep :: Globally search for Regular Expression and Print - Finds lines that match entered patterns
 Groff :: Document formatting system
@@ -125,6 +134,7 @@ Hotplug :: Automatic configuration of hotplugged devices
 Hplip :: HP print, scan and fax drivers for Linux
 Htop :: Interactive text-mode process viewer
 HwData :: Hardware identification and configuration data, for Kudzu
+IANA-etc :: Provides data for network services and protocols
 ID3Lib :: An ID3v1/ID3v2 tagging library
 IJS :: A library which implements a protocol for transmission of raster page images
 ILMBase :: A set of libraries that handles OpenEXR images
@@ -133,7 +143,8 @@ IMLib :: General Image loading and rendering library
 Indent :: Formats C source code
 InetUtils :: Collection of common network programs
 Installer :: The GoboLinux installer application
-internetworking over dialup lines
+Intltool :: Tools to centralize translation of file formats using GNU gettext-compatible PO files
+IPRoute2 :: Collection of utilities for controlling TCP / IP networking and traffic control
 Iptables :: A Linux kernel packet control tool.
 Ispell :: Interactive spell checker
 JPEG :: Libraries for compression of images based on the Joint
@@ -143,6 +154,7 @@ KDE-I18n-de :: KDE translations for german
 KDE-I18n-pt_BR :: KDE translations for brazilian portuguese
 KDE :: The K Desktop Environment
 Kerberos :: A network authentication protocol
+Kmod :: Tools for managing Linux kernel modules
 Kudzu :: Hardware Probing Tool
 Lame :: MP3 encoding tool
 Lazy :: A console-based CD player with digital audio extraction and freedb support
@@ -174,6 +186,7 @@ LibNL :: A netlink sockets library
 LibOGG :: Ogg Vorbis is a free compressed audio format.  LibOGG contains the Ogg file structure
 LibOpenRAW :: Library for decoding RAW files produced by digital cameras
 LibPaper :: Library for handling paper characteristics
+LibPipeline :: Library for manipulating pipelines of subprocesses
 LibPNG :: Portable Network Graphics library.
 LibPthread-Stubs :: Pthread functions stubs for platforms missing them
 LibRSVG :: Scalable Vector Graphics rendering engine
@@ -183,6 +196,7 @@ LibSigc++ :: Typesafe Callback Framework for C++
 LibSndfile :: A library for reading and writing  sound files
 LibSpiro :: Library for drawing curves (based on clothoid splines)
 LibStdC++ :: An implementation of the ISO 14882 Standard C++ library
+LibTasn1 :: ASN.1 library used by GnuTLS
 LibTheora ::  A free and open video compression format 
 LibTIRPC :: Libtirpc is a port of Suns Transport-Independent RPC library to Linux
 LibTool :: GNU Generic library support script
@@ -215,6 +229,7 @@ M4 :: GNU Macro Processor
 Makedepend :: Create dependencies in makefiles
 Make :: Generates executables and other non-source programs
 Manager :: A graphical management front-end for GoboLinux
+Man-DB :: Provides the man command to examine on-line help files (manual pages)
 Man-Pages :: Collection of standard documentation
 Man :: Programs used to read GNU/Linux documentation
 MC :: Midnight Commander, a console directory browser/file manager
@@ -223,6 +238,8 @@ Mesa :: Open source implementation of the OpenGL graphics API
 MkTemp :: A small program to allow safe temporary file creation from shell scripts
 Module-Init-Tools :: Kernel module management utilities for the Linux 2.6 kernels
 ModUtils :: Kernel module management utilities for the Linux 2.4 kernels
+MPC :: Library for the arithmetic of complex numbers with arbitrarily high precision
+MPFR :: Library for multiple-precision floating-point computations with correct rounding
 MPlayer :: Framebuffer or X movie and audio player
 Mtail :: A colorized tail workalike
 MtDev :: Multitouch Protocol Translation Library
@@ -231,9 +248,12 @@ Nasm :: Netwide Assembler - Portable, Modular 80x86 assembler
 NCSA-Mosaic :: This is NCSA Mosaic 2.7, one of the first graphical web browsers.
 Ncurses :: Console display and update toolkit
 NcursesW :: A System V Release 4.0 curses emulation library.
+Neon :: HTTP and WebDAV client library, with a C interface
 Netkit-Base :: Network applications and daemons
 Net-Tools :: Important tools for controlling the network subsystem of Linux
+Nettle :: Low-level cryptographic library
 Newt :: A development library for text mode user interfaces
+NPth :: New portable threads library
 NSPR :: The Netscape Portable Runtime
 NSS :: The Network Security Services
 NTFSProgs :: NTFS Utilities
@@ -244,6 +264,7 @@ OpenSSH :: Free implementation of the SSH 1 and 2 remote login protocols
 OpenSSL :: Toolkit for Secure Sockets Layer and Transport Layer Security
 ORC :: Oil Runtime Compilier
 OS-Prober :: Tool for adding other distros to GRUB
+P11-Kit :: Provides a way to load and enumerate PKCS#11 modules
 PangoMM :: A C++ API for Pango 
 Pango :: Text rendering internationalization framework
 Parted :: Manipulates disk partitions
@@ -265,9 +286,10 @@ Poppler :: PDF rendering library
 Popt :: Library for parsing command line options
 Portmap :: RPC connection manager
 PowerTOP :: Power consumption measurement and estimation tool
-PPP :: A daemon which implements the Point to Point Protocol for
+PPP :: A daemon which implements the Point to Point Protocol for internetworking over dialup lines
 Procinfo :: Gets useful information from /proc
-Procps :: Utilties that monitor system status
+Procps :: Utilities that monitor system status
+Procps-NG :: Utilities for monitoring your system and its processes
 ProgsReiserFS :: A collection of tools for manipulating ReiserFS filesystems using libreiserfs
 Psmisc :: Proc filesystem tools
 PyCairo :: A set of Python bindings for the cairo graphics library.
@@ -289,14 +311,18 @@ Runit :: Replacement for SysV-init and other init schemes
 RXVT-Unicode :: A terminal emulator for X.
 Sash :: Stand-alone shell
 Schroedinger :: Library for encoding/decoding of Dirac video streams
+SCons :: An open source software construction tool
 Scripts :: GoboLinux Scripts
 SDL ::  Simple DirectMedia Layer Game Programming Library
 Sed :: A stream-oriented non-interactive text editor
+Serf :: A high performance HTTP client library built upon the APR library
 SetupTools :: Easily download, build, install, upgrade, and uninstall Python packages
+SGML-Common :: Collection of entities and DTDs that are useful for processing SGML
 Shadow :: Programs to use encrypted passwords
 SIP ::  Python/C++ Bindings Generator
 S-Lang :: C-like programming language
 SPICE-Protocol :: Headers defining protocols of Spice
+SQLite :: A C library that implements an SQL database engine
 SquashFS-Tools :: Tools required to prepare squashfs images
 Startup-Notification ::  Reference Implementation for the Startup-Notification Protocol
 Strace :: Debugging tool
@@ -318,6 +344,7 @@ Texinfo :: Produces manuals, ASCII text, and on-line documentation
 Thunderbird :: A total redesign of the Mozilla mail component
 TIFF :: libraries for reading and writing tiff image files
 TraceRoute :: Determine route of packets in TCP/IP networks
+TZData :: Data files with rules for various timezones around the world
 Udev :: A userspace implementation of devfs
 UnionFS-Fuse :: A FUSE-based UnionFS filesystem implementation
 Unsermake :: A replacement for automake
@@ -347,6 +374,7 @@ Xpdf :: A X11 PDF viewer
 XTerm :: Classic X terminal
 Xtest :: A X11 server testing tool
 Xvidcore :: An MPEG-4 video codec
+XZ-Utils :: XZ-format compression utilities
 YAFC :: Yet another FTP client
 Yasm :: An x86 and AMD64 assembler
 Zip :: A compression and file packaging utility
