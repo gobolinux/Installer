@@ -164,6 +164,7 @@ Less :: Display paginator
 Lesstif :: Free implementation of OSF/Motif widget set
 LibART_LGPL :: Basic vector graphics library
 LibAssuan :: The IPC library used by some GnuPG related software, implementing the "Assuan protocol"
+LibCap :: Library for getting and setting POSIX.1e capabilities
 LibCroco :: A general CSS parsing and manipulation library
 LibDaemon :: A lightweight C library that eases the writing of UNIX daemons
 LibDRM :: Library for accessing the Linux kernel's Direct Rendering Modules
