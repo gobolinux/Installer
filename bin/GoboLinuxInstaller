@@ -265,6 +265,8 @@ class BootLoader :
 		goboversion = open("/System/Settings/GoboLinuxVersion").read().strip("\n")
 
 		olddir = os.getenv("PWD")
+		if not os.path.exists(efidir):
+		    os.makedirs(efidir)
 		os.chdir(efidir)
 		if os.path.exists(efiapp) :
 		    efiapp = "Gobo" + goboversion + ".EFI"
