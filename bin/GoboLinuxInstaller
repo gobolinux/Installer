@@ -1086,6 +1086,7 @@ def _RunInstallation():
 	############################################################################
 	# Create fstab
 	log(tr('Generating /System/Settings/fstab...'))
+	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
 
 	espParams = ""
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
@@ -1204,7 +1205,6 @@ def _RunInstallation():
 	
 	############################################################################
  	# Create lilo.conf...
-	bootloaderTarget = installer.getValue('BootloaderTarget')[1].split()[0]
 	bootloader = BootLoader(bootloaderTarget, rootPartition, destMountPoint, logger, reallyInstall)
 
 	installLilo = 'LILO' in map(lambda x: x.split()[0], installer.getValue('Packages')[1])
