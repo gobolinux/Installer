@@ -270,10 +270,12 @@ class BootLoader :
 		os.chdir(efidir)
 		if os.path.exists(efiapp) :
 		    efiapp = "Gobo" + goboversion + ".EFI"
+
+		shutil.copy(grubdir + "/grub.cfg", efimnt + "/grub.cfg")
 		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
 		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
 		cmd += '--fonts="unicode" --themes="" -o %s --compress=gz ' %efiapp
-		cmd += '"boot/grub/grub.cfg=grub-efi.cfg"'
+		cmd += '"boot/grub/grub.cfg=grub.cfg"'
 		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
 		os.chdir(olddir)
 
