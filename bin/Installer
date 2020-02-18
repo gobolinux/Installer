@@ -18,7 +18,7 @@ then
     # which the LiveCD was booted while the Installer is invoked. That should 
     # not be a problem for regular operations in the LiveCD.
     #
-    LIVECD_DEVICE=$(grep "/Mount/.Pivot/Mount/CD-ROM" /proc/mounts | awk {'print $1'})
+    LIVECD_DEVICE=$(grep "/initramfs/live" /proc/mounts | awk {'print $1'})
     RENAMED_DEVICE=$(echo "$LIVECD_DEVICE" | sed 's,/dev/,/dev/_,g')
     mv "$LIVECD_DEVICE" "$RENAMED_DEVICE"
 
