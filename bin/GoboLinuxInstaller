@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: iso-8859-1 -*-
 #
 # *** GOBOLINUX GRAPHICAL/CONSOLE INSTALLER ***
@@ -65,10 +65,10 @@ class DiskUtility :
 		devicesNames = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in names)
 		devicesTypes = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in types)
 		devicesFlags = dict((os.path.basename(x.split(":")[0]), x.split(":")[1]) for x in flags)
-		for key in devicesNames.keys():
-			if len(devicesNames[key]) == 0 and devicesTypes.has_key(key):
+		for key in list(devicesNames.keys()):
+			if len(devicesNames[key]) == 0 and key in devicesTypes:
 				devicesNames[key] = devicesTypes[key]
-			if len(devicesNames[key]) == 0 and devicesFlags.has_key(key):
+			if len(devicesNames[key]) == 0 and key in devicesFlags:
 				if devicesFlags[key].find("bios_grub") >= 0:
 					devicesNames[key] = "BIOS boot partition"
 
@@ -88,7 +88,7 @@ class DiskUtility :
 					c = name + ' (%0.1fGB'%(size/(1024*1024.0))
 				else :
 					c = name + ' (%0.1fMB'%(size/1024.0)
-				if devicesNames.has_key(name) and len(devicesNames[name]) :
+				if name in devicesNames and len(devicesNames[name]) :
 					c += ' - ' + devicesNames[name]
 				c += ')'
 				temp.append(c)
@@ -96,11 +96,11 @@ class DiskUtility :
 		devicesList = temp
 
 		p = re.compile(r'\b[a-z]+[0-9]+\b')
-		partitionsList = filter(lambda x:p.match(x) and not 'loop' in x,devicesList)
+		partitionsList = [x for x in devicesList if p.match(x) and not 'loop' in x]
 		partitionsList.sort()
 
 		d = re.compile(r'\b[a-z]+\b')
-		discsList = filter(lambda x:d.match(x) and not 'loop' in x,devicesList)
+		discsList = [x for x in devicesList if d.match(x) and not 'loop' in x]
 		discsList.sort()
 
 		return discsList, partitionsList, devicesSizes
@@ -157,7 +157,7 @@ class DiskUtility :
 			cmd = 'mkfs.fat -F 32 /dev/%s'%partition
 
 		else :
-			print 'Unkown FS type: '+fileSystem
+			print('Unkown FS type: '+fileSystem)
 			return
 
 		safeRun(cmd, '', 0, self.logger)
@@ -282,8 +282,8 @@ class BootLoader :
 		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
 		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
 		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\%s" --disk /dev/%s --part %s' %(goboversion, efiapp, rootDisk, partitionNum))
-		print tr('EFI boot manager entries:')
-		print tr('\n'.join(safeRun('efibootmgr -v')))
+		print(tr('EFI boot manager entries:'))
+		print(tr('\n'.join(safeRun('efibootmgr -v'))))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
@@ -294,7 +294,7 @@ if ('qt' in sys.argv) :
 elif ('curses' in sys.argv) :
     mode = 'curses'
 else :
-	if os.environ.has_key("DISPLAY") :
+	if "DISPLAY" in os.environ :
 		mode = 'qt'
 	else :
 		mode = 'curses'
@@ -315,7 +315,7 @@ if mode == 'curses' :
 elif mode == 'qt' :
 	pass
 else :
-	print 'Undefined mode:',mode
+	print('Undefined mode:',mode)
 	sys.exit(1)
 
 settable_root_name = (os.getenv("GOBO_LIVES") == "somewhere in time")
@@ -330,7 +330,7 @@ reallyInstall = ('install' in sys.argv)
 #               LOCALE-DEPENDENT INFO
 ###############################################################################
 
-if os.environ.has_key('LANG') :
+if 'LANG' in os.environ :
 	lang = os.environ['LANG'].split('.')[0].split('@')[0]
 else :
 	lang = 'en_US'
@@ -365,7 +365,7 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None, altEnv=None) :
 				if logger :
 					logger.append(line)
 				if showProgress :
-					print line,
+					sys.stdout.write("{} ".format(line))
 					sys.stdout.flush()
 				l.append(line.strip())
 			oe.close()
@@ -376,16 +376,16 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None, altEnv=None) :
 				logger.append(cmd)
 				logger.append('=======\n')
 			if showProgress :
-				print '===%s===='%context
-				print cmd
-				print '=======\n\n'
+				print('===%s===='%context)
+				print(cmd)
+				print('=======\n\n')
 			return []
-	except Exception, inst:
+	except Exception as inst:
 		if logger :
 			logger.append('Error running '+cmd)
 			logger.append(str(inst))
-		print 'Error running '+cmd
-		print str(inst)
+		print('Error running '+cmd)
+		print(str(inst))
 
 ###############################################################################
 
@@ -399,7 +399,7 @@ def safeWriteToFile(fileName, s, logger = None) :
 			return 1
 		else :
 			if reallyInstall :
-				print 'Warning: file %s could not be saved.'%fileName
+				print('Warning: file %s could not be saved.'%fileName)
 				if logger :
 					logger.append('Warning: file %s could not be saved.'%fileName)
 			if not context :
@@ -410,16 +410,16 @@ def safeWriteToFile(fileName, s, logger = None) :
 				logger.append(s)
 				logger.append('===========\n\n')
 
-			print '===%s===='%context
-			print s
-			print '===========\n\n'
+			print('===%s===='%context)
+			print(s)
+			print('===========\n\n')
 			return 0
-	except Exception, inst:
+	except Exception as inst:
 		if logger :
 			logger.append('Error writing '+fileName)
 			logger.append(str(inst))
-		print 'Error writing '+fileName
-		print str(inst)
+		print('Error writing '+fileName)
+		print(str(inst))
 
 
 ###############################################################################
@@ -439,24 +439,24 @@ def safeFileReadLines(fileName, logger = None) :
 					logger.append('Warning: file %s could not be read.'%fileName)
 					logger.append('Using %s instead.'%fileUsed)
 
-				print 'Warning: file %s could not be read.'%fileName
-				print 'Using %s instead.'%fileUsed
+				print('Warning: file %s could not be read.'%fileName)
+				print('Using %s instead.'%fileUsed)
 
 		if os.access(fileUsed, os.F_OK) :
 			f = open(fileUsed)
 			l = f.readlines()
 			f.close()
-			l = map(lambda x: x.strip(), l)
+			l = [x.strip() for x in l]
 			return l
 		else :
-			print 'Error: file %s not found.'%fileUsed
+			print('Error: file %s not found.'%fileUsed)
 			return []
-	except Exception, inst:
+	except Exception as inst:
 		if logger :
 			logger.append('Error reading '+fileName)
 			logger.append(str(inst))
-		print 'Error reading '+fileName
-		print str(inst)
+		print('Error reading '+fileName)
+		print(str(inst))
 
 
 
@@ -546,7 +546,7 @@ discsList, partitionsList, devicesSizes = DiskUtility().getDevicesList()
 if not partitionsList :
 	msg = tr('No valid partitions found')
 	msg = msg + '\n' + tr('Create one using "gparted" or "cfdisk"')
-	print msg
+	print(msg)
 	installer.showMessageBox(msg, ['Ok'])
 	installer.done()
 	sys.exit(1)
@@ -559,12 +559,12 @@ if not partitionsList :
 
 ##############################################################################
 introduction = Screen(tr('Welcome!'))
-file=open(shared+'Language/%s/Introduction'%lang)
-fileContents = file.read().decode('utf-8')
+f=open(shared+'Language/%s/Introduction'%lang, "rb")
+fileContents = f.read()
 if mode == 'curses' :
-	fileContents = fileContents.encode(locale.getpreferredencoding())
+	fileContents = fileContents.decode(locale.getpreferredencoding())
 introduction.addMultiLineEdit('IntroText', tr('Installation process'), fileContents, tr('Read this to learn more about the installation.') )
-file.close()
+f.close()
 installer.addScreen(introduction)
 
 
@@ -582,10 +582,10 @@ def rootPartitionSize() :
 	return devicesSizes[rootPartitionName()]
 
 def showSelectedSetSize() :
-	packages = map(lambda x: x.split()[0], installer.getValue('Packages')[1])
+	packages = [x.split()[0] for x in installer.getValue('Packages')[1]]
 	sum = system_plus_data_sum
 	for package in packages :
-		if programSizes.has_key(package) :
+		if package in programSizes :
 			sum = sum + programSizes[package]
 	if sum > (1024 * 1024.0) :
 		s = '%0.2f'%(sum / (1024 * 1024.0)) + 'GB'
@@ -633,12 +633,12 @@ def updateBootloaderTargets() :
 		sys.exit(1)
 	elif platform.pureEFI() and len(efibootloaderTargetList):
 		if mode != 'curses' :
-			print(tr('Proceeding with UEFI installation mode'))
+			print((tr('Proceeding with UEFI installation mode')))
 		bootloaderTargetList = efibootloaderTargetList
 		bootloaderInstallLabel = " EFI System Partition"
 	else:
 		if mode != 'curses' :
-			print(tr('Proceeding with BIOS/MBR installation mode'))
+			print((tr('Proceeding with BIOS/MBR installation mode')))
 	try :
 		bootloaderTargetList.remove(rootPartitionName_and_Size())
 	except ValueError :
@@ -676,10 +676,10 @@ installer.addScreen(deviceSelection)
 packageSelection = Screen(tr('Package selection'))
 
 def checkFitPackages() :
-	packages = map(lambda x: x.split()[0], installer.getValue('Packages')[1])
+	packages = [x.split()[0] for x in installer.getValue('Packages')[1]]
 	sum = system_plus_data_sum
 	for package in packages :
-		if programSizes.has_key(package) :
+		if package in programSizes :
 			sum = sum + programSizes[package]
 	if sum > rootPartitionSize() :
 		x = installer.showMessageBox(tr('Selected packages does not fit target partition.\nEither deselect packages or go back and choose another target partition.'), ['Ok'])
@@ -688,10 +688,10 @@ def checkFitPackages() :
 
 def getPackageWithsizeAndDescription(packageName) :
 	tr = packageName
-	if programShowSizes.has_key(packageName) :
+	if packageName in programShowSizes :
 		tr = tr + ' ('+programShowSizes[packageName]+'MB)'
 
-	if programDescriptions.has_key(packageName) :
+	if packageName in programDescriptions :
 		tr = tr + ' - '+programDescriptions[packageName]
 	return tr
 
@@ -700,7 +700,7 @@ def getProfilePackages(profileName) :
 		lines = os.listdir('/Programs')
 	else :
 		lines = safeFileReadLines(shared+'Profiles/'+profileName)
-	lines = map(getPackageWithsizeAndDescription, lines)
+	lines = list(map(getPackageWithsizeAndDescription, lines))
 	lines.sort()
 	return lines
 
@@ -710,13 +710,13 @@ for profileName in ['Base', 'Typical', 'Full'] :
 
 def fillUpDependencies() :
 	allWithSizes,selectedWithSize = installer.getValue('Packages')
-	all = map(lambda x: x.split()[0], allWithSizes)
+	all = [x.split()[0] for x in allWithSizes]
 
 	for basePackage in profiles['Base'] :
 		if not basePackage in selectedWithSize :
 			selectedWithSize.append(basePackage)
 
-	selected = map(lambda x: x.split()[0], selectedWithSize)
+	selected = [x.split()[0] for x in selectedWithSize]
 
 	for package in selected :
 		try :
@@ -734,7 +734,7 @@ def fillUpDependencies() :
 		except IOError:
 			pass
 
-	newSelectedWithSize = map(getPackageWithsizeAndDescription, selected)
+	newSelectedWithSize = list(map(getPackageWithsizeAndDescription, selected))
 	installer.setValue('Packages', (allWithSizes,newSelectedWithSize))
 	showSelectedSetSize()
 
@@ -843,7 +843,7 @@ def addUser() :
 		installer.setValue('NewUserPassword', '')
 		return
 
-	if not newLogin or newLogin in addedUsers.keys():
+	if not newLogin or newLogin in list(addedUsers.keys()):
 		return
 	newUser = {}
 	newUser['Password']  = installer.getValue('NewUserPassword')  # obs: existe o parametro '-p' no useradd para passar a senha
@@ -898,10 +898,10 @@ installer.addScreen(usersScreen)
 lastScreen = Screen(tr('Ready to install'))
 lastScreen.addImage(shared+'Images/que.png')
 
-file=open(shared+'Language/%s/Conclusion'%lang)
-fileContents = file.read().decode('utf-8')
+file=open(shared+'Language/%s/Conclusion'%lang, "rb")
+fileContents = file.read()
 if mode == 'curses' :
-	fileContents = fileContents.encode(locale.getpreferredencoding())
+	fileContents = fileContents.decode(locale.getpreferredencoding())
 lastScreen.addMultiLineEdit('',tr('Done'),fileContents, tr('Continuing from here will perform all the indicated actions.'))
 file.close()
 
@@ -915,7 +915,7 @@ installer.addScreen(lastScreen)
 #installer.showDialog(logger)
 ret = installer.start()
 if not ret :
-	print tr("GoboLinux installation aborted")
+	print(tr("GoboLinux installation aborted"))
 	exit(1)
 
 ###############################################################################
@@ -935,7 +935,7 @@ def _RunInstallation():
 			logger.append(s)
 			#logger.show()
 
-		print s
+		print(s)
 		sys.stdout.flush()
 
 	safeRun('clear')
@@ -972,7 +972,7 @@ def _RunInstallation():
 			o += package + '\n'
 		safeWriteToFile('/tmp/'+profileName, o, logger)
 
-	createProfileFile(map(lambda x: x.split()[0], installer.getValue('Packages')[1]))
+	createProfileFile([x.split()[0] for x in installer.getValue('Packages')[1]])
 
 	############################################################################
 	# Call ProfileInstall
@@ -1101,14 +1101,14 @@ def _RunInstallation():
 	safeRun(cmd, 'fstab generation', 0, logger)
 
 	lines = safeFileReadLines(destMountPoint+'/System/Settings/fstab', logger)
-	lines = filter(lambda x:x and x[0] != '#' and x.find('/Mount/') > -1,lines)
-	mountList = map(lambda x:x.split()[1], lines)
+	lines = [x for x in lines if x and x[0] != '#' and x.find('/Mount/') > -1]
+	mountList = [x.split()[1] for x in lines]
 	for m in mountList :
 		if reallyInstall :
 			if not os.access(destMountPoint+m, os.F_OK) :
 				os.mkdir(destMountPoint+m)
 		else :
-			print 'mkdir '+destMountPoint+m
+			print('mkdir '+destMountPoint+m)
 
 	############################################################################
 	# Create inittab
@@ -1136,10 +1136,10 @@ def _RunInstallation():
 		salt = goboOldPassword[:2]
 		criptedNewPassword = crypt.crypt(uncriptedNewPassword, salt)
 		goboLineList[1] = criptedNewPassword
-		goboLine = string.join(goboLineList,':')
+		goboLine = ":".join(goboLineList)
 
 		shadowLines[index] = goboLine
-		o = string.join(shadowLines,'\n')
+		o = "\n".join(shadowLines)
 		safeWriteToFile(destMountPoint+'/System/Settings/shadow', o, logger)
 
 		cmd = 'chroot %s GrepReplace "gobo" "%s" /etc/passwd /etc/group /Programs/Sudo/Settings/sudoers /System/Settings/enlightenment/sysactions.conf '%(destMountPoint,goboLogin)
@@ -1149,13 +1149,13 @@ def _RunInstallation():
 		safeRun(cmd, '', 0, logger)
 
 	else :
-		print 'Warning: keeping default superuser password: "gobo" (passwords typed do not match)'
+		print('Warning: keeping default superuser password: "gobo" (passwords typed do not match)')
 		salt = 'LE'
 
 	############################################################################
 	# Create regular users with AddUser
 	log(tr('Creating user accounts...'))
-	for login in addedUsers.keys() :
+	for login in list(addedUsers.keys()) :
 		log(tr('Creating account for user %s...')%str(login))
 		cmd = 'chroot %s AddUser'%destMountPoint
 		cmd = cmd + ' -f "'+addedUsers[login]['FullName'].strip()+'" '
@@ -1182,7 +1182,7 @@ def _RunInstallation():
 
 	############################################################################
 	# Propagate changes made to .xinitrc and .Xresources
-	for login in addedUsers.keys() + [root_name]:
+	for login in list(addedUsers.keys()) + [root_name]:
 		for rcfile in ['.xinitrc', '.Xresources']:
 			if os.path.exists('/Users/%s/%s' %(root_name, rcfile)):
 				cmd = 'cp /Users/%s/%s %s/Users/%s/' %(root_name, rcfile, destMountPoint, login)
@@ -1200,7 +1200,7 @@ def _RunInstallation():
 	############################################################################
 	# makewhatis
 	try :
-	   	if os.access(destMountPoint+'/Programs/Man', os.F_OK) :
+		if os.access(destMountPoint+'/Programs/Man', os.F_OK) :
 			log(tr('Creating "whatis" database...'))
 			cmd = 'chroot %s makewhatis -w'%destMountPoint
 			safeRun(cmd)
@@ -1211,7 +1211,7 @@ def _RunInstallation():
  	# Create lilo.conf...
 	bootloader = BootLoader(bootloaderTarget, rootPartition, destMountPoint, logger, reallyInstall)
 
-	installLilo = 'LILO' in map(lambda x: x.split()[0], installer.getValue('Packages')[1])
+	installLilo = 'LILO' in [x.split()[0] for x in installer.getValue('Packages')[1]]
 	try :
 		if installLilo :
 			log(tr('Generating LILO "lilo.conf" file...'))
@@ -1259,11 +1259,11 @@ def _RunInstallation():
 def RunInstallation():
 	try:
 		_RunInstallation()
-	except Exception, inst :
+	except Exception as inst :
 		x = '\033[1;31mGoboLinux installation failed.'+'\n'+'Check /tmp/GoboLinuxInstall.log.\033[0m'
 		y = 'Error: '+str(inst)
-		print x
-		print y
+		print(x)
+		print(y)
 		if logger :
 			logger.append(x)
 			logger.append(y)
