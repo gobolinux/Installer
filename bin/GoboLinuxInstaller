@@ -359,7 +359,7 @@ def safeRun(cmd, context = '', showProgress = 0, logger = None, altEnv=None) :
 			p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True, env=altEnv)
 			(i, oe) = (p.stdin, p.stdout)
 			while 1 :
-				line = oe.readline()
+				line = oe.readline().decode("utf-8")
 				if not line :
 					break
 				if logger :
