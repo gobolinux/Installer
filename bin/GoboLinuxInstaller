@@ -206,7 +206,7 @@ class BootLoader :
 		self.destMountPoint = destMountPoint
 		self.logger = logger
 		self.reallyInstall = reallyInstall
-		self.devroot = os.readlink("/dev/root")
+		self.devroot = os.readlink("/dev/root") if os.path.exists("/dev/root") else None
 		self.diskutil = DiskUtility(self.logger, self.reallyInstall)
 
 	def __fixDevRoot(self) :
@@ -214,7 +214,8 @@ class BootLoader :
 			return
 
 		# Required to fix issues with grub-mkconfig
-		os.unlink("/dev/root")
+		if self.devroot:
+			os.unlink("/dev/root")
 		os.symlink(self.targetPartition, "/dev/root")
 
 		if not os.path.exists(self.destMountPoint+"/etc/mtab") :
@@ -236,7 +237,8 @@ class BootLoader :
 
 		# Rollback modifications to /dev/root and /etc/mtab
 		os.unlink("/dev/root")
-		os.symlink(self.devroot, "/dev/root")
+		if self.devroot:
+			os.symlink(self.devroot, "/dev/root")
 		shutil.move(self.destMountPoint+"/etc/mtab.orig", self.destMountPoint+"/etc/mtab")
 
 	def installGrub(self) :
