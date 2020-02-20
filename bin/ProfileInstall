@@ -77,7 +77,7 @@ function install_base() {
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Status  ${dest_dir}/${goboStatus}
 
    Log_Normal "Installing directory "${goboSystem}/Kernel/Boot
-   cp -a ${goboBoot}/* ${dest_dir}/${goboBoot}
+   cp -a ${goboPrograms}/Linux/Current/Resources/Unmanaged/${goboSystem}/Kernel/Boot/* ${dest_dir}/${goboBoot}
 
    Log_Normal "Installing directory "${goboMount}
    mkdir -p ${dest_dir}/${goboMount}
