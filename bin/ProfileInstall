@@ -46,8 +46,16 @@ function install_base() {
 
    Log_Normal "Installing directory "${goboVariable}
    mkdir -p ${dest_dir}/${goboVariable}
-   cp -a ${goboVariable}/*  ${dest_dir}/${goboVariable} 2> /dev/null
-   rm -rf ${dest_dir}/${goboVariable}/run/*
+   for path in ${goboVariable}/*
+   do
+      # Avoid copying /var/run, since it may contain overlayfs files
+      # from the LiveCD that are pointless to have on dest_dir.
+      if [ "${path}" != "${goboVariable}/run" ]
+      then cp -a ${path}  ${dest_dir}/${goboVariable} 2> /dev/null
+      fi
+   done
+   rm -rf ${dest_dir}/${goboVariable}/run
+   mkdir -p ${dest_dir}/${goboVariable}/run/{cups,dbus,dhcpcd,blkid,udev}
 
    Log_Normal "Installing directory "${goboSystem}/Index
    cp -a ${goboSystem}/Index ${dest_dir}/${goboSystem}
@@ -60,20 +68,16 @@ function install_base() {
 
    Log_Normal "Installing directory "${goboSystem}/Tasks
    cp -a ${goboSystem}/Tasks ${dest_dir}/${goboSystem}
-   
+
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Boot
-   mkdir -p ${dest_dir}/${goboSystem}/Kernel/Modules
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Devices ${dest_dir}/${goboDevices}
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Objects ${dest_dir}/${goboObjects}
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Status  ${dest_dir}/${goboStatus}
 
    Log_Normal "Installing directory "${goboSystem}/Kernel/Boot
    cp -a ${goboBoot}/* ${dest_dir}/${goboBoot}
-
-   Log_Normal "Installing directory "${goboSystem}/Kernel/Modules
-   cp -a ${goboModules}/*  ${dest_dir}/${goboModules}
 
    Log_Normal "Installing directory "${goboMount}
    mkdir -p ${dest_dir}/${goboMount}
@@ -84,7 +88,12 @@ function install_base() {
    cp -a /usr ${dest_dir}/usr
 
    Log_Normal "Installing directory "/Data
-   cp -a /Data ${dest_dir}/
+   for path in /Data/*
+   do
+      if [ "${path}" != "${goboVariable}" ]
+      then cp -a ${path} ${dest_dir}/Data
+      fi
+   done
 
    Log_Normal "Installing legacy links on "${dest_dir}
    cp -a /bin /etc /lib /lib64 /sbin /tmp /var /media /run ${dest_dir}
