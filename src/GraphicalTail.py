@@ -1,7 +1,8 @@
-from PyQt4 import QtCore
-from PyQt4 import QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import *
+from PyQt5 import QtGui
 from GraphicalTailForm import *
-from PyQt4.QtGui import QApplication, QDialog
+from PyQt5.QtWidgets import QApplication, QDialog
 
 import threading
 

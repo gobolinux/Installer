@@ -566,9 +566,7 @@ if not partitionsList :
 ##############################################################################
 introduction = Screen(tr('Welcome!'))
 f=open(shared+'Language/%s/Introduction'%lang, "rb")
-fileContents = f.read()
-if mode == 'curses' :
-	fileContents = fileContents.decode(locale.getpreferredencoding())
+fileContents = f.read().decode(locale.getpreferredencoding())
 introduction.addMultiLineEdit('IntroText', tr('Installation process'), fileContents, tr('Read this to learn more about the installation.') )
 f.close()
 installer.addScreen(introduction)
@@ -904,12 +902,10 @@ installer.addScreen(usersScreen)
 lastScreen = Screen(tr('Ready to install'))
 lastScreen.addImage(shared+'Images/que.png')
 
-file=open(shared+'Language/%s/Conclusion'%lang, "rb")
-fileContents = file.read()
-if mode == 'curses' :
-	fileContents = fileContents.decode(locale.getpreferredencoding())
+f=open(shared+'Language/%s/Conclusion'%lang, "rb")
+fileContents = f.read().decode(locale.getpreferredencoding())
 lastScreen.addMultiLineEdit('',tr('Done'),fileContents, tr('Continuing from here will perform all the indicated actions.'))
-file.close()
+f.close()
 
 installer.addScreen(lastScreen)
 
