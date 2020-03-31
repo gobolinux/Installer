@@ -605,7 +605,7 @@ def showSelectedSetSize() :
 	else :
 		percentage = (sum*100)/targetSize
 	installer.setValue('SpaceRequired', tr('Space required: %s (%s%% of %s)')%(s,percentage,formattedTargetSize))
-	return 1
+	return True
 
 platform = Platform()
 deviceSelection = Screen(tr('Target device selection'))
@@ -687,8 +687,9 @@ def checkFitPackages() :
 			sum = sum + programSizes[package]
 	if sum > rootPartitionSize() :
 		x = installer.showMessageBox(tr('Selected packages does not fit target partition.\nEither deselect packages or go back and choose another target partition.'), ['Ok'])
+		return False
 	else :
-		return 1
+		return True
 
 def getPackageWithsizeAndDescription(packageName) :
 	tr = packageName
@@ -877,13 +878,14 @@ def checkAddedUsers() :
 	if len(userslist) == 0 :
 		answer = installer.showMessageBox(tr('No normal users are added. Do you want to continue anyway?'), ['Yes','No','Info'])
 		if answer == 'Yes' :
-			return 1
+			return True
 		elif answer == 'Info' :
 			x = installer.showMessageBox(tr('Your installation will only have a superuser defined.\n It is recommended that one adds at least one additional user for normal use.'), ['Ok'])
+			return False
 		else :
-			return 0
+			return False
 	else :
-		return 1
+		return True
 
 usersScreen.addLineEdit('NewUserLogin',          tr('Login:'), '', tr('Type here the UNIX login for the user, e.g. "johnd"'))
 usersScreen.addPassword('NewUserPassword',       tr('Password:'), '', tr('Enter the password for this user.'))
