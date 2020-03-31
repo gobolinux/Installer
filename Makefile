@@ -46,4 +46,3 @@ dist: version_check all cleanup
 	cd $(PACKAGE_DIR); tar cvp $(PROGRAM) | bzip2 > $(PACKAGE_FILE)
 	rm -rf $(PACKAGE_ROOT)
 	@echo; echo "Package at $(PACKAGE_FILE)"
-	@echo; echo "Now run 'cvs tag $(CVSTAG)'"; echo
