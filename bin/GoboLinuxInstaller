@@ -655,7 +655,7 @@ def deviceSelectionComplete() :
 	return showSelectedSetSize()
 
 deviceSelection.addBoolean('DoFormat',   tr('Format partition'), 0, tr('Erase all contents of the partition and prepare it to receive the new system?'), doFormatChanged)
-deviceSelection.addList('PartitionType', tr('File system'), (['Ext2', 'Ext3', 'Ext4'], 'Ext4'), tr('Which kind of file system should be used to format the root partition.') )
+deviceSelection.addList('PartitionType', tr('File system'), (['Ext4'], 'Ext4'), tr('Which kind of file system should be used to format the root partition.') )
 deviceSelection.setEnabled('PartitionType', 0)
 deviceSelection.onValidate(deviceSelectionComplete)
 
