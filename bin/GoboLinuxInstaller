@@ -168,25 +168,28 @@ class DiskUtility :
 		if self.reallyInstall :
 			self.__refreshUUID(partition)
 
+	def bindMountTable(self, dest):
+		return {
+			dest+'/proc': '/proc',
+			dest+'/sys':  '/sys',
+			dest+'/dev':  '/dev',
+			dest+'/System/Kernel/Status':  '/proc',
+			dest+'/System/Kernel/Objects': '/sys',
+			dest+'/System/Kernel/Devices': '/dev',
+		}
+
 	def bindMount(self, src, dest) :
 		cmd = 'mount -o bind %s %s' %(src, dest)
 		safeRun(cmd, 'Binding ' + src, 0, self.logger)
 
 	def mountPseudoFS(self, destMountPoint) :
-		self.bindMount('/proc', destMountPoint+'/proc')
-		self.bindMount('/sys', destMountPoint+'/sys')
-		self.bindMount('/dev', destMountPoint+'/dev')
+		for dest, src in self.bindMountTable(destMountPoint).items():
+			self.bindMount(src, dest)
 
 	def unmountPseudoFS(self, destMountPoint) :
-		cmd = 'umount %s/proc' %destMountPoint
-		safeRun(cmd, 'Unbinding /proc', 0, self.logger)
-
-		cmd = 'umount %s/dev' %destMountPoint
-		safeRun(cmd, 'Unbinding /dev', 0, self.logger)
-
-		cmd = 'umount %s/sys' %destMountPoint
-		safeRun(cmd, 'Unbinding /sys', 0, self.logger)
-
+		for dest, src in self.bindMountTable(destMountPoint).items():
+			cmd = 'umount %s' %dest
+			safeRun(cmd, 'Unbinding ' + src, 0, self.logger)
 
 	def mount(self, partition, destMountPoint) :
 		if not os.path.exists(destMountPoint) :
