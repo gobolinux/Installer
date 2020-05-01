@@ -32,7 +32,7 @@ shared = "/System/Index/share/Installer/"
 
 class Platform :
 	def __init__(self) :
-		self.efi = os.path.exists("/sys/firmware/efi/vars")
+		self.efi = os.path.exists("/sys/firmware/efi/efivars")
 		if os.getenv("FORCE_MBR_INSTALL") is not None :
 			self.efi = False
 
