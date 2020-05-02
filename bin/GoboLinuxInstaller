@@ -292,7 +292,7 @@ class BootLoader :
 		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
 		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\%s" --disk /dev/%s --part %s' %(goboversion, efiapp, rootDisk, partitionNum))
 		print(tr('EFI boot manager entries:'))
-		print(tr('\n'.join(safeRun('efibootmgr -v'))))
+		print(tr('\n'.join(safeRun('efibootmgr'))))
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
