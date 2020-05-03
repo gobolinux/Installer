@@ -22,8 +22,6 @@ Parse_Options "$@"
 
 ### Operation #################################################################
 
-Verify_Superuser
-
 profile="$(Arg 1)"
 dest_dir="$(Arg 2)"
 
