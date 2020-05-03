@@ -34,6 +34,13 @@ function lstrip() {
    echo "$1" | sed 's,/,,1'
 }
 
+function mkdir_and_link() {
+   local target="$1"
+   local link="$2"
+   mkdir -p "$target"
+   ln -s $(echo "$target" | sed "s,^$dest_dir,,g") "$link"
+}
+
 function install_base() {
    Log_Normal "Creating directory "${goboSystem}
    mkdir -p ${dest_dir}/${goboSystem}
@@ -70,9 +77,9 @@ function install_base() {
    Log_Normal "Installing directory "${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel
    mkdir -p ${dest_dir}/${goboSystem}/Kernel/Boot
-   mkdir -p ${dest_dir}/${goboSystem}/Kernel/Devices ${dest_dir}/${goboDevices}
-   mkdir -p ${dest_dir}/${goboSystem}/Kernel/Objects ${dest_dir}/${goboObjects}
-   mkdir -p ${dest_dir}/${goboSystem}/Kernel/Status  ${dest_dir}/${goboStatus}
+   mkdir_and_link ${dest_dir}/${goboSystem}/Kernel/Devices ${dest_dir}/${goboDevices}
+   mkdir_and_link ${dest_dir}/${goboSystem}/Kernel/Objects ${dest_dir}/${goboObjects}
+   mkdir_and_link ${dest_dir}/${goboSystem}/Kernel/Status  ${dest_dir}/${goboStatus}
 
    Log_Normal "Installing directory "${goboSystem}/Kernel/Boot
    cp -a ${goboPrograms}/Linux/Current/Resources/Unmanaged/${goboSystem}/Kernel/Boot/* ${dest_dir}/${goboBoot}
