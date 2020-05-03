@@ -106,15 +106,6 @@ function install_base() {
    mkdir -p ${dest_dir}/${goboUsers}/${superuser}
    eskeldir=${goboPrograms}/EnhancedSkel/Current/Resources/Defaults/Settings/skel
    cp -a ${eskeldir}/.[a-zA-Z]* ${dest_dir}/${goboUsers}/${superuser}
-   if [ -d "$HOME/.e" ]
-   then
-      # Override Enlightenment settings configured by the LiveCD session
-      e_cfg=".e/e/config/standard/e.cfg"
-      eet -d "$HOME/$e_cfg" config /tmp/setup/e.cfg.tmp
-      GrepReplace -B "gobo" "${superuser}" /tmp/setup/e.cfg.tmp
-      rm -f  "${dest_dir}/${goboUsers}/${superuser}/$e_cfg"
-      eet -e "${dest_dir}/${goboUsers}/${superuser}/$e_cfg" config /tmp/setup/e.cfg.tmp 1
-   fi
    chmod 600 ${dest_dir}/${goboUsers}/${superuser}/
 
    cd ${eskeldir}

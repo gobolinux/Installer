@@ -1149,7 +1149,7 @@ def _RunInstallation():
 		o = "\n".join(shadowLines)
 		safeWriteToFile(destMountPoint+'/System/Settings/shadow', o, logger)
 
-		cmd = 'chroot %s GrepReplace "gobo" "%s" /etc/passwd /etc/group /Programs/Sudo/Settings/sudoers /System/Settings/enlightenment/sysactions.conf '%(destMountPoint,goboLogin)
+		cmd = 'chroot %s GrepReplace "gobo" "%s" /etc/passwd /etc/group /Programs/Sudo/Settings/sudoers'%(destMountPoint,goboLogin)
 		safeRun(cmd, '', 0, logger)
 
 		cmd = 'chroot %s rm -f /etc/passwd~ /etc/group~ /Programs/Sudo/Settings/sudoers~'%destMountPoint
