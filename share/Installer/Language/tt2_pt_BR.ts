@@ -18,7 +18,7 @@
         <translation type="obsolete">Configuração do teclado</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="785"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="786"/>
         <source>Keyboard map</source>
         <translation type="unfinished">Mapa de teclado</translation>
     </message>
@@ -33,22 +33,22 @@
         <translation type="unfinished">Partição raiz</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="660"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="661"/>
         <source>Format partition</source>
         <translation type="unfinished">Formatar partição</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="683"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="684"/>
         <source>Package selection</source>
         <translation type="unfinished">Seleção de pacotes</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="757"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="758"/>
         <source>Predefined sets of packages</source>
         <translation type="unfinished">Conjuntos pré-definidos de pacotes</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="758"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
         <source>Select packages</source>
         <translation type="unfinished">Selecione os pacotes</translation>
     </message>
@@ -58,37 +58,37 @@
         <translation type="obsolete">Preencher Dependências</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="768"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="769"/>
         <source>Bootloader options</source>
         <translation type="unfinished">Opções do bootloader</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="776"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="777"/>
         <source>Install bootloader</source>
         <translation type="unfinished">Instalar bootloader</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="654"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="655"/>
         <source>Install at</source>
         <translation type="unfinished">Instalar em</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="783"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="784"/>
         <source>General settings</source>
         <translation type="unfinished">Configurações gerais</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="784"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="785"/>
         <source>Host name: </source>
         <translation type="unfinished">Nome da máquina:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="786"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="787"/>
         <source>Boot theme</source>
         <translation type="unfinished">Tema de boot</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="787"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="788"/>
         <source>BIOS clock is set in</source>
         <translation type="unfinished">Relógio da BIOS está ajustado pelo</translation>
     </message>
@@ -148,27 +148,27 @@
         <translation type="obsolete">DNS secundário:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="809"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="810"/>
         <source>Super-user settings</source>
         <translation type="unfinished">Configurações de super-usuário</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="893"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="894"/>
         <source>Login:</source>
         <translation type="unfinished">Login:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="894"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="895"/>
         <source>Password:</source>
         <translation type="unfinished">Senha:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="895"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="896"/>
         <source>Retype password:</source>
         <translation type="unfinished">Redigite a senha:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="834"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="835"/>
         <source>Additional users</source>
         <translation type="unfinished">Usuários adicionais</translation>
     </message>
@@ -183,12 +183,12 @@
         <translation type="obsolete">Utilizar configurações padrão avançadas</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="899"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="900"/>
         <source>Add user</source>
         <translation type="unfinished">Adicionar usuário</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="900"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="901"/>
         <source>Remove user</source>
         <translation type="unfinished">Remover usuário</translation>
     </message>
@@ -203,7 +203,7 @@
         <translation type="obsolete">Tenha um bom dia!</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="661"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="662"/>
         <source>File system</source>
         <translation type="unfinished">Sistema de arquivos</translation>
     </message>
@@ -218,32 +218,32 @@
         <translation type="unfinished">Em qual partição do seu HD o sistema deve ser instalado?</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="660"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="661"/>
         <source>Erase all contents of the partition and prepare it to receive the new system?</source>
         <translation type="unfinished">Apagar todos os dados da partição e prepará-la para receber o novo sistema?</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="661"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="662"/>
         <source>Which kind of file system should be used to format the root partition.</source>
         <translation type="unfinished">Qual sistema de arquivos deve ser usado para formatar a partição raiz.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="757"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="758"/>
         <source>Selecting one of these will reset the selections of the package list.</source>
         <translation type="unfinished">A seleção de um destes itens ocasionará na seleção dos pacotes na lista abaixo.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="758"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
         <source>Mark the packages that should be installed in the system.</source>
         <translation type="unfinished">Marque os pacotes que deverão ser instalados no sistema.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="761"/>
         <source>Mark all packages in the list that are needed by the ones already marked.</source>
         <translation type="unfinished">Marca todos os pacotes que são necessários para a utlização dos pacotes já marcados.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="776"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="777"/>
         <source>Install GRUB in the MBR of your hard disk in order to load up the system.</source>
         <translation type="unfinished">Instala o GRUB na MBR do seu disco rígido para permitir a carga do sistema.</translation>
     </message>
@@ -253,22 +253,22 @@
         <translation type="obsolete">Na MBR de qual disco deve ser instalado o bootloader (GRUB).</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="784"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="785"/>
         <source>Write in a name to identify this computer in a network environment.</source>
         <translation type="unfinished">Escreva um nome para identificar este computador em um ambiente de rede.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="785"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="786"/>
         <source>Select the layout type that matches your keyboard.</source>
         <translation type="unfinished">Selecione o tipo de layout que corresponde ao seu teclado.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="786"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="787"/>
         <source>The appearance of the boot process can be selected here.</source>
         <translation type="unfinished">A aparência do processo de inicialização do sistema pode ser selecionada aqui.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="787"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="788"/>
         <source>Use local time especially if your computer dual-boots with another OS.</source>
         <translation type="unfinished">Selecione a hora local, especialmente se seu computador possui dual-boot.</translation>
     </message>
@@ -323,32 +323,32 @@
         <translation type="obsolete">Selecione o login relativo ao superusuário. Desabilitado nesta versão.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="827"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="828"/>
         <source>Enter the password for the superuser.</source>
-        <translation type="unfinished">Digite a senha do superusuário.</translation>
+        <translation>Digite a senha do superusuário.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="895"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="896"/>
         <source>Enter the same password as above, to verify for typing mistakes.</source>
         <translation type="unfinished">Redigite a mesma senha digitada acima, para verificar erros de digitação.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="893"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="894"/>
         <source>Type here the UNIX login for the user, e.g. &quot;johnd&quot;</source>
         <translation type="unfinished">Digite o login UNIX para o usuário, por exemplo, &apos;jsilva&apos;</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="894"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="895"/>
         <source>Enter the password for this user.</source>
         <translation type="unfinished">Digite a senha para este usuário.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="896"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="897"/>
         <source>Full name:</source>
         <translation type="unfinished">Nome completo:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="896"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="897"/>
         <source>Type here the real name of the user, e.g. &quot;John Doe&quot;</source>
         <translation type="unfinished">Digite aqui o nome real do usuário, por exemplo &quot;João da Silva&quot;</translation>
     </message>
@@ -358,17 +358,17 @@
         <translation type="obsolete">Adicionar configurações avançadas para aplicações no diretório do usuário.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="899"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="900"/>
         <source>Create an user account using the information entered above.</source>
         <translation type="unfinished">Cria uma conta de usuário com as informações passadas acima.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="900"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="901"/>
         <source>Remove the user that is currently selected in the list below.</source>
         <translation type="unfinished">Remove o usuário que está selecionado na lista abaixo.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="901"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="902"/>
         <source>This is the list of users added so far.</source>
         <translation type="unfinished">Esta é a lista de usuários adicionados até agora.</translation>
     </message>
@@ -380,7 +380,7 @@ You are ready to proceed with the installation.</source>
 Você está pronto para proceder com a instalação.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="912"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="913"/>
         <source>Continuing from here will perform all the indicated actions.</source>
         <translation type="unfinished">A partir daqui, serão realizadas as ações indicadas.</translation>
     </message>
@@ -457,22 +457,22 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="unfinished">Atenção, isto irá apagar todos os dados em</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1256"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1257"/>
         <source>That&apos;s it!</source>
         <translation type="unfinished">Instalação Concluída!</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1257"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1258"/>
         <source>You should now be able to reboot and enjoy the GoboLinux experience. :)</source>
         <translation type="unfinished">Você agora pode reiniciar o sistema e aproveitar todas as vantagens do GoboLinux :)</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="843"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="844"/>
         <source>Invalid username</source>
         <translation type="unfinished">Nome de usuário inválido</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="849"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="850"/>
         <source>Passwords typed do not match</source>
         <translation type="unfinished">Senhas digitadas não conferem</translation>
     </message>
@@ -482,7 +482,7 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Sumário</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="907"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="908"/>
         <source>Ready to install</source>
         <translation type="unfinished">Pronto para instalar</translation>
     </message>
@@ -492,27 +492,27 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Espaço necessário: %s</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Space required to install the selected packages</source>
         <translation type="unfinished">Espaço necessário para a instalação dos pacotes selecionados</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="956"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="957"/>
         <source>Formatting root partition %s...</source>
         <translation type="unfinished">Formatando partição raiz %s...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="961"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="962"/>
         <source>Mounting selected root partition %s...</source>
         <translation type="unfinished">Montando partição raiz selecionada %s...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="971"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="972"/>
         <source>Creating temporary profile file...</source>
         <translation type="unfinished">Criando arquivo de &apos;profile&apos; temporário...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="986"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="987"/>
         <source>Performing file installation (may take a few minutes)...</source>
         <translation type="unfinished">Realizando a instalação dos arquivos (pode levar alguns minutos)...</translation>
     </message>
@@ -527,12 +527,12 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Instalando o GRUB em %s...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1067"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1068"/>
         <source>Creating /System/Settings/hosts...</source>
         <translation type="unfinished">Criando /System/Settings/hosts...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1073"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1074"/>
         <source>Creating /System/Settings/resolv.conf...</source>
         <translation type="unfinished">Criando /System/Settings/resolv.conf...</translation>
     </message>
@@ -542,7 +542,7 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Gerando arquivos de configuração das interfaces de rede...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1099"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1100"/>
         <source>Generating /System/Settings/fstab...</source>
         <translation type="unfinished">Gerando /System/Settings/fstab...</translation>
     </message>
@@ -552,12 +552,12 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Ajustando senha de superusuário...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1164"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1165"/>
         <source>Creating user accounts...</source>
         <translation type="unfinished">Criando contas de usuários...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1183"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1184"/>
         <source>Setting default locale settings...</source>
         <translation type="unfinished">Ajustando configurações locais padrão...</translation>
     </message>
@@ -592,12 +592,12 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Conclusao</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="912"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="913"/>
         <source>Done</source>
         <translation type="unfinished">Concluído</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="901"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="902"/>
         <source>Added users</source>
         <translation type="unfinished">Usuários adicionados</translation>
     </message>
@@ -612,7 +612,7 @@ Você está pronto para proceder com a instalação.</translation>
         <translation type="obsolete">Testando GraphicTail...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1260"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1261"/>
         <source>Warning: wizard was run in test mode.</source>
         <translation type="unfinished">Atenção: wizard foi executado em modo de teste.</translation>
     </message>
@@ -639,17 +639,17 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="unfinished">Nenhuma partição foi encontrada</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="637"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="638"/>
         <source>Create one using &quot;gparted&quot; or &quot;cfdisk&quot;</source>
         <translation type="unfinished">Crie uma usando o &quot;gparted&quot; ou o &quot;cfdisk&quot;</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="761"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="762"/>
         <source>Bypass dependencies check</source>
         <translation type="unfinished">Não verificar dependências</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="761"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="762"/>
         <source>Check if you want to install only the above selected packages.</source>
         <translation type="unfinished">Marque se você quer instalar apenas os pacotes selecionados acima.</translation>
     </message>
@@ -659,12 +659,12 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="unfinished">Processo de instalação</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="925"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="926"/>
         <source>GoboLinux installation aborted</source>
         <translation type="unfinished">Instalação do GoboLinux cancelada</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1166"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1167"/>
         <source>Creating account for user %s...</source>
         <translation type="unfinished">Criando conta para usuário  %s...</translation>
     </message>
@@ -684,52 +684,52 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="obsolete">Selecione se você quer que uma imagem de fundo seja exibida na tela do bootloader.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1224"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1225"/>
         <source>Generating LILO &quot;lilo.conf&quot; file...</source>
         <translation>Gerando arquivo &quot;lilo.conf&quot;...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1211"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1212"/>
         <source>Creating &quot;whatis&quot; database...</source>
         <translation>Criando banco de dados &quot;whatis&quot;...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1215"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1216"/>
         <source>Error creating &quot;whatis&quot; database.</source>
         <translation>Erro criando banco de dados &quot;whatis&quot;.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="761"/>
         <source>Satisfy dependencies</source>
         <translation>Preencher dependências</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="803"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="804"/>
         <source>Filter:</source>
         <translation>Filtro:</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="825"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="826"/>
         <source>Select the account name for the superuser.</source>
         <translation>Selecione a conta de superusuário.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="898"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="899"/>
         <source>Enable super-user privileges</source>
         <translation>Habilitar privilégios de super-usuário</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="898"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="899"/>
         <source>Adds the user to the &apos;sys&apos; group, enabling it to run all commands as super-user via &apos;sudo&apos;</source>
         <translation>Adiciona o usuário ao grupo &apos;sys&apos;, permitindo que ele execute comandos por meio do &apos;sudo&apos;</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1126"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1127"/>
         <source>Setting superuser login and password...</source>
         <translation>Ajustando login e senha do super-usuário...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1202"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1203"/>
         <source>Setting zoneinfo...</source>
         <translation>Ajustando zoneinfo...</translation>
     </message>
@@ -739,7 +739,7 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="obsolete">Atualizando arquivo de configuração do X11...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1261"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1262"/>
         <source>Run &quot;GoboLinuxInstaller [qt|curses] install&quot; to perform installation.</source>
         <translation>Execute &quot;GoboLinuxInstaller [qt|curses] install&quot; para realizar a instalação.</translation>
     </message>
@@ -764,17 +764,17 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="obsolete">Gerando novas chaves OpenSSh...</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="802"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="803"/>
         <source>Time zone</source>
         <translation>Fuso horário</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="802"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="803"/>
         <source>Select the time zone where you are at</source>
         <translation>Selecione o fuso horário na qual você está</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="803"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="804"/>
         <source>Narrow the selection by searching for a particular word</source>
         <translation>Lista apenas fusos que contenham esta palavra</translation>
     </message>
@@ -784,48 +784,48 @@ Crie uma usando &quot;gparted&quot; ou &quot;cfdisk&quot;</translation>
         <translation type="obsolete">Erro gerando chaves OpenSSH.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="819"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="820"/>
         <source>Password is not allowed to be empty.</source>
         <translation>A senha não pode ficar em branco.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="882"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="883"/>
         <source>No normal users are added. Do you want to continue anyway?</source>
         <translation>Nenhum usuário normal foi adicionado. Você quer continuar mesmo assim?</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="886"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="887"/>
         <source>Your installation will only have a superuser defined.
  It is recommended that one adds at least one additional user for normal use.</source>
         <translation>Sua instalação terá apenas o superusuário. É recomendada a instalação de pelo menos um usuário adicional para uso normal.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="676"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="677"/>
         <source>Create a swap file</source>
         <translation>Criar um arquivo de troca</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="676"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="677"/>
         <source>Create a special file in the root partition to function as memory swap space</source>
         <translation>Criar um arquivo especial na partição raiz para operar como um espaço de troca de memória</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="678"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="679"/>
         <source>Swap file size (in MB)</source>
         <translation>Tamanho do arquivo de troca (em MB)</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="678"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="679"/>
         <source>Size of the swap file, in megabytes.</source>
         <translation>Tamanho do arquivo de troca, em megabytes</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
         <source>Space required: %s (%s%% of %s)</source>
-        <translation>Espaço necessário: %s (%s%% de %s)</translation>
+        <translation type="obsolete">Espaço necessário: %s (%s%% de %s)</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="692"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="693"/>
         <source>Selected packages does not fit target partition.
 Either deselect packages or go back and choose another target partition.</source>
         <translation>Os pacotes selecionados não cabem na partição de destino. Retire alguns pacotes de sua seleção ou escolha outra partição de destino.</translation>
@@ -833,17 +833,17 @@ Either deselect packages or go back and choose another target partition.</source
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
         <source>Space required: %s (available space: %s)</source>
-        <translation>Espaço necessário: %s (espaço disponível: %s)</translation>
+        <translation type="obsolete">Espaço necessário: %s (espaço disponível: %s)</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1231"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1232"/>
         <source>Creating GRUB config file</source>
-        <translation type="unfinished"></translation>
+        <translation>Criando arquivo de configuração do GRUB</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1239"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1240"/>
         <source>Installing GRUB</source>
-        <translation type="unfinished"></translation>
+        <translation>Instalando o GRUB</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="294"/>
@@ -852,34 +852,43 @@ Either deselect packages or go back and choose another target partition.</source
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="295"/>
-        <source>
-</source>
+        <source></source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="636"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="637"/>
         <source>Error: cannot install GoboLinux on an UEFI system without an ESP partition.</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro: não é possível instalar o GoboLinux em um sistema UEFI sem uma partição ESP.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="643"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="644"/>
         <source>Proceeding with UEFI installation mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosseguindo com a instalação em modo UEFI</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="648"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="649"/>
         <source>Proceeding with BIOS/MBR installation mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Prosseguindo com a instalação em modo BIOS/MBR</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="774"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="775"/>
         <source>Install GRUB application in an existing EFI System Partition.</source>
-        <translation type="unfinished"></translation>
+        <translation>Instalar o aplicativo GRUB em uma partição ESP existente.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="1233"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="1234"/>
         <source>Installing EFI application on %s</source>
-        <translation type="unfinished"></translation>
+        <translation>Instalando o aplicativo EFI em %s</translation>
+    </message>
+    <message>
+        <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
+        <source>Space required: {} ({:.2f}% of {})</source>
+        <translation>Espaço requerido: {} ({:.2f}% de {})</translation>
+    </message>
+    <message>
+        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
+        <source>Space required: {} (available space: {})</source>
+        <translation>Espaço requerido: {} (espaço disponível: {})</translation>
     </message>
 </context>
 </TS>

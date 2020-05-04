@@ -691,8 +691,8 @@
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="507"/>
-        <source>Space required: %s (%s%% of %s)</source>
-        <translation type="unfinished">Espace requis : %s (%s%% sur %s)</translation>
+        <source>Space required: {} ({:.2f}% of {})</source>
+        <translation type="unfinished">Espace requis : {} ({:.2f}% sur {})</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="557"/>
@@ -703,8 +703,8 @@ Désélectionnez des paquets ou revenez en arrière pour choisir une autre parti
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="622"/>
-        <source>Space required: %s (available space: %s)</source>
-        <translation type="unfinished">Espace requis : %s (Espace disponible : %s)</translation>
+        <source>Space required: {} (available space: {})</source>
+        <translation type="unfinished">Espace requis : {} (Espace disponible : {})</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="1074"/>

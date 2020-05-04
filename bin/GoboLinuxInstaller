@@ -290,7 +290,7 @@ class BootLoader :
 
 		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
 		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\%s" --disk /dev/%s --part %s' %(goboversion, efiapp, rootDisk, partitionNum))
+		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\{}" --disk /dev/{} --part {}'.format(goboversion, efiapp, rootDisk, partitionNum))
 		print(tr('EFI boot manager entries:'))
 		print(tr('\n'.join(safeRun('efibootmgr'))))
 
@@ -607,7 +607,7 @@ def showSelectedSetSize() :
 		percentage = '>100'
 	else :
 		percentage = (sum*100)/targetSize
-	installer.setValue('SpaceRequired', tr('Space required: %s (%s%% of %s)')%(s,percentage,formattedTargetSize))
+	installer.setValue('SpaceRequired', tr('Space required: {} ({:.2f}% of {})').format(s,percentage,formattedTargetSize))
 	return True
 
 platform = Platform()
@@ -616,7 +616,8 @@ deviceSelection.addList('RootPartition', tr('Root partition'), (partitionsList,'
 
 def doFormatChanged() :
 	if installer.getValue('DoFormat') :
-		msg = tr('Warning, this will destroy all data in')+'\n'+rootPartitionName_and_Size()
+		warn = tr('Warning, this will destroy all data in')
+		msg = "{} {}".format(warn, rootPartitionName_and_Size())
 		ret = installer.showMessageBox(msg, ['Ok', 'Cancel'])
 		if ret == 'Ok' :
 			installer.setEnabled('PartitionType', 1)
@@ -633,8 +634,8 @@ def updateBootloaderTargets() :
 	efibootloaderTargetList = DiskUtility().getEFIPartitionsList()
 
 	if platform.pureEFI() and len(efibootloaderTargetList) == 0:
-		msg = tr('Error: cannot install GoboLinux on an UEFI system without an ESP partition.')
-		msg = msg + "\n" + tr('Create one using "gparted" or "cfdisk"')
+		err = tr('Error: cannot install GoboLinux on an UEFI system without an ESP partition.')
+		msg = "{} {}".format(err, tr('Create one using "gparted" or "cfdisk"'))
 		installer.showMessageBox(msg, ['Ok'])
 		installer.done()
 		sys.exit(1)
@@ -756,7 +757,7 @@ def setProfile() :
 #packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Base','Typical','Full'], 'Full'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
 packageSelection.addList('Profile', tr('Predefined sets of packages'), (['Full'], 'Full'), tr('Selecting one of these will reset the selections of the package list.'), setProfile)
 packageSelection.addCheckList('Packages', tr('Select packages'), (profiles['Full'],  profiles['Full']), tr('Mark the packages that should be installed in the system.'), showSelectedSetSize)
-packageSelection.addLabel('SpaceRequired',tr('Space required: %s (available space: %s)')%('1.5GB', rootPartitionSizeStr()), '', tr('Space required to install the selected packages'))
+packageSelection.addLabel('SpaceRequired',tr('Space required: {} (available space: {})').format('1.5GB', rootPartitionSizeStr()), '', tr('Space required to install the selected packages'))
 packageSelection.addButton('',tr('Satisfy dependencies'), '', tr('Mark all packages in the list that are needed by the ones already marked.'), fillUpDependencies)
 packageSelection.addBoolean('BypassFillUpDependencies', tr('Bypass dependencies check'), 0, tr("Check if you want to install only the above selected packages."))
 packageSelection.onValidate(checkFitPackages)
