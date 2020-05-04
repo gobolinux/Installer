@@ -38,7 +38,7 @@ function mkdir_and_link() {
    local target="$1"
    local link="$2"
    mkdir -p "$target"
-   ln -s $(echo "$target" | sed "s,^$dest_dir,,g") "$link"
+   ln -s $(echo "$target" | sed "s,^${dest_dir}//,,g") "$link"
 }
 
 function install_base() {
@@ -123,6 +123,7 @@ function install_base() {
    GrepReplace -B "prompt lode cyan" "prompt lode red" "${dest_dir}/${goboUsers}/${superuser}/.zshrc"
    cd - &> /dev/null
 
+   rm -rf ${dest_dir}/Data/Variable/tmp/*
    mkdir -p ${dest_dir}/Data/Variable/tmp/{.ICE-unix,.X11-unix} -m a+rwxt
 
    Log_Normal "Creating directory "${goboPrograms}
