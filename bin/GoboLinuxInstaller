@@ -188,7 +188,7 @@ class DiskUtility :
 
 	def unmountPseudoFS(self, destMountPoint) :
 		for dest, src in self.bindMountTable(destMountPoint).items():
-			cmd = 'umount %s' %dest
+			cmd = 'umount --recursive %s' %dest
 			safeRun(cmd, 'Unbinding ' + src, 0, self.logger)
 
 	def mount(self, partition, destMountPoint) :
