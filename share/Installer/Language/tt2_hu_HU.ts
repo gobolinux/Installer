@@ -661,8 +661,8 @@
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({:.2f}%% of {})</source>
-        <translation type="obsolete">Szükséges helymennyiség: {} ({:.2f}% / {})</translation>
+        <source>Space required: {} ({}% of {})</source>
+        <translation type="obsolete">Szükséges helymennyiség: {} ({}% / {})</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="693"/>
@@ -672,9 +672,9 @@ Either deselect packages or go back and choose another target partition.</source
 Töröld néhánynak a kiválasztását, vagy válassz egy másik partíciót.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Space required: {} (available space: {})</source>
-        <translation type="obsolete">A szükséges hely: {} (rendelkezésre áll: {})</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1232"/>
@@ -724,12 +724,7 @@ Töröld néhánynak a kiválasztását, vagy válassz egy másik partíciót.</
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({}%% of {})</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
-        <source>Space required: {} (available space: {})</source>
+        <source>Space required: {} ({}% of {})</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

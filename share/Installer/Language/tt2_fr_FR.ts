@@ -691,8 +691,8 @@
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="507"/>
-        <source>Space required: {} ({:.2f}% of {})</source>
-        <translation type="unfinished">Espace requis : {} ({:.2f}% sur {})</translation>
+        <source>Space required: {} ({}% of {})</source>
+        <translation type="unfinished">Espace requis : {} ({}% sur {})</translation>
     </message>
     <message>
         <location filename="../bin/GoboLinuxInstaller" line="557"/>

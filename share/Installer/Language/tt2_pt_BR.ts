@@ -851,11 +851,6 @@ Either deselect packages or go back and choose another target partition.</source
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="295"/>
-        <source></source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="637"/>
         <source>Error: cannot install GoboLinux on an UEFI system without an ESP partition.</source>
         <translation>Erro: não é possível instalar o GoboLinux em um sistema UEFI sem uma partição ESP.</translation>
@@ -882,13 +877,19 @@ Either deselect packages or go back and choose another target partition.</source
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({:.2f}% of {})</source>
-        <translation>Espaço requerido: {} ({:.2f}% de {})</translation>
+        <source>Space required: {} ({}% of {})</source>
+        <translation>Espaço requerido: {} ({}% de {})</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Space required: {} (available space: {})</source>
         <translation>Espaço requerido: {} (espaço disponível: {})</translation>
+    </message>
+    <message>
+        <location filename="../../../bin/GoboLinuxInstaller" line="295"/>
+        <source>
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

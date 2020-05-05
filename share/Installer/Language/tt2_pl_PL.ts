@@ -690,8 +690,8 @@
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({:.2f}% of {})</source>
-        <translation type="obsolete">Wymagana przestrze�: {} ({:.2f}% z {})</translation>
+        <source>Space required: {} ({}% of {})</source>
+        <translation type="unfinished">Wymagana przestrze�: {} ({}% z {})</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="693"/>
@@ -701,9 +701,9 @@ Either deselect packages or go back and choose another target partition.</source
 Albo usu� niekt�re z nich - albo cofnij si�, i wska� inn� partycj� docelow�.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Space required: {} (available space: {})</source>
-        <translation type="obsolete">Wymagana przestrze�: %s (dost�pna: %s)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="957"/>
@@ -754,16 +754,6 @@ Albo usu� niekt�re z nich - albo cofnij si�, i wska� inn� partycj� d
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1234"/>
         <source>Installing EFI application on %s</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({}%% of {})</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
-        <source>Space required: {} (available space: {})</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

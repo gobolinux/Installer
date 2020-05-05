@@ -822,8 +822,8 @@ Se recomienda que se agregue al menos un usuario adicional para el uso normal.</
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({:.2f}% of {})</source>
-        <translation type="obsolete">Espacio requerido: {} ({:.2f}% de {})</translation>
+        <source>Space required: {} ({}% of {})</source>
+        <translation type="unfinished">Espacio requerido: {} ({}% de {})</translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="693"/>
@@ -833,9 +833,9 @@ Either deselect packages or go back and choose another target partition.</source
 Desmarque paquetes o regrese y elija otra partición de destino.</translation>
     </message>
     <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="759"/>
+        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
         <source>Space required: {} (available space: {})</source>
-        <translation type="obsolete">Espacio requerido: {} (espacio disponible: {})</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1232"/>
@@ -881,16 +881,6 @@ Desmarque paquetes o regrese y elija otra partición de destino.</translation>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="1234"/>
         <source>Installing EFI application on %s</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({}%% of {})</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../bin/GoboLinuxInstaller" line="760"/>
-        <source>Space required: {} (available space: {})</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

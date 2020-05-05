@@ -742,7 +742,7 @@ Either deselect packages or go back and choose another target partition.</source
     </message>
     <message>
         <location filename="../../../bin/GoboLinuxInstaller" line="610"/>
-        <source>Space required: {} ({:.2f}% of {})</source>
+        <source>Space required: {} ({}% of {})</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

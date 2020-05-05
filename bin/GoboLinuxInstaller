@@ -606,8 +606,8 @@ def showSelectedSetSize() :
 	if sum > targetSize :
 		percentage = '>100'
 	else :
-		percentage = (sum*100)/targetSize
-	installer.setValue('SpaceRequired', tr('Space required: {} ({:.2f}% of {})').format(s,percentage,formattedTargetSize))
+		percentage = '{:.2f}'.format((sum*100)/targetSize)
+	installer.setValue('SpaceRequired', tr('Space required: {} ({}% of {})').format(s,percentage,formattedTargetSize))
 	return True
 
 platform = Platform()
