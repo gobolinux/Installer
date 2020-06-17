@@ -96,14 +96,18 @@ class DiskUtility :
 		devicesList = temp
 
 		p = re.compile(r'\b[a-z]+[0-9]+\b')
+		pmmcblk = re.compile(r'\b[a-z]+[a-z]+[a-z]+[a-z]+[a-z]+[a-z]+[0-9]+[a-z]+[0-9]+\b')
 		pnvme = re.compile(r'\b[a-z]+[0-9]+[a-z]+[0-9]+p[0-9]+\b')
 		partitionsList = [x for x in devicesList if p.match(x) and not 'loop' in x]
+		partitionsList = [x for x in devicesList if pmmcblk.match(x) and not 'loop' in x]
 		partitionsList += [x for x in devicesList if pnvme.match(x) and not 'loop' in x]
 		partitionsList.sort()
 
 		d = re.compile(r'\b[a-z]+\b')
+		dmmcblk = re.compile(r'\b[a-z]+[a-z]+[a-z]+[a-z]+[a-z]+[a-z]+[0-9]+\b')
 		dnvme = re.compile(r'\b[a-z]+[0-9]+[a-z]+[0-9]+\b')
 		discsList = [x for x in devicesList if d.match(x) and not 'loop' in x]
+		discsList = [x for x in devicesList if dmmcblk.match(x) and not 'loop' in x]
 		discsList += [x for x in devicesList if dnvme.match(x) and not 'loop' in x]
 		discsList.sort()
 
