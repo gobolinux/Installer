@@ -1040,7 +1040,7 @@ def _RunInstallation():
 		# clockmode is a special case...
 		o += comments['ClockMode'] + '\n'
 		if (installer.getValue('ClockMode')) :
-			if installer.getValue('ClockMode') == 'GMT' :
+			if str(installer.getValue('ClockMode')[1]) == 'GMT' :
 				o += 'ClockMode=GMT' + '\n\n'
 			else :
 				o += 'ClockMode=LocalTime' + '\n\n'
