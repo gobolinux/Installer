@@ -273,30 +273,21 @@ class BootLoader :
 		safeWriteToFile(self.destMountPoint + '/Programs/LILO/Settings/lilo.conf', lilo_conf, self.logger)
 
 	def createEFIConfig(self, grubdir, efimnt) :
-		efidir = "%s/EFI/BOOT" %efimnt
-		efiapp = "BOOTx64.EFI"
-		goboversion = open("/System/Settings/GoboLinuxVersion").read().strip("\n")
+		self.__fixDevRoot()
 
-		olddir = os.getenv("PWD")
-		if not os.path.exists(efidir):
-		    os.makedirs(efidir)
-		os.chdir(efidir)
-		if os.path.exists(efiapp) :
-		    efiapp = "Gobo" + goboversion + ".EFI"
+		grub_modules = 'part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font'
+		grub_cmd = 'grub-install '
+		grub_cmd += '--target=x86_64-efi '
+		grub_cmd += '--no-floppy '
+		grub_cmd += '--modules="%s" ' %(grub_modules)
+		grub_cmd += '--efi-directory=%s ' %(efimnt)
+		grub_cmd += '--boot-directory=%s ' %(grubdir)
+		grub_cmd += '--bootloader-id=GRUB '
 
-		shutil.copy(self.destMountPoint+"/"+grubdir+"/grub.cfg", efidir+"/grub.cfg")
-		cmd = 'grub-mkstandalone-efi -d /lib/grub/x86_64-efi -O x86_64-efi '
-		cmd += '--modules="part_gpt part_msdos iso9660 all_video efi_gop efi_uga video_cirrus gfxterm gettext font" '
-		cmd += '--fonts="unicode" --themes="" -o %s --compress=gz ' %efiapp
-		cmd += '"boot/grub/grub.cfg=grub.cfg"'
-		safeRun(cmd, 'grub-mkstandalone-efi', 1, self.logger)
-		os.chdir(olddir)
+		cmd = 'chroot %s %s' %(self.destMountPoint, grub_cmd)
+		safeRun(cmd, 'grub-install', 1, self.logger)
 
-		rootDisk = ''.join(i for i in os.path.basename(self.targetDisc) if not i.isdigit())
-		partitionNum = ''.join(i for i in os.path.basename(self.targetDisc) if i.isdigit())
-		safeRun('efibootmgr --create --label "GoboLinux %s" --loader "\EFI\BOOT\{}" --disk /dev/{} --part {}'.format(goboversion, efiapp, rootDisk, partitionNum))
-		print(tr('EFI boot manager entries:'))
-		print(tr('\n'.join(safeRun('efibootmgr'))))
+		self.__rollbackDevRoot()
 
 ###############################################################################
 #               CHOOSING DISPLAY MODE
@@ -1107,7 +1098,7 @@ def _RunInstallation():
 	espParams = ""
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
 	    espParams = "--esp /dev/%s" %(os.path.basename(bootloaderTarget))
-	    safeRun('mkdir -p %s/boot/efi' %destMountPoint)
+	    safeRun('mkdir -p %s/System/Kernel/ESP' %destMountPoint)
 
 	cmd = 'GenFstab %s %s > %s/System/Settings/fstab'%(espParams, genFstabParams,destMountPoint)
 	safeRun(cmd, 'fstab generation', 0, logger)
@@ -1236,10 +1227,10 @@ def _RunInstallation():
 	log(tr('Creating GRUB config file'))
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
 		log(tr('Installing EFI application on %s' %bootloaderTarget))
-		diskutil.mount(os.path.basename(bootloaderTarget), '/Mount/EFI')
-		bootloader.createGrubConfig('/boot/grub')
-		bootloader.createEFIConfig('/boot/grub', '/Mount/EFI')
-		diskutil.unmount(os.path.basename(bootloaderTarget), '/Mount/EFI')
+		diskutil.mount(os.path.basename(bootloaderTarget), destMountPoint+'/System/Kernel/ESP')
+		bootloader.createGrubConfig('/System/Kernel/ESP/grub')
+		bootloader.createEFIConfig('/System/Kernel/ESP', '/System/Kernel/ESP')
+		diskutil.unmount(os.path.basename(bootloaderTarget), destMountPoint+'/System/Kernel/ESP')
 	elif installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB'))
 		bootloader.installGrub()
