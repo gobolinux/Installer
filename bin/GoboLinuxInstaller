@@ -259,6 +259,8 @@ class BootLoader :
 	def createGrubConfig(self, grubdir) :
 		if len(grubdir) :
 			self.__fixDevRoot()
+			safeRun('mkdir -p %s/%s/images' %(self.destMountPoint,grubdir))
+			shutil.copy('/Programs/GRUB-EFI/Current/share/grub/images/gobo_splash.png', self.destMountPoint+'/'+grubdir+'/images/gobo_splash.png')
 			cmd = 'chroot %s GenGrubConf %s' %(self.destMountPoint, grubdir)
 			safeRun(cmd, 'Running GenGrubConf', 0, self.logger)
 			self.__rollbackDevRoot()
