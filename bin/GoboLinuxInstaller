@@ -1230,8 +1230,8 @@ def _RunInstallation():
 	if installer.getValue('InstallBootloader') and platform.pureEFI() :
 		log(tr('Installing EFI application on %s' %bootloaderTarget))
 		diskutil.mount(os.path.basename(bootloaderTarget), destMountPoint+'/System/Kernel/ESP')
-		bootloader.createGrubConfig('/System/Kernel/ESP/grub')
 		bootloader.createEFIConfig('/System/Kernel/ESP', '/System/Kernel/ESP')
+		bootloader.createGrubConfig('/System/Kernel/ESP/grub')
 		diskutil.unmount(os.path.basename(bootloaderTarget), destMountPoint+'/System/Kernel/ESP')
 	elif installer.getValue('InstallBootloader') :
 		log(tr('Installing GRUB'))
